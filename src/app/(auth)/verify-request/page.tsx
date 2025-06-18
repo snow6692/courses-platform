@@ -14,18 +14,22 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { authClient } from "@/lib/auth-client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useQueryState } from "nuqs";
 
 function VerifyRequestPage() {
   const [otp, setOtp] = useState("");
   const [emailPending, startEmailTransition] = useTransition();
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email") as string;
+  const [email] = useQueryState("email", { defaultValue: "" });
   const router = useRouter();
   function verifyAccount() {
     startEmailTransition(async () => {
+      if (!email) {
+        toast.error("Email is required");
+        return;
+      }
       await authClient.signIn.emailOtp({
         email,
         otp,

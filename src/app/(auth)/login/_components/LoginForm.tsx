@@ -15,11 +15,13 @@ import { authClient } from "@/lib/auth-client";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useQueryState } from "nuqs";
 
 function LoginForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [email, setEmail] = useState("");
+
+  const [email, setEmail] = useQueryState("email", { defaultValue: "" });
 
   function signInWithGoogle() {
     startTransition(async () => {

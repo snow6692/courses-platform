@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { Toaster } from "@/components/ui/sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,13 +38,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ModeToggle />
-          {children}
-          <Toaster
-            richColors
-            position="top-center"
-            duration={2000}
-            closeButton
-          />
+          <NuqsAdapter>
+            {children}
+            <Toaster
+              richColors
+              position="top-center"
+              duration={2000}
+              closeButton
+            />
+          </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>
