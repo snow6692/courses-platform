@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";

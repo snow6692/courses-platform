@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 export default function Home() {
-  const { data: session } = authClient.useSession();
-  const user = session?.user;
+  const user = useAuthUser();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   async function signOut() {
@@ -28,7 +28,7 @@ export default function Home() {
   }
   return (
     <div className="text-red-500">
-      {session ? (
+      {user ? (
         <p>{user?.name}</p>
       ) : (
         <Button
@@ -38,7 +38,7 @@ export default function Home() {
           Login
         </Button>
       )}
-      {session && (
+      {user && (
         <ConfirmDialog
           trigger={
             <Button
