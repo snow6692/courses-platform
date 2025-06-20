@@ -14,19 +14,19 @@ import { Button } from "@/components/ui/button";
 import { ReactNode, useState } from "react";
 
 interface ConfirmDialogProps {
-  trigger: ReactNode; // The element that triggers the dialog (e.g., a button)
+  trigger: ReactNode | string;
   title: string;
-  description: string; 
-  confirmLabel: string; // Label for the confirm button (e.g., "Logout", "Delete")
-  cancelLabel?: string; // Label for the cancel button (defaults to "Cancel")
-  onConfirm: () => void | Promise<void>; // Callback for confirm action
+  description: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  onConfirm: () => void | Promise<void>;
   confirmVariant?:
     | "default"
     | "destructive"
     | "outline"
     | "secondary"
     | "ghost"
-    | "link"; // Button variant for confirm
+    | "link";
 }
 
 export function ConfirmDialog({
@@ -45,16 +45,25 @@ export function ConfirmDialog({
     setOpen(false); // Close dialog after confirm
   };
 
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent click from bubbling to parent (e.g., DropdownMenuItem)
+    setOpen(true); // Explicitly open the dialog
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
+        <span onClick={handleTriggerClick}>{trigger}</span>
+      </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogCancel onClick={() => setOpen(false)}>
+            {cancelLabel}
+          </AlertDialogCancel>
           <AlertDialogAction asChild>
             <Button variant={confirmVariant} onClick={handleConfirm}>
               {confirmLabel}
