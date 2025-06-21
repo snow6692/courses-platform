@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CourseLevel, CourseStatus } from "../generated/prisma";
+import { CATEGORIES } from "../contants";
 export const courseSchema = z.object({
   title: z
     .string()
@@ -16,7 +17,9 @@ export const courseSchema = z.object({
     .min(1, { message: "Duration is required" })
     .max(500, { message: "Duration must be less than 500 hours" }),
   level: z.nativeEnum(CourseLevel),
-  category: z.string().min(1, { message: "Category is required" }),
+  category: z.enum(CATEGORIES, {
+    message: "Category is required",
+  }),
   smallDescription: z
     .string()
     .min(3, { message: "Small description at least 3 characters" })

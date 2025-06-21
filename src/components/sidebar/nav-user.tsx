@@ -55,8 +55,8 @@ export function NavUser() {
                   {user.name
                     ? user.name.length > 1
                       ? user.name.split(" ")[0]?.charAt(0).toUpperCase()
-                      : user.name.charAt(0).toUpperCase()
-                    : "CN"}
+                      : user.email.split("@")[0]?.charAt(0).toUpperCase()
+                    : user.email.split("@")[0]?.charAt(0).toUpperCase() || "CN"}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">

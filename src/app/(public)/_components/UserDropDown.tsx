@@ -41,7 +41,13 @@ export default function UserDropDown({
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
           <Avatar>
             <AvatarImage src={image} alt="Profile image" />
-            <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
+            <AvatarFallback>
+              {name
+                ? name.length > 1
+                  ? name.split(" ")[0]?.charAt(0).toUpperCase()
+                  : email.split("@")[0]?.charAt(0).toUpperCase()
+                : email.split("@")[0]?.charAt(0).toUpperCase() || "CN"}
+            </AvatarFallback>
           </Avatar>
           <ChevronDownIcon
             size={16}

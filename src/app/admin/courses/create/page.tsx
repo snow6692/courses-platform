@@ -26,7 +26,7 @@ function CreateCoursePage() {
       </div>
 
       {/* form */}
-      <Card>
+      <Card className="mt-4">
         <CardHeader>
           <CardTitle>Basic information</CardTitle>
           <CardDescription>
