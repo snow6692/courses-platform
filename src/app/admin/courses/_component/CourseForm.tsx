@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import RichTextEditor from "@/components/rich-text-editor/Editor";
+import Uploader from "@/components/file-uploader/Uploader";
 
 interface CourseFormProps {
   course?: Partial<Course>;
@@ -150,12 +151,6 @@ function CourseForm({ course }: CourseFormProps) {
               <FormItem>
                 <FormLabel htmlFor="description">Description</FormLabel>
                 <FormControl>
-                  {/* <Textarea
-                    id="description"
-                    {...field}
-                    placeholder="Enter course description"
-                    rows={10}
-                  /> */}
                   <RichTextEditor field={field} />
                 </FormControl>
                 <FormMessage />
@@ -168,16 +163,21 @@ function CourseForm({ course }: CourseFormProps) {
             name="fileKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="fileKey">Course File</FormLabel>
+                <FormLabel htmlFor="fileKey">Thumbnail Image</FormLabel>
                 <FormControl>
-                  <Input id="fileKey" {...field} accept=".pdf,.mp4" />
+                  <Uploader />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           {/* Slug */}
-          <div className="flex items-end justify-center">
+          <div
+            className={cn(
+              "flex items-end justify-center",
+              form.formState.errors.slug && "items-center",
+            )}
+          >
             <FormField
               control={form.control}
               name="slug"
@@ -195,7 +195,7 @@ function CourseForm({ course }: CourseFormProps) {
             <Button
               type="button"
               variant="outline"
-              className=""
+              className={cn(form.formState.errors.slug && "mb-1")}
               onClick={() => {
                 const titleValue = form.getValues("title");
                 const slugValue = slugify(titleValue);
@@ -206,61 +206,13 @@ function CourseForm({ course }: CourseFormProps) {
             </Button>
           </div>
 
-          {/* price, duration, level, category, status */}
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 xl:grid-cols-5">
-            {/* Price */}
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="price">Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      id="price"
-                      type="number"
-                      step="0.01"
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value) || 0)
-                      }
-                      placeholder="Enter price"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Duration */}
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="duration">Duration (hours)</FormLabel>
-                  <FormControl>
-                    <Input
-                      id="duration"
-                      type="number"
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value) || 0)
-                      }
-                      placeholder="Enter duration"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="flex flex-col gap-4 md:flex-row">
+            {/* Category */}
             <FormField
               control={form.control}
               name="category"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel htmlFor="category">Category</FormLabel>
                   <FormControl>
                     <Popover open={open} onOpenChange={setOpen}>
@@ -325,11 +277,11 @@ function CourseForm({ course }: CourseFormProps) {
               control={form.control}
               name="level"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel htmlFor="level">Level</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger id="level">
+                      <SelectTrigger id="level" className="w-full">
                         <SelectValue placeholder="Select level" />
                       </SelectTrigger>
                       <SelectContent>
@@ -349,37 +301,87 @@ function CourseForm({ course }: CourseFormProps) {
                 </FormItem>
               )}
             />
+          </div>
 
-            {/* Status */}
+          {/* price, duration,, status */}
+
+          <div className="flex flex-col gap-4 md:flex-row">
+            {/* Price */}
             <FormField
               control={form.control}
-              name="status"
+              name="price"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="status">Status</FormLabel>
+                <FormItem className="flex-1">
+                  <FormLabel htmlFor="price">Price</FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger id="status">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={CourseStatus.DRAFT}>
-                          Draft
-                        </SelectItem>
-                        <SelectItem value={CourseStatus.PUBLISHED}>
-                          Published
-                        </SelectItem>
-                        <SelectItem value={CourseStatus.ARCHIVED}>
-                          Archived
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      id="price"
+                      type="number"
+                      step="0.01"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 0)
+                      }
+                      placeholder="Enter price"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {/* Duration */}
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel htmlFor="duration">Duration (hours)</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="duration"
+                      type="number"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(parseInt(e.target.value) || 0)
+                      }
+                      placeholder="Enter duration"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Category */}
           </div>
+          {/* Status */}
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="status">Status</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger id="status">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={CourseStatus.DRAFT}>Draft</SelectItem>
+                      <SelectItem value={CourseStatus.PUBLISHED}>
+                        Published
+                      </SelectItem>
+                      <SelectItem value={CourseStatus.ARCHIVED}>
+                        Archived
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           {/* Small Description */}
           <FormField
             control={form.control}
