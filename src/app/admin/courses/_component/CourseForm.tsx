@@ -165,7 +165,7 @@ function CourseForm({ course }: CourseFormProps) {
               <FormItem>
                 <FormLabel htmlFor="fileKey">Thumbnail Image</FormLabel>
                 <FormControl>
-                  <Uploader />
+                  <Uploader onChange={field.onChange} value={field.value} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

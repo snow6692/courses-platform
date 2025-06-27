@@ -1,3 +1,6 @@
+import "server-only";
+
+//this code should run only on the server
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./db";

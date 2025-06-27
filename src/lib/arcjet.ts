@@ -1,3 +1,7 @@
+import "server-only";
+
+//this code should run only on the server
+
 import arcjet, {
   detectBot,
   fixedWindow,
@@ -23,7 +27,6 @@ export default arcjet({
   rules: [
     shield({
       mode: "LIVE",
-      
     }),
   ],
 });

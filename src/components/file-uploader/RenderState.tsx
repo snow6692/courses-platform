@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
-import { CloudUploadIcon, ImageIcon } from "lucide-react";
+import { CloudUploadIcon, ImageIcon, Loader2, TrashIcon } from "lucide-react";
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
   return (
@@ -43,6 +44,59 @@ export function RenderErrorState() {
       >
         Click or drag and drop to try again
       </Button>
+    </div>
+  );
+}
+
+export function RenderUploadedState({
+  previewUrl,
+  onRemoveFile,
+  isDeleting,
+}: {
+  previewUrl: string;
+  onRemoveFile: () => void;
+  isDeleting: boolean;
+}) {
+  return (
+    <div className="relative h-full w-full">
+      <Image
+        src={previewUrl}
+        alt="uploaded file"
+        fill
+        className="object-contain p-2"
+      />
+      <Button
+        type="button"
+        disabled={isDeleting}
+        onClick={(e) => {
+          e.stopPropagation();
+
+          onRemoveFile();
+        }}
+        className="absolute top-2 right-2"
+        variant={"destructive"}
+        size={"icon"}
+      >
+        {isDeleting ? <Loader2 className="animate-spin" /> : <TrashIcon />}
+      </Button>
+    </div>
+  );
+}
+
+export function RenderUploadingState({
+  progress,
+  file,
+}: {
+  progress: number;
+  file: File;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center">
+      <p className="text-foreground text-sm font-medium">{progress}%</p>
+      <p className="text-foreground mt-2 text-sm font-medium">Uploading...</p>
+      <p className="text-muted-foreground mt-1 max-w-xs truncate text-xs">
+        {file.name}
+      </p>
     </div>
   );
 }
