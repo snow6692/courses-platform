@@ -103,7 +103,8 @@ function Uploader({ value, onChange }: IProps) {
       });
 
       if (!presignedResponse.ok) {
-        toast.error("Failed to get presigned url");
+        const error = await presignedResponse.json();
+        toast.error(error.error);
         setFileState((prev) => ({
           ...prev,
           uploading: false,
@@ -182,7 +183,8 @@ function Uploader({ value, onChange }: IProps) {
         },
       });
       if (!response.ok) {
-        toast.error("Failed to delete file");
+        const error = await response.json();
+        toast.error(error.error);
         setFileState((prev) => ({
           ...prev,
           isDeleting: true,

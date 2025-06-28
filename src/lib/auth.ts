@@ -1,10 +1,8 @@
-import "server-only";
 
-//this code should run only on the server
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./db";
-import { emailOTP } from "better-auth/plugins";
+import { admin, emailOTP } from "better-auth/plugins";
 import { env } from "./config";
 import { resend } from "./resend";
 // If your Prisma file is located elsewhere, you can change the path
@@ -30,5 +28,6 @@ export const auth = betterAuth({
         });
       },
     }),
+    admin()
   ],
 });

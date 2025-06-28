@@ -26,7 +26,6 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
-import { useSession } from "@/hooks/useAuthUser";
 import { Check, ChevronsUpDown, SparklesIcon } from "lucide-react";
 import { CATEGORIES } from "@/lib/contants";
 import {
@@ -45,16 +44,14 @@ import {
 import { cn } from "@/lib/utils";
 import RichTextEditor from "@/components/rich-text-editor/Editor";
 import Uploader from "@/components/file-uploader/Uploader";
+import { createCourse } from "../create/actions";
+import { tryCatch } from "@/hooks/try-catch";
 
 interface CourseFormProps {
   course?: Partial<Course>;
 }
 
 function CourseForm({ course }: CourseFormProps) {
-  const {
-    session: { user },
-    isPending,
-  } = useSession();
   const router = useRouter();
   const [isSubmitting, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -89,30 +86,34 @@ function CourseForm({ course }: CourseFormProps) {
         },
   });
 
-  const onSubmit = async (data: CourseSchemaType) => {
-    if (!user) {
-      toast.error("You must be logged in to create or update a course");
-      router.push("/login");
-      return;
-    }
-
+  const onSubmit = (values: CourseSchemaType) => {
     startTransition(async () => {
-      try {
-        toast.success(
-          course
-            ? "Course updated successfully"
-            : "Course created successfully",
-        );
-        form.reset();
-        router.push("/admin/courses*");
-      } catch (error: any) {
-        toast.error(
-          `Failed to ${course ? "update" : "create"} course: ${error?.message}`,
-        );
+      const { data: result, error } = await tryCatch(createCourse(values));
+      //Failed on client side
+      if (error) {
+        toast.error("Failed to create course, Try again later");
+        return;
       }
+
+      // Server side status check
+      if (result.status === "success") {
+        toast.success(result.message);
+        form.reset();
+        router.push("/admin/courses");
+        return;
+      } else if (result.status === "error") {
+        toast.error(result.message);
+        return;
+      }
+
+      //Success
+      toast.success(
+        course ? "Course updated successfully" : "Course created successfully",
+      );
+      form.reset();
+      router.push("/admin/courses*");
     });
   };
-
   const handleReset = () => {
     form.reset();
   };
