@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useTransition } from "react";
-import { courseSchema, CourseSchemaType } from "@/lib/validation/course.zod";
+import { courseSchema, CourseSchemaType } from "@/validation/course.zod";
 import slugify from "slugify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Course, CourseLevel, CourseStatus } from "@/lib/generated/prisma";
@@ -44,7 +44,7 @@ import {
 import { cn } from "@/lib/utils";
 import RichTextEditor from "@/components/rich-text-editor/Editor";
 import Uploader from "@/components/file-uploader/Uploader";
-import { createCourse } from "../create/actions";
+import { createCourse, updateCourse } from "../../../../actions/course.action";
 import { tryCatch } from "@/hooks/try-catch";
 
 interface CourseFormProps {
@@ -87,6 +87,37 @@ function CourseForm({ course }: CourseFormProps) {
   });
 
   const onSubmit = (values: CourseSchemaType) => {
+    //Update Course
+    if (course) {
+      startTransition(async () => {
+        const { data: result, error } = await tryCatch(
+          updateCourse(course.id ?? "", values),
+        );
+        //Failed on client side
+        if (error) {
+          toast.error("Failed to update course, Try again later");
+          return;
+        }
+        if (result.status === "success") {
+          toast.success(result.message);
+          form.reset();
+          router.push("/admin/courses");
+          return;
+        }
+        if (result.status === "error") {
+          toast.error(result.message);
+          return;
+        }
+        //Success
+        toast.success("Course updated successfully");
+        form.reset();
+        router.push("/admin/courses");
+        return;
+      });
+      return;
+    }
+
+    //Create Course
     startTransition(async () => {
       const { data: result, error } = await tryCatch(createCourse(values));
       //Failed on client side
@@ -107,11 +138,9 @@ function CourseForm({ course }: CourseFormProps) {
       }
 
       //Success
-      toast.success(
-        course ? "Course updated successfully" : "Course created successfully",
-      );
+      toast.success("Course created successfully");
       form.reset();
-      router.push("/admin/courses*");
+      router.push("/admin/courses");
     });
   };
   const handleReset = () => {
@@ -166,7 +195,10 @@ function CourseForm({ course }: CourseFormProps) {
               <FormItem>
                 <FormLabel htmlFor="fileKey">Thumbnail Image</FormLabel>
                 <FormControl>
-                  <Uploader onChange={field.onChange} value={field.value} />
+                  <Uploader
+                    onChange={field.onChange}
+                    value={course ? course.fileKey : field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

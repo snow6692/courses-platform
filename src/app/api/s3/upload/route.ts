@@ -1,5 +1,5 @@
 import { env } from "@/lib/config";
-import { fileUploadSchema } from "@/lib/validation/fileUpload.zod";
+import { fileUploadSchema } from "@/validation/fileUpload.zod";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";

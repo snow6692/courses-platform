@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { CourseLevel, CourseStatus } from "../generated/prisma";
-import { CATEGORIES } from "../contants";
+import { CourseLevel, CourseStatus } from "../lib/generated/prisma";
+import { CATEGORIES } from "../lib/contants";
 export const courseSchema = z.object({
   title: z
     .string()
