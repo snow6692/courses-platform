@@ -9,6 +9,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import CourseForm from "../../_component/CourseForm";
+import CourseStructure from "./_components/CourseStructure";
 
 interface AdminCourseEditPageProps {
   params: Promise<{
@@ -45,9 +46,15 @@ async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
         </TabsContent>
 
         <TabsContent value="course-structure">
-          <div>
-            <h2 className="text-2xl font-bold">Course Structure</h2>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Course Structure</CardTitle>
+              <CardDescription>Update your course structure</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CourseStructure data={data} />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

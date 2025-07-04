@@ -188,6 +188,27 @@ exports.Prisma.CourseScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.ChapterScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  courseId: 'courseId'
+};
+
+exports.Prisma.LessonScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  position: 'position',
+  description: 'description',
+  thumbnailKey: 'thumbnailKey',
+  videoKey: 'videoKey',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  chapterId: 'chapterId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -219,7 +240,9 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
-  Course: 'Course'
+  Course: 'Course',
+  Chapter: 'Chapter',
+  Lesson: 'Lesson'
 };
 
 /**

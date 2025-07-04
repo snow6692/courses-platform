@@ -12,6 +12,7 @@ import {
   RenderUploadingState,
 } from "./RenderState";
 import { toast } from "sonner";
+import { useConstructUrl } from "@/hooks/use-construct-url";
 
 interface UploaderState {
   id: string | null;
@@ -30,6 +31,7 @@ interface IProps {
   onChange?: (value: string) => void;
 }
 function Uploader({ value, onChange }: IProps) {
+  const fileUrl = useConstructUrl(value as string);
   const [fileState, setFileState] = useState<UploaderState>({
     id: null,
     file: null,
@@ -39,6 +41,7 @@ function Uploader({ value, onChange }: IProps) {
     error: false,
     fileType: "image",
     key: value,
+    objectUrl: fileUrl,
   });
 
   //onDrop is a callback function that is called when a file is dropped
