@@ -2,8 +2,6 @@
 
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Heading from "@tiptap/extension-heading";
-import Text from "@tiptap/extension-text";
 import TextAlign from "@tiptap/extension-text-align";
 import React from "react";
 import Menubar from "./Menubar";
@@ -13,8 +11,7 @@ function RichTextEditor({ field }: { field: any }) {
     immediatelyRender: false,
     extensions: [
       StarterKit,
-      Text,
-      Heading,
+
       TextAlign.configure({
         types: ["heading", "paragraph", "bulletList", "orderedList"],
       }),

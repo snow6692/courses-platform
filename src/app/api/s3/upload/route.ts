@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3 } from "@/lib/S3Client";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+
 import { requireAdmin } from "@/app/data/admin/require-admin";
 
 const aj = arcjet

@@ -62,6 +62,7 @@ export function RenderUploadedState({
       <Image
         src={previewUrl}
         alt="uploaded file"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         fill
         className="object-contain p-2"
       />
