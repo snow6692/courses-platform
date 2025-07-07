@@ -9,7 +9,7 @@ import {
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import CourseForm from "../_component/CourseForm";
+import CourseForm from "../../../../components/forms/CourseForm";
 
 function CreateCoursePage() {
   return (

@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Check, ChevronsUpDown, SparklesIcon } from "lucide-react";
-import { CATEGORIES } from "@/lib/contants";
+import { CATEGORIES } from "@/lib/constants";
 import {
   Popover,
   PopoverContent,
@@ -44,7 +44,7 @@ import {
 import { cn } from "@/lib/utils";
 import RichTextEditor from "@/components/rich-text-editor/Editor";
 import Uploader from "@/components/file-uploader/Uploader";
-import { createCourse, updateCourse } from "../../../../actions/course.action";
+import { createCourse, updateCourse } from "../../actions/course.action";
 import { tryCatch } from "@/hooks/try-catch";
 
 interface CourseFormProps {

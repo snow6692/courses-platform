@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import CourseForm from "../../_component/CourseForm";
+import CourseForm from "../../../../../components/forms/CourseForm";
 import CourseStructure from "./_components/CourseStructure";
 
 interface AdminCourseEditPageProps {

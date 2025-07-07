@@ -6,7 +6,6 @@ import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { CourseSchemaType, courseSchema } from "@/validation/course.zod";
 import { request } from "@arcjet/next";
-import { revalidatePath } from "next/cache";
 
 const aj = arcjet
   .withRule(
@@ -145,85 +144,6 @@ export async function updateCourse(
     return {
       status: "error",
       message: "Failed to update course",
-    };
-  }
-}
-
-export async function reorderLessons(
-  chapterId: string,
-  lessons: { id: string; position: number }[],
-  courseId: string,
-): Promise<APIResponse> {
-  await requireAdmin();
-  try {
-    if (!lessons || lessons.length === 0) {
-      return {
-        status: "error",
-        message: "No lessons provided for reordering",
-      };
-    }
-
-    const updates = lessons.map((lesson) =>
-      prisma.lesson.update({
-        where: {
-          id: lesson.id,
-          chapterId,
-        },
-        data: {
-          position: lesson.position,
-        },
-      }),
-    );
-    // run all the above commands in a single one
-    await prisma.$transaction(updates);
-
-    revalidatePath(`/admin/courses/${courseId}/edit`);
-    return {
-      status: "success",
-      message: "Lessons reordered successfully",
-    };
-  } catch (error) {
-    return {
-      status: "error",
-      message: "Failed to reorder lessons.",
-    };
-  }
-}
-export async function reorderChapters(
-  courseId: string,
-  chapters: { id: string; position: number }[],
-): Promise<APIResponse> {
-  await requireAdmin();
-  try {
-    if (!chapters || chapters.length === 0) {
-      return {
-        status: "error",
-        message: "No Chapters provided for reordering",
-      };
-    }
-
-    const updates = chapters.map((chapter) =>
-      prisma.chapter.update({
-        where: {
-          id: chapter.id,
-          courseId,
-        },
-        data: { position: chapter.position },
-      }),
-    );
-
-    await prisma.$transaction(updates);
-
-    revalidatePath(`/admin/courses/${courseId}/edit`);
-
-    return {
-      status: "success",
-      message: "Chapters reordered successfully",
-    };
-  } catch (error) {
-    return {
-      status: "error",
-      message: "Failed to reorder chapters.",
     };
   }
 }

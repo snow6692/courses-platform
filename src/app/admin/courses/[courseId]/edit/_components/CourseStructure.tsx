@@ -1,6 +1,7 @@
 "use client";
 
-import { reorderChapters, reorderLessons } from "@/actions/course.action";
+import { reorderLessons } from "@/actions/lesson.action";
+import { reorderChapters } from "@/actions/chapter.action";
 import { AdminCourseSingularType } from "@/app/data/admin/admin-get-course";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,6 +41,8 @@ import {
 import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
+import ChapterForm from "@/components/forms/ChapterForm";
+import LessonForm from "@/components/lesson/LessonForm";
 
 interface IProps {
   data: AdminCourseSingularType;
@@ -287,10 +290,9 @@ function CourseStructure({ data }: IProps) {
       onDragEnd={handleDragEnd}
     >
       <Card className="w-full">
-        <CardHeader className="border-b p-4">
-          <CardTitle className="text-lg font-semibold">
-            B Course Chapters
-          </CardTitle>
+        <CardHeader className="flex justify-between border-b p-4">
+          <CardTitle className="text-lg font-semibold">Chapters</CardTitle>
+          <ChapterForm courseId={data.id} />
         </CardHeader>
 
         <CardContent className="flex w-full flex-col gap-4 space-y-8 overflow-y-auto">
@@ -400,14 +402,8 @@ function CourseStructure({ data }: IProps) {
                             </SortableItem>
                           ))}
                         </SortableContext>
-                        <Button
-                          variant="outline"
-                          className="mt-2 w-full text-sm"
-                          aria-label={`Create new lesson in chapter ${item.title}`}
-                        >
-                          <PlusIcon className="mr-2 h-4 w-4" />
-                          Add New Lesson
-                        </Button>
+
+                        <LessonForm chapterId={item.id} courseId={data.id} />
                       </CollapsibleContent>
                     </Collapsible>
                   </Card>
