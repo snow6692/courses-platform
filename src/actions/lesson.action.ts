@@ -171,10 +171,15 @@ export async function deleteLesson({
   }
 }
 
-export async function updateLesson(
-  values: LessonSchemaType,
-  lessonId: string,
-): Promise<APIResponse> {
+export async function updateLesson({
+  values,
+  lessonId,
+  courseId,
+}: {
+  values: LessonSchemaType;
+  lessonId: string;
+  courseId: string;
+}): Promise<APIResponse> {
   await requireAdmin();
   try {
     const validatedData = lessonSchema.safeParse(values);
@@ -187,7 +192,7 @@ export async function updateLesson(
     }
     const data = validatedData.data;
 
-    await prisma.lesson.update({
+    const lesson = await prisma.lesson.update({
       where: {
         id: lessonId,
       },
@@ -198,6 +203,8 @@ export async function updateLesson(
         videoKey: data.videoKey,
       },
     });
+
+    revalidatePath(`/admin/courses/${courseId}/edit`);
 
     return {
       status: "success",

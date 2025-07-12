@@ -29,6 +29,7 @@ import { updateLesson } from "@/actions/lesson.action";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 interface IProps {
   lesson: AdminLessonType;
@@ -48,11 +49,11 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
     },
   });
   const [pending, startTransition] = useTransition();
-
+  const router = useRouter();
   const onSubmit = (values: LessonSchemaType) => {
     startTransition(async () => {
       const { data: result, error } = await tryCatch(
-        updateLesson(values, lesson.id),
+        updateLesson({ courseId, lessonId: lesson.id, values }),
       );
 
       if (error) {
@@ -61,7 +62,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
       }
       if (result.status === "success") {
         toast.success(result.message);
-        form.reset();
+        router.refresh();
       } else if (result.status === "error") {
         toast.error(result.message);
       }

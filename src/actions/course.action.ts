@@ -6,6 +6,7 @@ import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { CourseSchemaType, courseSchema } from "@/validation/course.zod";
 import { request } from "@arcjet/next";
+import { revalidatePath } from "next/cache";
 
 const aj = arcjet
   .withRule(
@@ -144,6 +145,24 @@ export async function updateCourse(
     return {
       status: "error",
       message: "Failed to update course",
+    };
+  }
+}
+
+export async function deleteCourse(courseId: string): Promise<APIResponse> {
+  await requireAdmin();
+
+  try {
+    await prisma.course.delete({ where: { id: courseId } });
+    revalidatePath("/admin/courses");
+    return {
+      status: "success",
+      message: "Course deleted successfully",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: "Failed to delete course",
     };
   }
 }

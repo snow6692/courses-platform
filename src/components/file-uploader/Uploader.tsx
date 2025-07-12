@@ -288,7 +288,8 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
       fileTypeAccepted === "video" ? { "video/*": [] } : { "image/*": [] },
     maxFiles: 1,
     multiple: false,
-    maxSize: 1024 * 1024 * 5, // 5MB
+    maxSize:
+      fileTypeAccepted === "image" ? 1024 * 1024 * 5 : 1024 * 1024 * 5000, // 5MB// 5GB
     onDropRejected: (files: FileRejection[]) => rejectedFiles(files),
     disabled: fileState.uploading || !!fileState.objectUrl,
   });
