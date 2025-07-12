@@ -1,5 +1,3 @@
-"use client";
-
 import { AdminCourseType } from "@/app/data/admin/admin-get-courses";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +12,6 @@ import { useConstructUrl } from "@/hooks/use-construct-url";
 import {
   ArrowRight,
   Eye,
-  Link2,
   MoreVertical,
   Pencil,
   School,
@@ -23,6 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from "../ui/skeleton";
 
 function AdminCourseCard({ course }: { course: AdminCourseType }) {
   return (
@@ -60,13 +58,16 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <Image
         src={useConstructUrl(course.fileKey)}
         alt={course.title}
         width={600}
         height={400}
         className="aspect-video h-full w-full rounded-t-lg object-cover"
+        loading="lazy"
       />
+
       <CardContent className="p-4">
         <Link
           href={`/admin/courses/${course.id}/edit`}
@@ -102,4 +103,31 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
 
 export default AdminCourseCard;
 
-//https://courses.fly.storage.tigris.dev/
+export function AdminCourseCardSkeleton() {
+  return (
+    <Card className="group relative gap-0 py-0">
+      <div className="absolute top-2 right-2 flex items-center gap-2">
+        <Skeleton className="h-7 w-16 rounded-full" />
+        <Skeleton className="size-8 rounded-full" />
+      </div>
+      <div className="relative h-fit w-full">
+        <Skeleton className="aspect-video h-[150px] w-full rounded-t-lg object-cover" />
+      </div>
+      <CardContent className="p-4">
+        <Skeleton className="mb-2 h-6 w-3/4 rounded" />
+        <Skeleton className="mb-4 h-4 w-full rounded" />
+        <div className="mt-4 flex items-center gap-x-5">
+          <div className="flex items-center gap-x-2">
+            <Skeleton className="size-6 rounded-md" />
+            <Skeleton className="size-6 h-full w-10 rounded" />
+          </div>
+          <div className="flex items-center gap-x-2">
+            <Skeleton className="size-6 rounded-md" />
+            <Skeleton className="size-6 h-full w-10 rounded" />
+          </div>
+        </div>
+        <Skeleton className="mt-4 h-10 w-full rounded" />
+      </CardContent>
+    </Card>
+  );
+}

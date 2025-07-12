@@ -1,14 +1,13 @@
 import { adminGetCourses } from "@/app/data/admin/admin-get-courses";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import React from "react";
-import AdminCourseCard from "../../../components/course/AdminCourseCard";
+import React, { Suspense } from "react";
+import AdminCourseCard, {
+  AdminCourseCardSkeleton,
+} from "../../../components/course/AdminCourseCard";
+import EmptyState from "@/components/shared/EmptyState";
 
-async function CoursesPage() {
-  const { data, totalCourses } = await adminGetCourses({
-    page: 1,
-    limit: 10,
-  });
+function CoursesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -21,17 +20,47 @@ async function CoursesPage() {
         </Link>
       </div>
 
-      <div className="mt-4">
-        <h1>Here are all courses</h1>
-      </div>
-
-      <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
-        {data.map((course) => (
-          <AdminCourseCard key={course.id} course={course} />
-        ))}
-      </div>
+      <Suspense fallback={<AdminCourseCardSkeletonLayout />}>
+        <RenderCourses />
+      </Suspense>
     </div>
   );
 }
 
 export default CoursesPage;
+
+async function RenderCourses() {
+  const { data, totalCourses } = await adminGetCourses({
+    page: 1,
+    limit: 10,
+  });
+
+  return (
+    <>
+      {data.length === 0 ? (
+        <EmptyState
+          href={"/admin/courses/create"}
+          title="No courses found"
+          buttonText="Create a course"
+          description="Create a new course to get started"
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+          {data.map((course) => (
+            <AdminCourseCard key={course.id} course={course} />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function AdminCourseCardSkeletonLayout() {
+  return (
+    <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <AdminCourseCardSkeleton key={index} />
+      ))}
+    </div>
+  );
+}

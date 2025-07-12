@@ -46,7 +46,7 @@ function DeleteCoursePage() {
   };
   return (
     <div className="mx-auto w-full max-w-xl">
-      <Card className="mt-32" >
+      <Card className="mt-32">
         <CardHeader>
           <CardTitle>Are you sure you want to delete This course?</CardTitle>
           <CardDescription>
@@ -72,7 +72,7 @@ function DeleteCoursePage() {
               disabled={pending || name !== "confirm"}
               className="cursor-pointer bg-red-500 hover:bg-red-600"
             >
-              {pending ? "Delete..." : "Delete"}
+              {pending ? "Delete..." : "Deleting"}
             </Button>
           </div>
         </CardContent>

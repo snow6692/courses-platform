@@ -11,6 +11,7 @@ export async function adminGetCourses({
   limit: number;
 }) {
   await requireAdmin();
+  // await new Promise((resolve) => setTimeout(resolve, 10000));
   const skip = (page - 1) * limit;
 
   const data = await prisma.course.findMany({

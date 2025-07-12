@@ -46,6 +46,7 @@ import RichTextEditor from "@/components/rich-text-editor/Editor";
 import Uploader from "@/components/file-uploader/Uploader";
 import { createCourse, updateCourse } from "../../actions/course.action";
 import { tryCatch } from "@/hooks/try-catch";
+import { useConfetti } from "@/hooks/use-confetti";
 
 interface CourseFormProps {
   course?: Partial<Course>;
@@ -53,6 +54,8 @@ interface CourseFormProps {
 
 function CourseForm({ course }: CourseFormProps) {
   const router = useRouter();
+  const { triggerConfetti } = useConfetti();
+
   const [isSubmitting, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -100,6 +103,8 @@ function CourseForm({ course }: CourseFormProps) {
         }
         if (result.status === "success") {
           toast.success(result.message);
+          triggerConfetti();
+
           form.reset();
           router.push("/admin/courses");
           return;
@@ -109,6 +114,7 @@ function CourseForm({ course }: CourseFormProps) {
           return;
         }
         //Success
+
         toast.success("Course updated successfully");
         form.reset();
         router.push("/admin/courses");
@@ -129,6 +135,8 @@ function CourseForm({ course }: CourseFormProps) {
       // Server side status check
       if (result.status === "success") {
         toast.success(result.message);
+        triggerConfetti();
+
         form.reset();
         router.push("/admin/courses");
         return;
@@ -139,7 +147,9 @@ function CourseForm({ course }: CourseFormProps) {
 
       //Success
       toast.success("Course created successfully");
+      triggerConfetti();
       form.reset();
+
       router.push("/admin/courses");
     });
   };
