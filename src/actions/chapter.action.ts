@@ -86,10 +86,89 @@ export async function createChapter(
       status: "success",
       message: "Chapter Created Successfully",
     };
-  } catch (error) {
+  } catch {
     return {
       status: "error",
       message: "Failed to create new chapter",
+    };
+  }
+}
+
+export async function deleteChapter({
+  chapterId,
+  courseId,
+}: {
+  courseId: string;
+  chapterId: string;
+}): Promise<APIResponse> {
+  await requireAdmin();
+
+  try {
+    const courseWithChapters = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: {
+        chapters: {
+          select: {
+            position: true,
+            id: true,
+          },
+          orderBy: {
+            position: "asc",
+          },
+        },
+      },
+    });
+
+    if (!courseWithChapters)
+      return {
+        status: "error",
+        message: "Course not found",
+      };
+
+    const chapters = courseWithChapters.chapters;
+
+    const chapterToDelete = chapters.find(
+      (chapter) => chapter.id === chapterId,
+    );
+    if (!chapterToDelete) {
+      return {
+        status: "error",
+        message: "Chapter not found in the chapter",
+      };
+    }
+
+    const remainingChapters = chapters.filter(
+      (chapter) => chapterId !== chapter.id,
+    );
+
+    const updates = remainingChapters.map((chapter, index) => {
+      return prisma.chapter.update({
+        where: {
+          id: chapter.id,
+          courseId,
+        },
+        data: {
+          position: index + 1,
+        },
+      });
+    });
+
+    await prisma.$transaction([
+      ...updates, // Execute the updates
+      prisma.chapter.delete({
+        where: { id: chapterId, courseId: courseId },
+      }),
+    ]);
+    revalidatePath(`/admin/courses/${courseId}/edit`);
+    return {
+      status: "success",
+      message: "Chapter deleted and positions reordered successfully",
+    };
+  } catch (error) {
+    console.log(error.message);
+    return {
+      status: "error",
+      message: "Failed to delete  chapter",
     };
   }
 }

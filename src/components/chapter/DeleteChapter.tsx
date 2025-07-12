@@ -12,26 +12,25 @@ import {
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
 import { tryCatch } from "@/hooks/try-catch";
-import { deleteLesson } from "@/actions/lesson.action";
+import { deleteChapter } from "@/actions/chapter.action";
 import { toast } from "sonner";
 
-function DeleteLesson({
-  courseId,
-  lessonId,
+function DeleteChapter({
   chapterId,
+  courseId,
 }: {
-  lessonId: string;
   courseId: string;
   chapterId: string;
 }) {
   const [open, setOpen] = useState(false);
-
   const [pending, startTransition] = useTransition();
-  async function onSubmit() {
+
+  const onSubmit = async () => {
     startTransition(async () => {
       const { data: result, error } = await tryCatch(
-        deleteLesson({ chapterId, courseId, lessonId }),
+        deleteChapter({ chapterId, courseId }),
       );
+
       if (error) {
         toast.error("An unexpected error occurred, Please try again.");
         return;
@@ -44,7 +43,7 @@ function DeleteLesson({
         toast.error(result.message);
       }
     });
-  }
+  };
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
@@ -56,7 +55,8 @@ function DeleteLesson({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will delete this lesson.
+            This action cannot be undone. This will delete this Chapter with its
+            own lessons.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -74,4 +74,4 @@ function DeleteLesson({
   );
 }
 
-export default DeleteLesson;
+export default DeleteChapter;

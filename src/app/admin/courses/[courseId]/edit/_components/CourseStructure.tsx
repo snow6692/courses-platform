@@ -39,9 +39,10 @@ import {
 import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
-import ChapterForm from "@/components/forms/ChapterForm";
+import ChapterForm from "@/components/chapter/ChapterForm";
 import LessonForm from "@/components/lesson/LessonForm";
 import DeleteLesson from "@/components/lesson/DeleteLesson";
+import DeleteChapter from "@/components/chapter/DeleteChapter";
 
 interface IProps {
   data: AdminCourseSingularType;
@@ -346,14 +347,7 @@ function CourseStructure({ data }: IProps) {
                             {item.title}
                           </span>
                         </div>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="flex-shrink-0 text-red-500 hover:text-red-600"
-                          aria-label={`Delete chapter ${item.title}`}
-                        >
-                          {/* <Trash2 className="h-4 w-4" /> */}
-                        </Button>
+                        <DeleteChapter chapterId={item.id} courseId={data.id} />
                       </div>
 
                       <CollapsibleContent className="space-y-2 rounded-b-md px-3 py-2">
