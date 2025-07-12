@@ -1,5 +1,5 @@
 import React from "react";
-import { ConfirmDialog } from "./ConfirmDialog";
+import { ConfirmDialog } from "../shared/ConfirmDialog";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { LogOutIcon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";

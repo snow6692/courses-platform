@@ -196,6 +196,7 @@ function CourseForm({ course }: CourseFormProps) {
                 <FormLabel htmlFor="fileKey">Thumbnail Image</FormLabel>
                 <FormControl>
                   <Uploader
+                    fileTypeAccepted="image"
                     onChange={field.onChange}
                     value={course ? course.fileKey : field.value}
                   />

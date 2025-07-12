@@ -347,7 +347,11 @@ function CourseStructure({ data }: IProps) {
                             {item.title}
                           </span>
                         </div>
-                        <DeleteChapter chapterId={item.id} courseId={data.id} chapterName={item.title} />
+                        <DeleteChapter
+                          chapterId={item.id}
+                          courseId={data.id}
+                          chapterName={item.title}
+                        />
                       </div>
 
                       <CollapsibleContent className="space-y-2 rounded-b-md px-3 py-2">
@@ -376,7 +380,7 @@ function CourseStructure({ data }: IProps) {
                                     </Button>
                                     <FileTextIcon className="h-4 w-4 flex-shrink-0" />
                                     <Link
-                                      href={`/admin/courses/${data.id}/${item.id}/${lesson.id}/lesson`}
+                                      href={`/admin/courses/${data.id}/${item.id}/${lesson.id}`}
                                       className="truncate text-sm font-medium hover:text-blue-600"
                                     >
                                       {lesson.title}

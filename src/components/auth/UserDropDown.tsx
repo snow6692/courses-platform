@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 
-import Logout from "@/components/shared/Logout";
+import Logout from "./Logout";
 
 interface UserDropDownProps {
   email: string;

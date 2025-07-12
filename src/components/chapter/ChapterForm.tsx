@@ -49,6 +49,9 @@ function ChapterForm({
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const handleOpenChange = (open: boolean) => {
+    if (!open || !chapter) {
+      form.reset();
+    }
     setOpen(open);
   };
 

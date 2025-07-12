@@ -1,14 +1,13 @@
 "use client";
 import Link from "next/link";
-import React, { useTransition } from "react";
+
 import Image from "next/image";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/hooks/useAuthUser";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
-import UserDropDown from "./UserDropDown";
+import UserDropDown from "../auth/UserDropDown";
 
 const navItems = [
   {

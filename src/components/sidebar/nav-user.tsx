@@ -27,8 +27,8 @@ import { useSession } from "@/hooks/useAuthUser";
 import { redirect } from "next/navigation";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
-import { Book, Tv2 } from "lucide-react";
-import Logout from "../shared/Logout";
+import { Tv2 } from "lucide-react";
+import Logout from "../auth/Logout";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

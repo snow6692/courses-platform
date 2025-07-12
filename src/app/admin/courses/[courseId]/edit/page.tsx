@@ -8,13 +8,11 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import CourseForm from "../../../../../components/forms/CourseForm";
-import CourseStructure from "./_components/CourseStructure";
+import CourseForm from "../../../../../components/course/CourseForm";
+import CourseStructure from "../../../../../components/course/CourseStructure";
 
 interface AdminCourseEditPageProps {
-  params: Promise<{
-    courseId: string;
-  }>;
+  params: Promise<{ courseId: string }>;
 }
 
 async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {

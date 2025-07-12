@@ -170,3 +170,43 @@ export async function deleteLesson({
     };
   }
 }
+
+export async function updateLesson(
+  values: LessonSchemaType,
+  lessonId: string,
+): Promise<APIResponse> {
+  await requireAdmin();
+  try {
+    const validatedData = lessonSchema.safeParse(values);
+
+    if (!validatedData.success) {
+      return {
+        status: "error",
+        message: validatedData.error.message,
+      };
+    }
+    const data = validatedData.data;
+
+    await prisma.lesson.update({
+      where: {
+        id: lessonId,
+      },
+      data: {
+        title: data.name,
+        description: data.description,
+        thumbnailKey: data.thumbnailKey,
+        videoKey: data.videoKey,
+      },
+    });
+
+    return {
+      status: "success",
+      message: "Lesson updated successfully",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: "Failed to UPDATE the lesson",
+    };
+  }
+}

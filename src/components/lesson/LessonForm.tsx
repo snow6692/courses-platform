@@ -20,7 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Lesson } from "@/lib/generated/prisma";
 import { LessonSchemaType, lessonSchema } from "@/validation/lesson.zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -29,42 +28,33 @@ import { toast } from "sonner";
 import { createLesson } from "@/actions/lesson.action";
 export default function LessonForm({
   courseId,
-  lesson,
   chapterId,
 }: {
   courseId: string;
   chapterId: string;
-  lesson?: Lesson;
 }) {
   const form = useForm<LessonSchemaType>({
     resolver: zodResolver(lessonSchema),
-    defaultValues: lesson
-      ? {
-          courseId: courseId,
-          chapterId: chapterId,
-          name: lesson.title ?? "",
-          description: lesson.description ?? "",
-          thumbnailKey: lesson.thumbnailKey ?? "",
-          videoKey: lesson.videoKey ?? "",
-        }
-      : {
-          courseId: courseId,
-          chapterId: chapterId,
-          name: "",
-          description: "",
-          thumbnailKey: "",
-          videoKey: "",
-        },
+    defaultValues: {
+      courseId: courseId,
+      chapterId: chapterId,
+      name: "",
+      description: "",
+      thumbnailKey: "",
+      videoKey: "",
+    },
   });
 
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      form.reset();
+    }
     setOpen(open);
   };
 
   const onSubmit = (values: LessonSchemaType) => {
-    console.log("Form submitted with values:", values);
 
     startTransition(async () => {
       const { data: result, error } = await tryCatch(createLesson(values));
@@ -118,13 +108,7 @@ export default function LessonForm({
                 type="submit"
                 disabled={isPending || !form.formState.isValid}
               >
-                {lesson
-                  ? isPending
-                    ? "Updating Lesson..."
-                    : `Update Lesson`
-                  : isPending
-                    ? "Creating Lesson..."
-                    : `Create new  Lesson`}
+                {isPending ? "Creating Lesson..." : `Create new  Lesson`}
               </Button>
             </DialogFooter>
           </form>
