@@ -35,14 +35,13 @@ import {
   ChevronRight,
   FileTextIcon,
   GripVertical,
-  PlusIcon,
-  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
 import ChapterForm from "@/components/forms/ChapterForm";
 import LessonForm from "@/components/lesson/LessonForm";
+import DeleteLesson from "@/components/lesson/DeleteLesson";
 
 interface IProps {
   data: AdminCourseSingularType;
@@ -353,7 +352,7 @@ function CourseStructure({ data }: IProps) {
                           className="flex-shrink-0 text-red-500 hover:text-red-600"
                           aria-label={`Delete chapter ${item.title}`}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          {/* <Trash2 className="h-4 w-4" /> */}
                         </Button>
                       </div>
 
@@ -389,14 +388,11 @@ function CourseStructure({ data }: IProps) {
                                       {lesson.title}
                                     </Link>
                                   </div>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="flex-shrink-0 text-red-500 hover:text-red-600"
-                                    aria-label={`Delete lesson ${lesson.title}`}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+                                  <DeleteLesson
+                                    lessonId={lesson.id}
+                                    chapterId={item.id}
+                                    courseId={data.id}
+                                  />
                                 </div>
                               )}
                             </SortableItem>
