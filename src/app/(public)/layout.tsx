@@ -5,7 +5,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="container mx-auto px-4 md:px-6 lg:px-8">
       <Navbar />
-      <main className="container mx-auto">{children}</main> <h1>Footer</h1>
+      <main className="container mx-auto mb-32">{children}</main>{" "}
     </div>
   );
 }
