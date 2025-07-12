@@ -164,8 +164,7 @@ export async function deleteChapter({
       status: "success",
       message: "Chapter deleted and positions reordered successfully",
     };
-  } catch (error) {
-    console.log(error.message);
+  } catch {
     return {
       status: "error",
       message: "Failed to delete  chapter",

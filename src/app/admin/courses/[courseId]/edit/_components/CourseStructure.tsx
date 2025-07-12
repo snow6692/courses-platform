@@ -347,7 +347,7 @@ function CourseStructure({ data }: IProps) {
                             {item.title}
                           </span>
                         </div>
-                        <DeleteChapter chapterId={item.id} courseId={data.id} />
+                        <DeleteChapter chapterId={item.id} courseId={data.id} chapterName={item.title} />
                       </div>
 
                       <CollapsibleContent className="space-y-2 rounded-b-md px-3 py-2">

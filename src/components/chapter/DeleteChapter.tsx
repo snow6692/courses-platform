@@ -14,16 +14,20 @@ import { Trash2 } from "lucide-react";
 import { tryCatch } from "@/hooks/try-catch";
 import { deleteChapter } from "@/actions/chapter.action";
 import { toast } from "sonner";
+import { Input } from "../ui/input";
 
 function DeleteChapter({
   chapterId,
   courseId,
+  chapterName,
 }: {
   courseId: string;
   chapterId: string;
+  chapterName: string;
 }) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [name, setName] = useState("");
 
   const onSubmit = async () => {
     startTransition(async () => {
@@ -56,14 +60,20 @@ function DeleteChapter({
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will delete this Chapter with its
-            own lessons.
+            own lessons. Please enter "{chapterName}" to delete
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
+          <Input
+            placeholder="Enter chapter name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
           <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+
           <Button
             onClick={onSubmit}
-            disabled={pending}
+            disabled={pending || chapterName !== name}
             className="cursor-pointer bg-red-500 text-white hover:bg-red-600"
           >
             {pending ? "Deleting..." : "Delete"}
