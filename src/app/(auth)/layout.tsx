@@ -1,8 +1,8 @@
 import { buttonVariants } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { FaArrowLeft } from "react-icons/fa";
 
 function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -15,7 +15,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
             className: "absolute top-10 left-4",
           })}
         >
-          <FaArrowLeft className="size-4" />
+          <ArrowLeft className="size-4" />
           Back
         </Link>
       </div>

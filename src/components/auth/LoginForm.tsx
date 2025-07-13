@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
+import { IconBrandGoogle } from "@tabler/icons-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -72,7 +72,7 @@ function LoginForm() {
           variant="outline"
           disabled={isPending}
         >
-          <FcGoogle className="size-4" />
+          <IconBrandGoogle className="size-4" />
           Sign in with Google
         </Button>
 
