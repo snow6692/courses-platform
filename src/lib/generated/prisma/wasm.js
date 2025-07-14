@@ -128,6 +128,7 @@ exports.Prisma.UserScalarFieldEnum = {
   image: 'image',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  stripeCustomerId: 'stripeCustomerId',
   role: 'role',
   banned: 'banned',
   banReason: 'banReason',
@@ -209,6 +210,16 @@ exports.Prisma.LessonScalarFieldEnum = {
   chapterId: 'chapterId'
 };
 
+exports.Prisma.EnrollmentScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  status: 'status',
+  courseId: 'courseId',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -235,6 +246,12 @@ exports.CourseStatus = exports.$Enums.CourseStatus = {
   ARCHIVED: 'ARCHIVED'
 };
 
+exports.EnrollmentStatus = exports.$Enums.EnrollmentStatus = {
+  PENDING: 'PENDING',
+  SUCCESSFUL: 'SUCCESSFUL',
+  CANCELED: 'CANCELED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -242,7 +259,8 @@ exports.Prisma.ModelName = {
   Verification: 'Verification',
   Course: 'Course',
   Chapter: 'Chapter',
-  Lesson: 'Lesson'
+  Lesson: 'Lesson',
+  Enrollment: 'Enrollment'
 };
 
 /**

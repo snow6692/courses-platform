@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +39,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NuqsAdapter>
-            {children}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
             <Toaster
               richColors
               position="top-center"

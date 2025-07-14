@@ -8,6 +8,7 @@ import { CourseSchemaType, courseSchema } from "@/validation/course.zod";
 import { request } from "@arcjet/next";
 import { revalidatePath } from "next/cache";
 
+
 const aj = arcjet
   .withRule(
     detectBot({
@@ -182,3 +183,4 @@ export async function deleteCourse(courseId: string): Promise<APIResponse> {
     };
   }
 }
+
