@@ -3,7 +3,7 @@ import { checkIfCourseBought } from "@/app/data/user/user-is-enrolled";
 import EnrollmentButton from "@/components/course/EnrollmentButton";
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Collapsible,
@@ -266,7 +266,10 @@ async function CoursePage({ params }: IProps) {
               </div>
 
               {isEnrolled ? (
-                <Link href={"/dashboard"} className="w-full">
+                <Link
+                  href={"/dashboard"}
+                  className={buttonVariants({ className: "w-full" })}
+                >
                   Watch Now
                 </Link>
               ) : (

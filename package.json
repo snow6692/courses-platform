@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "stripe": "stripe listen --forward-to localhost:3000/api/webhook/stripe",
     "lint": "next lint"
   },
   "dependencies": {
