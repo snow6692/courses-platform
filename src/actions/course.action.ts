@@ -150,9 +150,25 @@ export async function updateCourse(
 }
 
 export async function deleteCourse(courseId: string): Promise<APIResponse> {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   try {
+    const req = await request();
+    const decision = await aj.protect(req, {
+      fingerprint: session?.user.id as string,
+    });
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit())
+        return {
+          status: "error",
+          message: "Too many requests",
+        };
+      if (decision.reason.isBot())
+        return {
+          status: "error",
+          message: "You are a bot! Please try again later",
+        };
+    }
     await prisma.course.delete({ where: { id: courseId } });
     revalidatePath("/admin/courses");
     return {
