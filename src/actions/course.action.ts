@@ -3,11 +3,11 @@
 import { requireAdmin } from "@/app/data/admin/require-admin";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
 import prisma from "@/lib/db";
+import { stripe } from "@/lib/stripe";
 import { APIResponse } from "@/lib/types";
 import { CourseSchemaType, courseSchema } from "@/validation/course.zod";
 import { request } from "@arcjet/next";
 import { revalidatePath } from "next/cache";
-
 
 const aj = arcjet
   .withRule(
@@ -63,8 +63,21 @@ export async function createCourse(
       };
     }
 
+    const stripeData = await stripe.products.create({
+      name: parsedData.data.title,
+      description: parsedData.data.smallDescription,
+      default_price_data: {
+        currency: "usd",
+        unit_amount: parsedData.data.price * 100,
+      },
+    });
+
     const result = await await prisma.course.create({
-      data: { ...parsedData.data, userId: userId as string },
+      data: {
+        ...parsedData.data,
+        userId: userId as string,
+        stripePriceId: stripeData.default_price as string,
+      },
     });
 
     return {
@@ -183,4 +196,3 @@ export async function deleteCourse(courseId: string): Promise<APIResponse> {
     };
   }
 }
-

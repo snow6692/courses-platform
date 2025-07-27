@@ -1,3 +1,4 @@
+import { getAllCourses } from "@/app/data/course/get-all-courses";
 import { getCourse } from "@/app/data/course/get-course";
 import { checkIfCourseBought } from "@/app/data/user/user-is-enrolled";
 import EnrollmentButton from "@/components/course/EnrollmentButton";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
 import { useConstructUrl } from "@/hooks/use-construct-url";
+import prisma from "@/lib/db";
 import {
   IconBook,
   IconCategory,
@@ -23,14 +25,33 @@ import {
 import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface IProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const courses = await prisma.course.findMany({
+    where: {
+      status: "PUBLISHED",
+    },
+    select: {
+      slug: true,
+    },
+  });
+  return courses.map((course) => ({
+    slug: course.slug, // Return an object with the slug for each course
+  }));
+}
+
 async function CoursePage({ params }: IProps) {
   const { slug } = await params;
   const course = await getCourse(slug);
+  if (!course) {
+    notFound();
+  }
+
   const isEnrolled = await checkIfCourseBought(course.id);
   const thumbnailImage = useConstructUrl(course.fileKey);
   return (

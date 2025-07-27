@@ -22,6 +22,7 @@ function PublicCourseCard({ course }: { course: PublicCourseType }) {
       />
       <CardContent className="p-4">
         <Link
+          prefetch={false}
           className="group-hover:text-primary line-clamp-2 text-lg font-medium transition-colors hover:underline"
           href={`/courses/${course.slug}`}
         >
@@ -60,26 +61,26 @@ export function PublicCourseCardSkeleton() {
       {/* Badge placeholder */}
       <Skeleton className="absolute top-2 right-2 z-10 h-6 w-16 rounded-md" />
       {/* Image placeholder */}
-      <Skeleton className="aspect-video h-full w-full animate-pulse rounded-t-xl " />
+      <Skeleton className="aspect-video h-full w-full animate-pulse rounded-t-xl" />
       <CardContent className="p-4">
         {/* Title placeholder */}
-        <Skeleton className="mb-2 h-6 w-3/4 animate-pulse " />
+        <Skeleton className="mb-2 h-6 w-3/4 animate-pulse" />
         {/* Description placeholder */}
-        <Skeleton className="mb-4 h-4 w-full animate-pulse " />
-        <Skeleton className="mb-4 h-4 w-2/3 animate-pulse " />
+        <Skeleton className="mb-4 h-4 w-full animate-pulse" />
+        <Skeleton className="mb-4 h-4 w-2/3 animate-pulse" />
         {/* Duration and Category placeholders */}
         <div className="mt-4 flex gap-x-5">
           <div className="flex items-center gap-x-2">
-            <Skeleton className="h-6 w-6 animate-pulse rounded-md " />
-            <Skeleton className="h-4 w-12 animate-pulse " />
+            <Skeleton className="h-6 w-6 animate-pulse rounded-md" />
+            <Skeleton className="h-4 w-12 animate-pulse" />
           </div>
           <div className="flex items-center gap-x-2">
-            <Skeleton className="h-6 w-6 animate-pulse rounded-md " />
-            <Skeleton className="h-4 w-16 animate-pulse " />
+            <Skeleton className="h-6 w-6 animate-pulse rounded-md" />
+            <Skeleton className="h-4 w-16 animate-pulse" />
           </div>
         </div>
         {/* Button placeholder */}
-        <Skeleton className="mt-4 h-10 w-full animate-pulse rounded-md " />
+        <Skeleton className="mt-4 h-10 w-full animate-pulse rounded-md" />
       </CardContent>
     </Card>
   );
