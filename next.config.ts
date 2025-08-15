@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // ppr: "incremental",
+    viewTransition: true,
+  },
   /* config options here */
   images: {
     remotePatterns: [

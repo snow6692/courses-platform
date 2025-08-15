@@ -168,3 +168,34 @@
     @apply bg-background text-foreground;
   }
 }
+
+::view-transition-new(.slide-in) {
+  animation: slideIn 400ms;
+}
+
+::view-transition-old(.slide-out) {
+  animation: slideOut 400ms;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100);
+    opacity: 0;
+  }
+}
+
+/* For accessability if user don't want animation */

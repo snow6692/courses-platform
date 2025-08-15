@@ -8,6 +8,7 @@ import Link from "next/link";
 import { School, TimerIcon } from "lucide-react";
 import { buttonVariants } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
+
 function PublicCourseCard({ course }: { course: PublicCourseType }) {
   const ThumbnailUrl = useConstructUrl(course.fileKey);
   return (
