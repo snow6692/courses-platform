@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     // ppr: "incremental",
     viewTransition: true,
   },
-  /* config options here */
+
   images: {
     remotePatterns: [
       {
