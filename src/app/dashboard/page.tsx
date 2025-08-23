@@ -28,7 +28,7 @@ async function DashboardPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {enrolledCourses.map(({ Course: course }) => (
-            <Link key={course.id} href={`dashboard/${course.slug}`}>
+            <Link  key={course.id} href={`dashboard/${course.slug}`}>
               {course.title}  
             </Link>
           ))}
