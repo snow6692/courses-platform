@@ -1,7 +1,9 @@
+"use client";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Check, Play } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface IProps {
   lesson: {
@@ -12,8 +14,11 @@ interface IProps {
   };
   slug: string;
 }
-export async function LessonItem({ lesson, slug }: IProps) {
-  const completed = true;
+export function LessonItem({ lesson, slug }: IProps) {
+  const completed = false;
+  const pathname = usePathname();
+  const currentLessonId = pathname.split("/").pop(); // the last part of the url (lessonId)
+  const isActive = currentLessonId === lesson.id;
   return (
     <Link
       href={`/dashboard/${slug}/${lesson.id}`}
@@ -23,6 +28,9 @@ export async function LessonItem({ lesson, slug }: IProps) {
           "h-auto w-full justify-start p-3 transition-all",
           completed &&
             "border-green-300 bg-green-100 text-green-800 hover:bg-green-200 dark:border-green-700 dark:bg-green-900/30 dark:text-green-200 dark:hover:bg-green-900/50",
+          isActive &&
+            !completed &&
+            "bg-primary/70 dark:bg-primary/70 border-primary/50 hover:bg-primary dark:hover:bg-primary hover:text-muted-foreground",
         ),
       })}
     >
@@ -36,9 +44,19 @@ export async function LessonItem({ lesson, slug }: IProps) {
             <div
               className={cn(
                 "bg-background flex size-5 items-center justify-center rounded-full border-2",
+                isActive
+                  ? "border-muted-foreground bg-primary/10 dark:bg-primary/20"
+                  : "border-muted-foreground/60",
               )}
             >
-              <Play className={cn("size-2.5 fill-current")} />
+              <Play
+                className={cn(
+                  "size-2.5 fill-current",
+                  isActive
+                    ? "hover:text-muted-foreground"
+                    : "text-muted-foreground",
+                )}
+              />
             </div>
           )}
         </div>
@@ -55,6 +73,12 @@ export async function LessonItem({ lesson, slug }: IProps) {
           {completed && (
             <p className="text-[10px] font-medium text-green-700 dark:text-green-300">
               Completed
+            </p>
+          )}
+
+          {isActive && !completed && (
+            <p className="text-muted-foreground text-[10px] font-medium">
+              Currently Watching
             </p>
           )}
         </div>
