@@ -34,7 +34,7 @@ function EnrollmentButton({ courseId }: { courseId: string }) {
     <Button className="w-full" onClick={onSubmit} disabled={pending}>
       {pending ? (
         <>
-          <Loader2 className="size-4 animate-spin" /> Loading...
+          <Loader2 className="size-4 animate-spin" /> Enrolling...
         </>
       ) : (
         " Enroll Now!"

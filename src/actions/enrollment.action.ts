@@ -142,7 +142,16 @@ export async function enrollInCourse(
         customer: stripeCustomerId,
         line_items: [
           {
-            price: "price_1RkgkDCrGTF12qtPSygyx9fE",
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: course.title,
+                metadata: {
+                  courseId: course.id,
+                },
+              },
+              unit_amount: Math.round(course.price! * 100),
+            },
             quantity: 1,
           },
         ],

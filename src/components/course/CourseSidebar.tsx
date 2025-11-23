@@ -2,8 +2,13 @@ import React from "react";
 import { ChevronDown, Play } from "lucide-react";
 import { CourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 import { Progress } from "../ui/progress";
-import { Collapsible, CollapsibleTrigger } from "../ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
 import { Button } from "../ui/button";
+import { LessonItem } from "../lesson/LessonItem";
 
 interface IProps {
   course: CourseSidebarData;
@@ -39,8 +44,8 @@ function CourseSidebar({ course }: IProps) {
       </div>
 
       <div className="space-y-3 py-4 pr-4">
-        {course.chapters.map((chapter) => (
-          <Collapsible key={chapter.id}>
+        {course.chapters.map((chapter, index) => (
+          <Collapsible key={chapter.id} defaultOpen={index === 0}>
             <CollapsibleTrigger asChild>
               <Button
                 variant={"outline"}
@@ -49,14 +54,28 @@ function CourseSidebar({ course }: IProps) {
                 <div className="shrink-0">
                   <ChevronDown className="text-primary size-4" />
                 </div>
-                <div className="min-w-0 flex-1 text-left">
-                    <p className="font-semibold text-sm truncate text-foreground">
-
+                <div className="min-w-0 flex-1 space-x-4 text-left">
+                  <p className="text-foreground truncate text-sm font-semibold">
                     {chapter.position}: {chapter.title}
+                  </p>
+                  <div className="flex items-center justify-start gap-2">
+                    <p className="text-muted-foreground size-[8px] truncate pb-5 text-xs font-medium">
+                      {chapter.lessons.length}{" "}
                     </p>
+                    <p className="">lessons</p>
+                  </div>
                 </div>
               </Button>
             </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3 space-y-3 border-l-2 pl-6">
+              {chapter.lessons.map((lesson) => (
+                <LessonItem
+                  lesson={lesson}
+                  slug={course.slug}
+                  key={lesson.id}
+                />
+              ))}
+            </CollapsibleContent>
           </Collapsible>
         ))}
       </div>

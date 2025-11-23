@@ -24,3 +24,4 @@ async function CourseLayout({ children, params }: IProps) {
 }
 
 export default CourseLayout;
+ 
