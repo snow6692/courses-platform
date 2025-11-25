@@ -1,4 +1,3 @@
-import "server-only";
 import { requireUser } from "./require-user";
 import prisma from "@/lib/db";
 
@@ -22,9 +21,14 @@ export async function getEnrolledCourses() {
           chapters: {
             select: {
               id: true,
+
               lessons: {
                 select: {
                   id: true,
+                  lessonProgress: {
+                    where: { userId: user.id },
+                    select: { lessonId: true, completed: true },
+                  },
                 },
               },
             },
@@ -34,3 +38,7 @@ export async function getEnrolledCourses() {
     },
   });
 }
+
+export type EnrolledCourseType = Awaited<
+  ReturnType<typeof getEnrolledCourses>
+>[0];

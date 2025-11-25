@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdmin } from "@/app/data/admin/require-admin";
+import { requireUser } from "@/app/data/user/require-user";
 import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { lessonSchema, LessonSchemaType } from "@/validation/lesson.zod";
@@ -214,6 +215,41 @@ export async function updateLesson({
     return {
       status: "error",
       message: "Failed to UPDATE the lesson",
+    };
+  }
+}
+
+export async function markLessonCompleted(
+  lessonId: string,
+  slug: string,
+): Promise<APIResponse> {
+  const user = await requireUser();
+  try {
+    await prisma.lessonProgress.upsert({
+      where: {
+        userId_lessonId: {
+          userId: user.id,
+          lessonId,
+        },
+      },
+      update: {
+        completed: true,
+      },
+      create: {
+        userId: user.id,
+        lessonId,
+        completed: true,
+      },
+    });
+    revalidatePath(`/dashboard/${slug}`);
+    return {
+      message: "Progress updated",
+      status: "success",
+    };
+  } catch (error) {
+    return {
+      message: "Failed to mark lesson as completed",
+      status: "error",
     };
   }
 }

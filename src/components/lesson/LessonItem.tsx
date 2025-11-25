@@ -13,9 +13,9 @@ interface IProps {
     description: string | null;
   };
   slug: string;
+  completed: boolean;
 }
-export function LessonItem({ lesson, slug }: IProps) {
-  const completed = false;
+export function LessonItem({ lesson, slug, completed }: IProps) {
   const pathname = usePathname();
   const currentLessonId = pathname.split("/").pop(); // the last part of the url (lessonId)
   const isActive = currentLessonId === lesson.id;

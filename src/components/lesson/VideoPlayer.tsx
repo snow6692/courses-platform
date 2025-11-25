@@ -49,7 +49,10 @@ export default function VideoPlayer({
   }
 
   return (
-    <div className="relative aspect-video overflow-hidden rounded-lg bg-black">
+    <div
+      className="relative aspect-video overflow-hidden rounded-lg bg-black"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <video
         controls
         poster={thumbnailUrl}
@@ -66,8 +69,10 @@ export default function VideoPlayer({
         Your Browser doesn't support the video tag
       </video>
       {/* Watermark */}
-      <div className="pointer-events-none absolute top-2 left-2 text-sm text-white opacity-50">
-        {user?.email}
+      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-8 text-2xl font-bold text-white opacity-40">
+        <div>{user?.email}</div>
+        <div className="text-right">{user?.id}</div>
+        <div className="self-center">{new Date().toLocaleString()}</div>
       </div>
     </div>
   );

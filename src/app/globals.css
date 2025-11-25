@@ -4,6 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+video {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+@supports (-webkit-touch-callout: none) {
+  video {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
 :root {
   --background: oklch(0.9751 0.0127 244.2507);
   --foreground: oklch(0.3729 0.0306 259.7328);

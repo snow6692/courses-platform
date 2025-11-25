@@ -3,7 +3,7 @@ import React, { useState, useTransition } from "react";
 import { courseSchema, CourseSchemaType } from "@/validation/course.zod";
 import slugify from "slugify";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Course, CourseLevel, CourseStatus } from "@/lib/generated/prisma";
+
 import {
   Form,
   FormControl,
@@ -47,6 +47,7 @@ import Uploader from "@/components/file-uploader/Uploader";
 import { createCourse, updateCourse } from "../../actions/course.action";
 import { tryCatch } from "@/hooks/try-catch";
 import { useConfetti } from "@/hooks/use-confetti";
+import {  Course, CourseLevel, CourseStatus } from "@/generated/prisma/client";
 
 interface CourseFormProps {
   course?: Partial<Course>;

@@ -5,27 +5,27 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/lib/generated/prisma"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String       @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-  courses       Course[]
-  enrollments   Enrollment[]
+  id             String           @id
+  name           String
+  email          String
+  emailVerified  Boolean
+  image          String?
+  createdAt      DateTime
+  updatedAt      DateTime
+  sessions       Session[]
+  accounts       Account[]
+  courses        Course[]
+  enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
 
   stripeCustomerId String? @unique
 
@@ -145,10 +145,11 @@ model Lesson {
   thumbnailKey String?
   videoKey     String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  chapterId String
-  Chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapterId      String
+  Chapter        Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lessonProgress LessonProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 enum EnrollmentStatus {
@@ -173,3 +174,18 @@ model Enrollment {
   @@unique([userId, courseId])
 }
 
+model LessonProgress {
+  id        String  @id @default(uuid())
+  completed Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+}

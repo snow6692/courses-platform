@@ -1,7 +1,6 @@
 import React from "react";
 import { ChevronDown, Play } from "lucide-react";
 import { CourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
-import { Progress } from "../ui/progress";
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,10 +8,12 @@ import {
 } from "../ui/collapsible";
 import { Button } from "../ui/button";
 import { LessonItem } from "../lesson/LessonItem";
+import { CourseProgressClient } from "./CourseProgressClient";
 
 interface IProps {
   course: CourseSidebarData;
 }
+
 function CourseSidebar({ course }: IProps) {
   return (
     <div className="flex h-full flex-col">
@@ -33,14 +34,7 @@ function CourseSidebar({ course }: IProps) {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">Progress</span>
-            <span className="font-medium">4/10 lessons</span>
-          </div>
-          <Progress value={55} className="h-1.5" />
-          <p className="text-muted-foreground text-xs">55% completed</p>
-        </div>
+        <CourseProgressClient course={course} />
       </div>
 
       <div className="space-y-3 py-4 pr-4">
@@ -73,6 +67,11 @@ function CourseSidebar({ course }: IProps) {
                   lesson={lesson}
                   slug={course.slug}
                   key={lesson.id}
+                  completed={
+                    lesson.lessonProgress.find(
+                      (progress) => progress.lessonId === lesson.id,
+                    )?.completed || false
+                  }
                 />
               ))}
             </CollapsibleContent>
