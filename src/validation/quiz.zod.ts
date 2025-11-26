@@ -1,22 +1,23 @@
-// validation/quiz.zod.ts
 import { z } from "zod";
 
-export const createQuizSchema = z
+// validation/quiz.zod.ts
+export const quizSchema = z
   .object({
+    quizId: z.string().uuid().optional(), //
     title: z.string().min(3, "Title must be at least 3 characters"),
-    description: z.string().optional(),
-    timeLimit: z.coerce.number().int().min(1).max(300).optional(),
-    type: z.enum(["COURSE", "CHAPTER", "LESSON"]),
+    description: z.string().optional().nullable(),
+    timeLimit: z.coerce.number().int().min(1).max(300).optional().nullable(),
+
     courseId: z.string().uuid().optional().nullable(),
     chapterId: z.string().uuid().optional().nullable(),
     lessonId: z.string().uuid().optional().nullable(),
   })
   .refine(
     (data) => {
-      const count = [data.courseId, data.chapterId, data.lessonId].filter(
+      const ids = [data.courseId, data.chapterId, data.lessonId].filter(
         Boolean,
       ).length;
-      return count === 1;
+      return ids === 1;
     },
     {
       message:
@@ -24,22 +25,19 @@ export const createQuizSchema = z
     },
   );
 
-export const addQuestionSchema = z.object({
-  quizId: z.string().uuid(),
-  text: z.string().min(1, "Question text is required"),
+export type QuizSchema = z.infer<typeof quizSchema>;
+
+const createQuestionSchema = z.object({
+  quizId: z.string(),
+  text: z.string().min(1),
   imageKey: z.string().optional(),
   explanation: z.string().optional(),
   explanationImageKey: z.string().optional(),
   explanationVideoKey: z.string().optional(),
-  answers: z
-    .array(
-      z.object({
-        text: z.string().min(1, "Answer text is required"),
-        isCorrect: z.boolean(),
-      }),
-    )
-    .min(2, "At least 2 answers required"),
 });
 
-export type CreateQuizSchema = z.infer<typeof createQuizSchema>;
-export type AddQuestionSchema = z.infer<typeof addQuestionSchema>;
+const createAnswerSchema = z.object({
+  questionId: z.string(),
+  text: z.string().min(1),
+  isCorrect: z.boolean(),
+});

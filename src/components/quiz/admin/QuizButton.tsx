@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import CreateQuizDialog from "./CreateQuizDialog";
+import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 
 type Props = {
   quizType: "COURSE" | "CHAPTER" | "LESSON";
@@ -11,14 +12,16 @@ type Props = {
   chapterId?: string;
   lessonId?: string;
   label?: string;
+  existingQuiz: AdminGetQuizOfCourse | null;
 };
 
-export function CreateQuizButton({
+export function QuizButton({
   quizType,
   courseId,
   chapterId,
   lessonId,
   label,
+  existingQuiz,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -36,6 +39,7 @@ export function CreateQuizButton({
         chapterId={quizType === "CHAPTER" ? chapterId : null}
         lessonId={quizType === "LESSON" ? lessonId : null}
         quizType={quizType}
+        existingQuiz={existingQuiz}
       />
     </>
   );

@@ -1,3 +1,4 @@
+// components/quiz/admin/QuizDialog.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -19,70 +20,71 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createQuizSchema, CreateQuizSchema } from "@/validation/quiz.zod";
+import { quizSchema, QuizSchema } from "@/validation/quiz.zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { createQuiz } from "@/actions/quiz/quiz.action";
+import { saveQuiz } from "@/actions/quiz/quiz.action";
+import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 
-type IProps = {
+
+type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  quizType: "COURSE" | "CHAPTER" | "LESSON";
   courseId?: string | null;
   chapterId?: string | null;
   lessonId?: string | null;
+  existingQuiz?: AdminGetQuizOfCourse | null;
+  quizType: "COURSE" | "LESSON" | "CHAPTER";
 };
 
-export default function CreateQuizDialog({
+export default function QuizDialog({
   open,
   onOpenChange,
   courseId = null,
   chapterId = null,
   lessonId = null,
+  existingQuiz = null,
   quizType,
-}: IProps) {
+}: Props) {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<CreateQuizSchema>({
-    resolver: zodResolver(createQuizSchema),
+  const form = useForm<QuizSchema>({
+    resolver: zodResolver(quizSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      timeLimit: 0,
+      quizId: existingQuiz?.id,
+      title: existingQuiz?.title || "",
+      description: existingQuiz?.description || "",
+      timeLimit: existingQuiz?.timeLimit || null,
       courseId,
       chapterId,
       lessonId,
-      type: quizType,
     },
   });
 
-  const onSubmit = (values: CreateQuizSchema) => {
+  const onSubmit = (values: QuizSchema) => {
     startTransition(async () => {
-      const { status, message } = await createQuiz(values);
-      if (status === "success") {
-        toast.success(message);
+      const result = await saveQuiz(values, quizType);
+      if (result.status === "success") {
+        toast.success(result.message);
         form.reset();
         onOpenChange(false);
       } else {
-        toast.error(message);
+        toast.error(result.message);
       }
     });
   };
 
-  const handleOpenChange = (open: boolean) => {
-    onOpenChange(open);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle>Create New Quiz</DialogTitle>
+          <DialogTitle>
+            {existingQuiz ? "Edit Quiz" : "Create New Quiz"}
+          </DialogTitle>
           <DialogDescription>
-            Add a new quiz to{" "}
-            {courseId ? "course" : chapterId ? "chapter" : "lesson"}
+            {existingQuiz ? "Update your quiz details" : "Add a new quiz"}
           </DialogDescription>
         </DialogHeader>
 
@@ -110,7 +112,7 @@ export default function CreateQuizDialog({
                   <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Short description about this quiz..."
+                      placeholder="Short description..."
                       {...field}
                       value={field.value ?? ""}
                     />
@@ -132,11 +134,11 @@ export default function CreateQuizDialog({
                       placeholder="e.g. 30"
                       {...field}
                       value={field.value ?? ""}
-                      onChange={(e) => {
-                        const val =
-                          e.target.value === "" ? null : Number(e.target.value);
-                        field.onChange(val);
-                      }}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? null : Number(e.target.value),
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -145,12 +147,12 @@ export default function CreateQuizDialog({
             />
 
             <DialogFooter>
-              <Button
-                type="submit"
-                disabled={isPending || !form.formState.isValid}
-                className="w-full"
-              >
-                {isPending ? "Creating Quiz..." : "Create Quiz"}
+              <Button type="submit" disabled={isPending} className="w-full">
+                {isPending
+                  ? "Saving..."
+                  : existingQuiz
+                    ? "Update Quiz"
+                    : "Create Quiz"}
               </Button>
             </DialogFooter>
           </form>

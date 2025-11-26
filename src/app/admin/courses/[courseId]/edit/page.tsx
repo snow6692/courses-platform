@@ -10,7 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import CourseForm from "../../../../../components/course/CourseForm";
 import CourseStructure from "../../../../../components/course/CourseStructure";
-import { CreateQuizButton } from "@/components/quiz/admin/CreateQuizButton";
+import { QuizButton } from "@/components/quiz/admin/QuizButton";
+import { adminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 
 interface AdminCourseEditPageProps {
   params: Promise<{ courseId: string }>;
@@ -19,6 +20,7 @@ interface AdminCourseEditPageProps {
 async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
   const courseId = (await params).courseId;
   const data = await adminGetCourse(courseId);
+  const existingQuiz = await adminGetQuizOfCourse(courseId);
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">
@@ -49,7 +51,11 @@ async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle>Course Structure</CardTitle>
-                <CreateQuizButton quizType="COURSE" courseId={courseId} />
+                <QuizButton
+                  quizType="COURSE"
+                  courseId={courseId}
+                  existingQuiz={existingQuiz!}
+                />
               </div>
               <CardDescription>Update your course structure</CardDescription>
             </CardHeader>
