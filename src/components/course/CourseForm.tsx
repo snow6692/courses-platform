@@ -47,7 +47,8 @@ import Uploader from "@/components/file-uploader/Uploader";
 import { createCourse, updateCourse } from "../../actions/course.action";
 import { tryCatch } from "@/hooks/try-catch";
 import { useConfetti } from "@/hooks/use-confetti";
-import {  Course, CourseLevel, CourseStatus } from "@/generated/prisma/client";
+import { Course } from "@/lib/db";
+import { CourseLevelEnum, CourseStatusEnum } from "@/lib/course-enums";
 
 interface CourseFormProps {
   course?: Partial<Course>;
@@ -330,13 +331,13 @@ function CourseForm({ course }: CourseFormProps) {
                         <SelectValue placeholder="Select level" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={CourseLevel.BEGINNER}>
+                        <SelectItem value={CourseLevelEnum.BEGINNER}>
                           Beginner
                         </SelectItem>
-                        <SelectItem value={CourseLevel.INTERMEDIATE}>
+                        <SelectItem value={CourseLevelEnum.INTERMEDIATE}>
                           Intermediate
                         </SelectItem>
-                        <SelectItem value={CourseLevel.ADVANCED}>
+                        <SelectItem value={CourseLevelEnum.ADVANCED}>
                           Advanced
                         </SelectItem>
                       </SelectContent>
@@ -413,11 +414,13 @@ function CourseForm({ course }: CourseFormProps) {
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={CourseStatus.DRAFT}>Draft</SelectItem>
-                      <SelectItem value={CourseStatus.PUBLISHED}>
+                      <SelectItem value={CourseStatusEnum.DRAFT}>
+                        Draft
+                      </SelectItem>
+                      <SelectItem value={CourseStatusEnum.PUBLISHED}>
                         Published
                       </SelectItem>
-                      <SelectItem value={CourseStatus.ARCHIVED}>
+                      <SelectItem value={CourseStatusEnum.ARCHIVED}>
                         Archived
                       </SelectItem>
                     </SelectContent>

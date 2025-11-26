@@ -14,25 +14,27 @@ datasource db {
 }
 
 model User {
-  id             String           @id
-  name           String
-  email          String
-  emailVerified  Boolean
-  image          String?
-  createdAt      DateTime
-  updatedAt      DateTime
-  sessions       Session[]
-  accounts       Account[]
-  courses        Course[]
-  enrollments    Enrollment[]
-  lessonProgress LessonProgress[]
+  id                String             @id
+  name              String
+  email             String
+  emailVerified     Boolean
+  image             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  sessions          Session[]
+  accounts          Account[]
+  courses           Course[]
+  enrollments       Enrollment[]
+  lessonProgress    LessonProgress[]
+  favoriteQuestions FavoriteQuestion[]
 
   stripeCustomerId String? @unique
 
-  role       String?
-  banned     Boolean?
-  banReason  String?
-  banExpires DateTime?
+  role         String?
+  banned       Boolean?
+  banReason    String?
+  banExpires   DateTime?
+  quizAttempts QuizAttempt[]
 
   @@unique([email])
   @@map("user")
@@ -118,6 +120,7 @@ model Course {
   enrollments Enrollment[]
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   chapters    Chapter[]
+  quizzes     Quiz[]
 
   @@map("course")
 }
@@ -133,6 +136,7 @@ model Chapter {
   Course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   lessons Lesson[]
+  quizzes Quiz[]
 
   @@map("chapter")
 }
@@ -150,6 +154,7 @@ model Lesson {
   lessonProgress LessonProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  quizzes        Quiz[]
 }
 
 enum EnrollmentStatus {
@@ -188,4 +193,156 @@ model LessonProgress {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, lessonId])
+}
+
+enum QuizType {
+  COURSE
+  CHAPTER
+  LESSON
+}
+
+// Quiz model - fixed
+model Quiz {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  timeLimit   Int?
+  type        QuizType
+  isActive    Boolean  @default(true)
+
+  courseId  String?
+  course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId String?
+  chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lessonId  String?
+  lesson    Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  questions Question[]
+  attempts  QuizAttempt[]
+  memes     Meme[]        @relation("QuizMemes")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([courseId, chapterId, lessonId])
+  @@map("quiz")
+}
+
+model Question {
+  id       String  @id @default(uuid())
+  quizId   String
+  quiz     Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  position Int
+  text     String
+  imageKey String?
+
+  answers             Answer[]
+  explanation         String?
+  explanationImageKey String?
+  explanationVideoKey String?
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  favoriteQuestions FavoriteQuestion[]
+  memes             Meme[]             @relation("QuestionMemes")
+
+  @@index([quizId, position])
+  @@map("question")
+}
+
+model FavoriteQuestion {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, questionId])
+  @@index([userId])
+  @@map("favorite_question")
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  text      String
+  isCorrect Boolean @default(false)
+
+  @@map("answer")
+}
+
+model QuizAttempt {
+  id     String @id @default(uuid())
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  startedAt      DateTime  @default(now())
+  finishedAt     DateTime?
+  score          Float?
+  totalQuestions Int
+  correctAnswers Int
+
+  answers   QuizAnswer[] //      Student answers on each question
+  createdAt DateTime     @default(now())
+
+  @@unique([userId, quizId, id]) //      Allow the user to solve the exam more than one
+  @@index([userId, createdAt])
+  @@map("quiz_attempt")
+}
+
+model QuizAnswer {
+  id         String      @id @default(uuid())
+  attemptId  String
+  attempt    QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+
+  selectedAnswerIds String[]
+  isCorrect         Boolean
+
+  @@unique([attemptId, questionId])
+  @@map("quiz_answer")
+}
+
+enum MemeType {
+  IMAGE
+  GIF
+  VIDEO
+}
+
+enum MemeTrigger {
+  CORRECT
+  WRONG
+  TOO_SLOW // 90s
+  RANDOM
+}
+
+model Meme {
+  id String @id @default(uuid())
+
+  // Relation to Quiz (optional)
+  quizId String?
+  quiz   Quiz?   @relation("QuizMemes", fields: [quizId], references: [id], onDelete: Cascade)
+
+  // Relation to Question (optional)
+  questionId String?
+  question   Question? @relation("QuestionMemes", fields: [questionId], references: [id], onDelete: Cascade)
+
+  type     MemeType
+  fileKey  String
+  trigger  MemeTrigger @default(RANDOM)
+  isActive Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+
+  @@index([quizId, trigger])
+  @@index([questionId, trigger])
+  @@map("meme")
 }
