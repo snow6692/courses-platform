@@ -2,13 +2,12 @@ import { adminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-co
 import { QuizStructure } from "@/components/quiz/QuizStructure";
 import { notFound } from "next/navigation";
 import React from "react";
-
 async function QuizCoursePage({
   params,
 }: {
-  params: Promise<{ quizId: string; courseId: string }>;
+  params: Promise<{ courseId: string }>;
 }) {
-  const { quizId, courseId } = await params;
+  const { courseId } = await params;
   const quiz = await adminGetQuizOfCourse(courseId);
   if (!courseId) notFound();
 

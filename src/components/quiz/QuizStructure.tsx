@@ -26,6 +26,12 @@ import { GripVertical, Trash2 } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import AnswerForm from "../questions/AnswerForm";
 import { CSS } from "@dnd-kit/utilities";
+import { ConfirmDialog } from "../shared/ConfirmDialog";
+import { deleteQuiz } from "@/actions/quiz/quiz.action";
+import { toast } from "sonner";
+import { tryCatch } from "@/hooks/try-catch";
+import { useRouter } from "next/navigation";
+import { QuizButton } from "./admin/QuizButton";
 
 // components/quiz/QuizStructure.tsx
 
@@ -37,7 +43,8 @@ export function QuizStructure({
   courseId: string;
 }) {
   const [questions, setQuestions] = useState(quiz.questions ?? []);
-
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor),
@@ -61,9 +68,51 @@ export function QuizStructure({
     );
   };
 
+  const handleDeleteQuiz = async () => {
+    startTransition(async () => {
+      const { data: result, error } = await tryCatch(
+        deleteQuiz(quiz.id, courseId),
+      );
+      if (error) {
+        toast.error("An unexpected error occurred, Please try again.");
+        return;
+      }
+
+      if (result.status === "success") {
+        toast.success(result.message);
+        router.push(`/admin/courses/${courseId}/edit`);
+      } else if (result.status === "error") {
+        toast.error(result.message);
+      }
+    });
+  };
+
   return (
     <div className="p-8">
-      <h1 className="mb-6 text-3xl font-bold">{quiz.title} - Edit Questions</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="mb-6 text-3xl font-bold">
+          {quiz.title} - Edit Questions
+        </h1>
+        <div className="flex items-center gap-2">
+          <ConfirmDialog
+            trigger={
+              <Button variant="destructive" size="sm">
+                Delete Quiz
+              </Button>
+            }
+            title="Delete Quiz"
+            description="Are you sure you want to delete this quiz?"
+            confirmLabel="Delete"
+            cancelLabel="Cancel"
+            onConfirm={handleDeleteQuiz}
+          />
+          <QuizButton
+            quizType="COURSE"
+            courseId={courseId}
+            existingQuiz={quiz}
+          />
+        </div>
+      </div>
 
       <QuestionForm quizId={quiz.id} courseId={courseId} />
 

@@ -12,6 +12,8 @@ import CourseForm from "../../../../../components/course/CourseForm";
 import CourseStructure from "../../../../../components/course/CourseStructure";
 import { QuizButton } from "@/components/quiz/admin/QuizButton";
 import { adminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 interface AdminCourseEditPageProps {
   params: Promise<{ courseId: string }>;
@@ -51,11 +53,20 @@ async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle>Course Structure</CardTitle>
-                <QuizButton
-                  quizType="COURSE"
-                  courseId={courseId}
-                  existingQuiz={existingQuiz!}
-                />
+                {existingQuiz ? (
+                  <Link
+                    className={buttonVariants({ variant: "outline" })}
+                    href={`/admin/courses/${courseId}/edit/quiz`}
+                  >
+                    Update the quiz
+                  </Link>
+                ) : (
+                  <QuizButton
+                    quizType="COURSE"
+                    courseId={courseId}
+                    existingQuiz={existingQuiz!}
+                  />
+                )}
               </div>
               <CardDescription>Update your course structure</CardDescription>
             </CardHeader>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import CreateQuizDialog from "./CreateQuizDialog";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
@@ -28,8 +28,12 @@ export function QuizButton({
   return (
     <>
       <Button onClick={() => setOpen(true)} variant="outline" size="sm">
-        <Plus className="mr-1 size-4" />
-        {label || "New Quiz"}
+        {existingQuiz ? (
+          <Pencil className="mr-1 size-4" />
+        ) : (
+          <Plus className="mr-1 size-4" />
+        )}
+        {label || existingQuiz ? "Update Quiz" : "Create Quiz"}
       </Button>
 
       <CreateQuizDialog

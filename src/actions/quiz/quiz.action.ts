@@ -5,6 +5,7 @@ import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { quizSchema, QuizSchema } from "@/validation/quiz.zod";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function saveQuiz(
   values: QuizSchema,
@@ -58,7 +59,17 @@ export async function saveQuiz(
       message: quizId ? "Failed to update quiz" : "Failed to create quiz",
     };
   }
-  redirect(`/admin/courses/${courseId}/edit/${quizId}`);
+  redirect(`/admin/courses/${courseId}/edit/quiz`);
 }
 
+export async function deleteQuiz(quizId: string, courseId: string) {
+  await requireAdmin();
+  try {
+    await prisma.quiz.delete({ where: { id: quizId } });
 
+    revalidatePath(`/admin/courses/${courseId}/edit`);
+    return { status: "success", message: "Quiz deleted successfully" };
+  } catch (error) {
+    return { status: "error", message: "Failed to delete quiz" };
+  }
+}

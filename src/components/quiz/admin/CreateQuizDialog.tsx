@@ -28,7 +28,6 @@ import { toast } from "sonner";
 import { saveQuiz } from "@/actions/quiz/quiz.action";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 
-
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -81,7 +80,7 @@ export default function QuizDialog({
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>
-            {existingQuiz ? "Edit Quiz" : "Create New Quiz"}
+            {existingQuiz ? "Update Quiz" : "Create Quiz"}
           </DialogTitle>
           <DialogDescription>
             {existingQuiz ? "Update your quiz details" : "Add a new quiz"}
