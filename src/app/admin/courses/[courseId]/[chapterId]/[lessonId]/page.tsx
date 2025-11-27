@@ -6,6 +6,7 @@ type Params = Promise<{
   lessonId: string;
 }>;
 
+
 async function LessonPage({ params }: { params: Params }) {
   const { chapterId, courseId, lessonId } = await params;
   const lesson = await adminGetLesson(lessonId);
@@ -15,6 +16,7 @@ async function LessonPage({ params }: { params: Params }) {
       lesson={lesson}
       courseId={courseId}
     />
+    
   );
 }
 

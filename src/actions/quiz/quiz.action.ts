@@ -59,7 +59,7 @@ export async function saveQuiz(
       message: quizId ? "Failed to update quiz" : "Failed to create quiz",
     };
   }
-  redirect(`/admin/courses/${courseId}/edit/quiz`);
+  redirect(`/admin/courses/${courseId}/quiz`);
 }
 
 export async function deleteQuiz(quizId: string, courseId: string) {

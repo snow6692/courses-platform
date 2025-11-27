@@ -19,19 +19,25 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useState, useTransition } from "react";
-import QuestionForm from "../questions/QuestionForm";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { GripVertical, Trash2 } from "lucide-react";
-import { Checkbox } from "../ui/checkbox";
-import AnswerForm from "../questions/AnswerForm";
+import QuestionForm from "../../questions/QuestionForm";
+import { Card } from "../../ui/card";
+import { Button } from "../../ui/button";
+import { GripVertical, Pencil, Plus } from "lucide-react";
+import { Checkbox } from "../../ui/checkbox";
+import AnswerForm from "../../questions/AnswerForm";
 import { CSS } from "@dnd-kit/utilities";
-import { ConfirmDialog } from "../shared/ConfirmDialog";
+import { ConfirmDialog } from "../../shared/ConfirmDialog";
 import { deleteQuiz } from "@/actions/quiz/quiz.action";
 import { toast } from "sonner";
 import { tryCatch } from "@/hooks/try-catch";
 import { useRouter } from "next/navigation";
-import { QuizButton } from "./admin/QuizButton";
+import { QuizButton } from "./QuizButton";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // components/quiz/QuizStructure.tsx
 
@@ -96,7 +102,7 @@ export function QuizStructure({
         <div className="flex items-center gap-2">
           <ConfirmDialog
             trigger={
-              <Button variant="destructive" size="sm">
+              <Button variant="destructive" size="sm" disabled={pending}>
                 Delete Quiz
               </Button>
             }
@@ -114,7 +120,18 @@ export function QuizStructure({
         </div>
       </div>
 
-      <QuestionForm quizId={quiz.id} courseId={courseId} />
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="default">
+            <Plus className="size-4" />
+            Add Question
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+          <DialogTitle>Edit Question</DialogTitle>
+          <QuestionForm quizId={quiz.id} courseId={courseId} />
+        </DialogContent>
+      </Dialog>
 
       {questions.length === 0 ? (
         <Card className="p-12 text-center">
@@ -159,6 +176,7 @@ export function SortableQuestion({
   courseId: string;
 }) {
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
       id: question.id,
@@ -167,6 +185,27 @@ export function SortableQuestion({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+  const handleDeleteQuestion = async () => {
+    startTransition(async () => {
+      const { data: result, error } = await tryCatch(
+        deleteQuestion(question.id, quizId, courseId),
+      );
+
+      if (error) {
+        toast.error("An unexpected error occurred, Please try again.");
+        return;
+      }
+
+      if (result.status === "success") {
+        toast.success(result.message);
+        router.refresh();
+      } else if (result.status === "error") {
+        toast.error(result.message);
+      }
+    });
+  };
+
   return (
     <Card ref={setNodeRef} style={style} className="p-6">
       <div className="flex items-start gap-4">
@@ -195,17 +234,37 @@ export function SortableQuestion({
                 </p>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                if (confirm("Delete question?")) {
-                  deleteQuestion(question.id, quizId, courseId);
+            <div className="flex items-center gap-4">
+              <ConfirmDialog
+                trigger={
+                  <Button disabled={pending} variant="destructive" size="sm">
+                    Delete Question
+                  </Button>
                 }
-              }}
-            >
-              <Trash2 className="size-4 text-red-500" />
-            </Button>
+                title="Delete Question"
+                description="Are you sure you want to delete this Question?"
+                confirmLabel="Delete"
+                cancelLabel="Cancel"
+                onConfirm={handleDeleteQuestion}
+              />
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Pencil className="h-4 w-4" />
+                    <span className="sr-only">Edit question</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+                  <DialogTitle>Edit Question</DialogTitle>
+                  <QuestionForm
+                    quizId={quizId}
+                    courseId={courseId}
+                    question={question}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
 
           <div className="mt-6 space-y-3">

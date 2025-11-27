@@ -1,151 +1,209 @@
-// components/quiz/QuestionForm.tsx
 
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createQuestion } from "@/actions/quiz/question.action";
+import { createQuestion, updateQuestion } from "@/actions/quiz/question.action";
 import { toast } from "sonner";
+import { createQuestionSchema } from "@/validation/question.zod";
+import RichTextEditor from "../rich-text-editor/Editor";
+import { Question } from "@/generated/prisma/client";
+import Uploader from "../file-uploader/Uploader";
+import { tryCatch } from "@/hooks/try-catch";
 
-const schema = z.object({
-  text: z.string().min(1, "Question text is required"),
-  imageKey: z.string().optional(),
-  explanation: z.string().optional(),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<typeof createQuestionSchema>;
 
 export default function QuestionForm({
   quizId,
   courseId,
+  question,
 }: {
   quizId: string;
   courseId: string;
+  question?: Question;
 }) {
-  const [open, setOpen] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      text: "",
-      imageKey: "",
-      explanation: "",
-    },
+    resolver: zodResolver(createQuestionSchema),
+    defaultValues: question
+      ? {
+          quizId,
+          text: question.text ?? "",
+          imageKey: question.imageKey ?? "",
+          explanation: question.explanation ?? "",
+          explanationImageKey: question.explanationImageKey ?? "",
+          explanationVideoKey: question.explanationVideoKey ?? "",
+        }
+      : {
+          quizId,
+          text: "",
+          imageKey: "",
+          explanation: "",
+          explanationImageKey: "",
+          explanationVideoKey: "",
+        },
   });
 
   const onSubmit = async (data: FormData) => {
-    const res = await createQuestion({ ...data, quizId }, courseId);
-    if (res.status === "success") {
-      toast.success("Question created successfully");
-      form.reset();
-      setOpen(false);
-    } else {
-      toast.error(res.message || "Failed to create question");
-    }
+    startTransition(async () => {
+      //create
+      if (!question) {
+        const { data: result, error } = await tryCatch(
+          createQuestion({ ...data, quizId }, courseId),
+        );
+        if (error) {
+          toast.error("Failed to Create Questions, Try again later");
+          return;
+        }
+        if (result.status === "success") {
+          toast.success(result.message);
+
+          form.reset();
+
+          return;
+        }
+        if (result.status === "error") {
+          toast.error(result.message);
+          return;
+        }
+      } else {
+        //update
+        const { data: result, error } = await tryCatch(
+          updateQuestion({ ...data, quizId }, question.id, courseId),
+        );
+        if (error) {
+          toast.error("Failed to Update Questions, Try again later");
+          return;
+        }
+        if (result.status === "success") {
+          toast.success(result.message);
+
+          form.reset();
+
+          return;
+        }
+        if (result.status === "error") {
+          toast.error(result.message);
+          return;
+        }
+      }
+    });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full">
-          <Plus className="mr-2 size-4" />
-          Add Question
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          name="text"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Question Text</FormLabel>
+              <FormControl>
+                <RichTextEditor field={field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="imageKey"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Question Image (optional)</FormLabel>
+              <FormControl>
+                <Uploader
+                  fileTypeAccepted="image"
+                  onChange={field.onChange}
+                  value={
+                    question ? (question.imageKey ?? "") : (field.value ?? "")
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="explanation"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Explanation (shown after answer)</FormLabel>
+              <FormControl>
+                <RichTextEditor field={field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="explanationImageKey"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Explanation Image (shown after answer)</FormLabel>
+              <FormControl>
+                <Uploader
+                  fileTypeAccepted="image"
+                  onChange={field.onChange}
+                  value={
+                    question
+                      ? (question.explanationImageKey ?? "")
+                      : (field.value ?? "")
+                  }
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="explanationVideoKey"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Explanation Video (shown after answer)</FormLabel>
+              <FormControl>
+                <Uploader
+                  fileTypeAccepted="video"
+                  onChange={field.onChange}
+                  value={
+                    question
+                      ? (question.explanationVideoKey ?? "")
+                      : (field.value ?? "")
+                  }
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" disabled={pending}>
+          {pending
+            ? question
+              ? "Updating..."
+              : "Creating..."
+            : question
+              ? "Update"
+              : "Create"}
         </Button>
-      </DialogTrigger>
-
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Create New Question</DialogTitle>
-        </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              name="text"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Question Text</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="Enter your question here..."
-                      rows={5}
-                    />
-                  </FormControl>
-                  {/* <FormMessage /> */}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="imageKey"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image Key (optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value ?? ""}
-                      placeholder="e.g. questions/image-123.jpg"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="explanation"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Explanation (shown after answer)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? ""}
-                      placeholder="Explain why this is the correct answer..."
-                      rows={4}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit">Create Question</Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+      </form>
+    </Form>
   );
 }

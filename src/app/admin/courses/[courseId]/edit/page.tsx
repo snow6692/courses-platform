@@ -56,7 +56,7 @@ async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
                 {existingQuiz ? (
                   <Link
                     className={buttonVariants({ variant: "outline" })}
-                    href={`/admin/courses/${courseId}/edit/quiz`}
+                    href={`/admin/courses/${courseId}/quiz`}
                   >
                     Update the quiz
                   </Link>
