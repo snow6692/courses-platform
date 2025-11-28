@@ -1,75 +1,93 @@
-// components/questions/AnswerForm.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createAnswer } from "@/actions/quiz/question.action";
 import { toast } from "sonner";
-import { useTransition } from "react";
+import { tryCatch } from "@/hooks/try-catch";
+import { createAnswerSchema, createAnswerType } from "@/validation/answer.zod";
+import { createAnswer } from "@/actions/quiz/answer.action";
 
-const schema = z.object({
-  text: z.string().min(1, "Answer text is required"),
-});
-
-type FormData = z.infer<typeof schema>;
-
-export default function AnswerForm({ questionId }: { questionId: string }) {
-  const [open, setOpen] = useState(false);
-  const [pending, startTransition] = useTransition();
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: { text: "" },
+export default function AnswerForm({
+  questionId,
+  courseId,
+}: {
+  questionId: string;
+  courseId: string;
+}) {
+  const form = useForm<createAnswerType>({
+    resolver: zodResolver(createAnswerSchema),
+    defaultValues: {
+      questionId,
+      text: "",
+      isCorrect: false,
+    },
   });
 
-  const onSubmit = (data: FormData) => {
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      form.reset();
+    }
+    setOpen(open);
+  };
+
+  const onSubmit = (values: createAnswerType) => {
     startTransition(async () => {
-      const res = await createAnswer({
-        questionId,
-        text: data.text,
-        isCorrect: false,
-      });
-      if (res.status === "success") {
-        toast.success("Answer added successfully");
+      const { data: result, error } = await tryCatch(createAnswer(values,courseId));
+
+      if (error) {
+        toast.error("An unexpected error occurred, Please try again.");
+        return;
+      }
+      if (result.status === "success") {
+        toast.success(result.message);
         form.reset();
         setOpen(false);
-      } else {
-        toast.error(res.message || "Failed to add answer");
+      } else if (result.status === "error") {
+        toast.error(result.message);
       }
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="mt-4">
-          <Plus className="mr-2 size-4" />
-          Add Answer
+        <Button variant="outline" className="w-full justify-center gap-1">
+          <PlusIcon className="size-4" />
+          New Answer
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Answer</DialogTitle>
+          <DialogTitle>Create New Answer</DialogTitle>
+          <DialogDescription>
+            Add a new answer to the question here.
+          </DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -79,23 +97,21 @@ export default function AnswerForm({ questionId }: { questionId: string }) {
                 <FormItem>
                   <FormLabel>Answer Text</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter the answer..." />
+                    <Input {...field} placeholder="Enter answer text" />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="flex justify-end gap-3">
+            <DialogFooter>
               <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
+                className="w-full cursor-pointer"
+                type="submit"
+                disabled={isPending || !form.formState.isValid}
               >
-                Cancel
+                {isPending ? "Creating Answer..." : "Create New Answer"}
               </Button>
-              <Button type="submit" disabled={pending}>
-                {pending ? "Adding..." : "Add Answer"}
-              </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

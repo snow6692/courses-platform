@@ -10,6 +10,7 @@ async function QuizCoursePage({
   const { courseId } = await params;
   const quiz = await adminGetQuizOfCourse(courseId);
   if (!courseId) notFound();
+  if (!quiz) notFound();
 
   return <QuizStructure quiz={quiz} courseId={courseId} />;
 }

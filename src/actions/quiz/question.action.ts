@@ -4,7 +4,6 @@ import { requireAdmin } from "@/app/data/admin/require-admin";
 import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import {
-  createAnswerSchema,
   createQuestionSchema,
 } from "@/validation/question.zod";
 import { revalidatePath } from "next/cache";
@@ -66,30 +65,6 @@ export async function updateQuestion(
   }
 }
 
-export async function createAnswer(values: z.infer<typeof createAnswerSchema>) {
-  await requireAdmin();
-  const validated = createAnswerSchema.safeParse(values);
-  if (!validated.success) return { status: "error", message: "Invalid answer" };
-
-  try {
-    await prisma.answer.create({ data: validated.data });
-    return { status: "success", message: "Answer added" };
-  } catch (error) {
-    return { status: "error", message: "Failed to add answer" };
-  }
-}
-
-export async function toggleAnswerCorrect(
-  answerId: string,
-  isCorrect: boolean,
-) {
-  await requireAdmin();
-  await prisma.answer.update({
-    where: { id: answerId },
-    data: { isCorrect },
-  });
-  revalidatePath(`/admin/quizzes`);
-}
 
 export async function deleteQuestion(
   questionId: string,

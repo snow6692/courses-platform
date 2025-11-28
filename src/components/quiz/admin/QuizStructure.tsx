@@ -2,7 +2,6 @@
 import {
   deleteQuestion,
   reorderQuestions,
-  toggleAnswerCorrect,
 } from "@/actions/quiz/question.action";
 import {
   closestCenter,
@@ -23,14 +22,13 @@ import QuestionForm from "../../questions/QuestionForm";
 import { Card } from "../../ui/card";
 import { Button } from "../../ui/button";
 import { GripVertical, Pencil, Plus } from "lucide-react";
-import { Checkbox } from "../../ui/checkbox";
 import AnswerForm from "../../questions/AnswerForm";
 import { CSS } from "@dnd-kit/utilities";
 import { ConfirmDialog } from "../../shared/ConfirmDialog";
 import { deleteQuiz } from "@/actions/quiz/quiz.action";
 import { toast } from "sonner";
 import { tryCatch } from "@/hooks/try-catch";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { QuizButton } from "./QuizButton";
 import {
   Dialog,
@@ -38,16 +36,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
+import RenderDescription from "@/components/rich-text-editor/RenderDescription";
+import type { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import AnswerItem from "@/components/questions/AnswerItem";
 // components/quiz/QuizStructure.tsx
 
 export function QuizStructure({
   quiz,
   courseId,
 }: {
-  quiz: any;
+  quiz: AdminGetQuizOfCourse;
   courseId: string;
 }) {
+  if (!quiz) return notFound();
+
   const [questions, setQuestions] = useState(quiz.questions ?? []);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -69,7 +71,7 @@ export function QuizStructure({
     setQuestions(newOrder);
 
     reorderQuestions(
-      quiz.id,
+      quiz!.id,
       newOrder.map((q: any, i: number) => ({ id: q.id, position: i + 1 })),
     );
   };
@@ -77,7 +79,7 @@ export function QuizStructure({
   const handleDeleteQuiz = async () => {
     startTransition(async () => {
       const { data: result, error } = await tryCatch(
-        deleteQuiz(quiz.id, courseId),
+        deleteQuiz(quiz!.id, courseId),
       );
       if (error) {
         toast.error("An unexpected error occurred, Please try again.");
@@ -146,11 +148,11 @@ export function QuizStructure({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={questions.map((q: any) => q.id)}
+            items={questions.map((q) => q.id)}
             strategy={verticalListSortingStrategy}
           >
             <div className="mt-8 space-y-6">
-              {questions.map((question: any) => (
+              {questions.map((question) => (
                 <SortableQuestion
                   key={question.id}
                   question={question}
@@ -171,7 +173,7 @@ export function SortableQuestion({
   quizId,
   courseId,
 }: {
-  question: any;
+  question: AdminGetQuizOfCourse["questions"][number];
   quizId: string;
   courseId: string;
 }) {
@@ -220,7 +222,7 @@ export function SortableQuestion({
         <div className="flex-1">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-lg font-medium">{question.text}</p>
+              <RenderDescription json={question.text} />
               {question.imageKey && (
                 <img
                   src={`/api/file/${question.imageKey}`}
@@ -250,9 +252,9 @@ export function SortableQuestion({
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button>
+                    Edit question
                     <Pencil className="h-4 w-4" />
-                    <span className="sr-only">Edit question</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
@@ -267,22 +269,31 @@ export function SortableQuestion({
             </div>
           </div>
 
-          <div className="mt-6 space-y-3">
-            {question.answers.map((answer: any) => (
-              <div key={answer.id} className="flex items-center gap-3">
-                <Checkbox
-                  checked={answer.isCorrect}
-                  disabled={pending}
-                  onCheckedChange={(checked) => {
-                    startTransition(async () => {
-                      await toggleAnswerCorrect(answer.id, checked as boolean);
-                    });
-                  }}
-                />
-                <span>{answer.text}</span>
-              </div>
-            ))}
-            <AnswerForm questionId={question.id} />
+          <div className="mt-6 space-y-4">
+            {/* Answers List with Toggle */}
+            <div className="space-y-3">
+              {question.answers.length === 0 ? (
+                <p className="text-muted-foreground text-sm italic">
+                  No answers yet. Add one below.
+                </p>
+              ) : (
+                question.answers.map(
+                  (
+                    answer: AdminGetQuizOfCourse["questions"][number]["answers"][number],
+                  ) => (
+                    <AnswerItem
+                      key={answer.id}
+                      answer={answer}
+                      questionId={question.id}
+                      courseId={courseId}
+                    />
+                  ),
+                )
+              )}
+            </div>
+
+            {/* Add Answer Form */}
+            <AnswerForm questionId={question.id} courseId={courseId} />
           </div>
         </div>
       </div>

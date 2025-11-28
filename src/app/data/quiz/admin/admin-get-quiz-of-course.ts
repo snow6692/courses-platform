@@ -43,6 +43,6 @@ export async function adminGetQuizOfCourse(courseId: string) {
   return quiz;
 }
 
-export type AdminGetQuizOfCourse = Awaited<
-  ReturnType<typeof adminGetQuizOfCourse>
+export type AdminGetQuizOfCourse = NonNullable<
+  Awaited<ReturnType<typeof adminGetQuizOfCourse>>
 >;

@@ -8,9 +8,3 @@ export const createQuestionSchema = z.object({
   explanationImageKey: z.string().optional(),
   explanationVideoKey: z.string().optional(),
 });
-
-export const createAnswerSchema = z.object({
-  questionId: z.string(),
-  text: z.string().min(1),
-  isCorrect: z.boolean(),
-});

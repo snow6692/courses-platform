@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -19,9 +18,12 @@ import { createQuestion, updateQuestion } from "@/actions/quiz/question.action";
 import { toast } from "sonner";
 import { createQuestionSchema } from "@/validation/question.zod";
 import RichTextEditor from "../rich-text-editor/Editor";
-import { Question } from "@/generated/prisma/client";
 import Uploader from "../file-uploader/Uploader";
 import { tryCatch } from "@/hooks/try-catch";
+import {
+  AdminGetQuizOfCourse,
+  adminGetQuizOfCourse,
+} from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 
 type FormData = z.infer<typeof createQuestionSchema>;
 
@@ -32,7 +34,7 @@ export default function QuestionForm({
 }: {
   quizId: string;
   courseId: string;
-  question?: Question;
+  question?: AdminGetQuizOfCourse["questions"][number];
 }) {
   const [pending, startTransition] = useTransition();
 
