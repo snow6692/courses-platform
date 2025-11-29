@@ -71,6 +71,7 @@ function CourseStructure({ data }: IProps) {
         order: lesson.position,
         isOpen: true,
         description: lesson.description,
+        quizzes: lesson.quizzes,
       })),
     })) || [];
   const [items, setItems] = useState(initialItems);
@@ -91,6 +92,7 @@ function CourseStructure({ data }: IProps) {
             order: lesson.position,
             isOpen: true,
             description: lesson.description,
+            quizzes: lesson.quizzes,
           })),
         })) || [];
 
@@ -411,6 +413,25 @@ function CourseStructure({ data }: IProps) {
                                     chapterId={item.id}
                                     courseId={data.id}
                                   />
+
+                                  {/* Quiz for lessons */}
+
+                                  {/* Quiz for lessons */}
+                                  {lesson.quizzes.length === 0 ? (
+                                    <QuizButton
+                                      quizType="LESSON"
+                                      courseId={data.id}
+                                      chapterId={item.id}
+                                      lessonId={lesson.id}
+                                    />
+                                  ) : (
+                                    <Link
+                                      className={buttonVariants()}
+                                      href={`/admin/courses/${data.id}/${item.id}/${lesson.id}/quiz`}
+                                    >
+                                      Update the Quiz
+                                    </Link>
+                                  )}
                                 </div>
                               )}
                             </SortableItem>
