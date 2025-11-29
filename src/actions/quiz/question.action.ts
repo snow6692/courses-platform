@@ -3,15 +3,15 @@
 import { requireAdmin } from "@/app/data/admin/require-admin";
 import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
-import {
-  createQuestionSchema,
-} from "@/validation/question.zod";
+import { createQuestionSchema } from "@/validation/question.zod";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export async function createQuestion(
   values: z.infer<typeof createQuestionSchema>,
   courseId: string,
+  chapterId?: string,
+  lessonId?: string,
 ): Promise<APIResponse> {
   await requireAdmin();
   const validated = createQuestionSchema.safeParse(values);
@@ -26,7 +26,7 @@ export async function createQuestion(
       select: { position: true },
     });
 
-    await prisma.question.create({
+    const question = await prisma.question.create({
       data: {
         ...data,
         quizId,
@@ -35,6 +35,8 @@ export async function createQuestion(
     });
 
     revalidatePath(`/admin/courses/${courseId}/quiz`);
+    revalidatePath(`/admin/courses/${courseId}/${chapterId}`);
+
     return { status: "success", message: "Question created successfully" };
   } catch (error) {
     return {
@@ -64,7 +66,6 @@ export async function updateQuestion(
     };
   }
 }
-
 
 export async function deleteQuestion(
   questionId: string,

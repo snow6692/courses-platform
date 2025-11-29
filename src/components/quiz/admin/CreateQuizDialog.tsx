@@ -31,20 +31,20 @@ import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-co
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  courseId?: string | null;
-  chapterId?: string | null;
-  lessonId?: string | null;
-  existingQuiz?: AdminGetQuizOfCourse | null;
+  courseId?: string;
+  chapterId?: string;
+  lessonId?: string;
+  existingQuiz?: AdminGetQuizOfCourse;
   quizType: "COURSE" | "LESSON" | "CHAPTER";
 };
 
 export default function QuizDialog({
   open,
   onOpenChange,
-  courseId = null,
-  chapterId = null,
-  lessonId = null,
-  existingQuiz = null,
+  courseId,
+  chapterId,
+  lessonId,
+  existingQuiz,
   quizType,
 }: Props) {
   const [isPending, startTransition] = useTransition();

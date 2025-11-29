@@ -25,6 +25,8 @@ export async function toggleAnswerCorrect(
   answerId: string,
   isCorrect: boolean,
   courseId: string,
+  chapterId?: string,
+  lessonId?: string,
 ): Promise<APIResponse> {
   await requireAdmin();
   try {
@@ -33,6 +35,11 @@ export async function toggleAnswerCorrect(
       data: { isCorrect },
     });
     revalidatePath(`/admin/courses/${courseId}/quiz`);
+
+    if (chapterId) {
+      revalidatePath(`/admin/courses/${courseId}/${chapterId}`);
+    }
+
     return {
       message: "Correct answer updated successfully",
       status: "success",

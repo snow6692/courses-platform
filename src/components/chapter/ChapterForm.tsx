@@ -19,13 +19,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Chapter } from "@/lib/generated/prisma";
+
 import { chapterSchema, ChapterSchemaType } from "@/validation/chapter.zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { tryCatch } from "@/hooks/try-catch";
 import { createChapter } from "@/actions/chapter.action";
 import { toast } from "sonner";
+import { Chapter } from "@/lib/db";
 function ChapterForm({
   courseId,
   chapter,

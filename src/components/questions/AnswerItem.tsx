@@ -19,6 +19,7 @@ export default function AnswerItem({
   answer: initialAnswer,
   questionId,
   courseId,
+  chapterId,
 }: {
   answer: {
     id: string;
@@ -27,6 +28,7 @@ export default function AnswerItem({
   };
   questionId: string;
   courseId: string;
+  chapterId?: string;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialAnswer.text);
@@ -41,6 +43,7 @@ export default function AnswerItem({
           initialAnswer.id,
           !initialAnswer.isCorrect,
           courseId,
+          chapterId,
         ),
       );
       if (error || result?.status === "error") {

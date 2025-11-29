@@ -117,6 +117,7 @@ model Course {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   userId      String
+  pdfKey      String?
   enrollments Enrollment[]
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   chapters    Chapter[]
@@ -320,7 +321,7 @@ enum MemeType {
 enum MemeTrigger {
   CORRECT
   WRONG
-  TOO_SLOW // 90s
+  TOO_SLOW
   RANDOM
 }
 

@@ -12,7 +12,7 @@ type Props = {
   chapterId?: string;
   lessonId?: string;
   label?: string;
-  existingQuiz: AdminGetQuizOfCourse | null;
+  existingQuiz?: AdminGetQuizOfCourse;
 };
 
 export function QuizButton({
@@ -27,7 +27,15 @@ export function QuizButton({
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} variant="outline" size="sm">
+      <Button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(true);
+        }}
+        variant="outline"
+        size="sm"
+      >
         {existingQuiz ? (
           <Pencil className="mr-1 size-4" />
         ) : (
@@ -39,9 +47,9 @@ export function QuizButton({
       <CreateQuizDialog
         open={open}
         onOpenChange={setOpen}
-        courseId={quizType === "COURSE" ? courseId : null}
-        chapterId={quizType === "CHAPTER" ? chapterId : null}
-        lessonId={quizType === "LESSON" ? lessonId : null}
+        courseId={courseId}
+        chapterId={chapterId}
+        lessonId={lessonId}
         quizType={quizType}
         existingQuiz={existingQuiz}
       />

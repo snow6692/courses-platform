@@ -20,10 +20,7 @@ import { createQuestionSchema } from "@/validation/question.zod";
 import RichTextEditor from "../rich-text-editor/Editor";
 import Uploader from "../file-uploader/Uploader";
 import { tryCatch } from "@/hooks/try-catch";
-import {
-  AdminGetQuizOfCourse,
-  adminGetQuizOfCourse,
-} from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 
 type FormData = z.infer<typeof createQuestionSchema>;
 
@@ -31,10 +28,12 @@ export default function QuestionForm({
   quizId,
   courseId,
   question,
+  chapterId,
 }: {
   quizId: string;
   courseId: string;
   question?: AdminGetQuizOfCourse["questions"][number];
+  chapterId?: string;
 }) {
   const [pending, startTransition] = useTransition();
 

@@ -28,6 +28,35 @@ export async function adminGetCourse(id: string) {
           id: true,
           title: true,
           position: true,
+          quizzes: {
+            select: {
+              id: true,
+              title: true,
+              type: true,
+              description: true,
+              timeLimit: true,
+              isActive: true,
+              questions: {
+                orderBy: { position: "asc" },
+                select: {
+                  id: true,
+                  position: true,
+                  text: true,
+                  imageKey: true,
+                  explanation: true,
+                  explanationImageKey: true,
+                  explanationVideoKey: true,
+                  answers: {
+                    select: {
+                      id: true,
+                      text: true,
+                      isCorrect: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
           lessons: {
             select: {
               id: true,

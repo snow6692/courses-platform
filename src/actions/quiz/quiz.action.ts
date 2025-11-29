@@ -54,20 +54,35 @@ export async function saveQuiz(
       });
     }
   } catch (error) {
+    console.log(error);
     return {
       status: "error",
       message: quizId ? "Failed to update quiz" : "Failed to create quiz",
     };
   }
-  redirect(`/admin/courses/${courseId}/quiz`);
+
+  revalidatePath(`/admin/courses/${courseId}/edit`);
+
+  if (type === "COURSE") {
+    redirect(`/admin/courses/${courseId}/quiz`);
+  }
+  if (type === "CHAPTER") {
+    redirect(`/admin/courses/${courseId}/${chapterId}`);
+  }
+
+  return {
+    status: "success",
+    message: quizId ? "Quiz updated successfully" : "Quiz created successfully",
+  };
 }
 
-export async function deleteQuiz(quizId: string, courseId: string) {
+export async function deleteQuiz(quizId: string, courseId: string, chapterId?: string, lessonId?: string) {
   await requireAdmin();
   try {
     await prisma.quiz.delete({ where: { id: quizId } });
 
     revalidatePath(`/admin/courses/${courseId}/edit`);
+    revalidatePath(`/admin/courses/${courseId}/${chapterId}`);
     return { status: "success", message: "Quiz deleted successfully" };
   } catch (error) {
     return { status: "error", message: "Failed to delete quiz" };

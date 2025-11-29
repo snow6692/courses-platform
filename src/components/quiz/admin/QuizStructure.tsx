@@ -28,7 +28,7 @@ import { ConfirmDialog } from "../../shared/ConfirmDialog";
 import { deleteQuiz } from "@/actions/quiz/quiz.action";
 import { toast } from "sonner";
 import { tryCatch } from "@/hooks/try-catch";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { QuizButton } from "./QuizButton";
 import {
   Dialog,
@@ -44,13 +44,17 @@ import AnswerItem from "@/components/questions/AnswerItem";
 export function QuizStructure({
   quiz,
   courseId,
+  chapterId,
+  lessonId,
 }: {
-  quiz: AdminGetQuizOfCourse;
+  quiz?: AdminGetQuizOfCourse;
   courseId: string;
+  chapterId?: string;
+  lessonId?: string;
 }) {
-  if (!quiz) return notFound();
+  // if (!quiz) return notFound();
 
-  const [questions, setQuestions] = useState(quiz.questions ?? []);
+  const [questions, setQuestions] = useState(quiz!.questions ?? []);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
   const sensors = useSensors(
@@ -79,7 +83,7 @@ export function QuizStructure({
   const handleDeleteQuiz = async () => {
     startTransition(async () => {
       const { data: result, error } = await tryCatch(
-        deleteQuiz(quiz!.id, courseId),
+        deleteQuiz(quiz!.id, courseId, chapterId, lessonId),
       );
       if (error) {
         toast.error("An unexpected error occurred, Please try again.");
@@ -99,7 +103,7 @@ export function QuizStructure({
     <div className="p-8">
       <div className="flex items-center justify-between">
         <h1 className="mb-6 text-3xl font-bold">
-          {quiz.title} - Edit Questions
+          {quiz!.title} - Edit Questions
         </h1>
         <div className="flex items-center gap-2">
           <ConfirmDialog
@@ -114,10 +118,12 @@ export function QuizStructure({
             cancelLabel="Cancel"
             onConfirm={handleDeleteQuiz}
           />
+
           <QuizButton
             quizType="COURSE"
             courseId={courseId}
-            existingQuiz={quiz}
+            chapterId={chapterId}
+            existingQuiz={quiz!}
           />
         </div>
       </div>
@@ -131,7 +137,7 @@ export function QuizStructure({
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
           <DialogTitle>Edit Question</DialogTitle>
-          <QuestionForm quizId={quiz.id} courseId={courseId} />
+          <QuestionForm quizId={quiz!.id} courseId={courseId} />
         </DialogContent>
       </Dialog>
 
@@ -156,8 +162,10 @@ export function QuizStructure({
                 <SortableQuestion
                   key={question.id}
                   question={question}
-                  quizId={quiz.id}
+                  quizId={quiz!.id}
                   courseId={courseId}
+                  chapterId={chapterId}
+                  lessonId={lessonId}
                 />
               ))}
             </div>
@@ -172,10 +180,14 @@ export function SortableQuestion({
   question,
   quizId,
   courseId,
+  chapterId,
+  lessonId,
 }: {
   question: AdminGetQuizOfCourse["questions"][number];
   quizId: string;
   courseId: string;
+  chapterId?: string;
+  lessonId?: string;
 }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -286,6 +298,7 @@ export function SortableQuestion({
                       answer={answer}
                       questionId={question.id}
                       courseId={courseId}
+                      chapterId={chapterId}
                     />
                   ),
                 )

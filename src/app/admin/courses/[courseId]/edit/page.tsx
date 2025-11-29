@@ -53,6 +53,7 @@ async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle>Course Structure</CardTitle>
+                {/* Quiz fro course */}
                 {existingQuiz ? (
                   <Link
                     className={buttonVariants({ variant: "outline" })}

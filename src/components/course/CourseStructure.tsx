@@ -3,7 +3,7 @@
 import { reorderLessons } from "@/actions/lesson.action";
 import { reorderChapters } from "@/actions/chapter.action";
 import { AdminCourseSingularType } from "@/app/data/admin/admin-get-course";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
@@ -43,6 +43,7 @@ import ChapterForm from "@/components/chapter/ChapterForm";
 import LessonForm from "@/components/lesson/LessonForm";
 import DeleteLesson from "@/components/lesson/DeleteLesson";
 import DeleteChapter from "@/components/chapter/DeleteChapter";
+import { QuizButton } from "../quiz/admin/QuizButton";
 
 interface IProps {
   data: AdminCourseSingularType;
@@ -63,6 +64,7 @@ function CourseStructure({ data }: IProps) {
       title: chapter.title,
       order: chapter.position,
       isOpen: true,
+      quizzes: chapter.quizzes,
       lessons: chapter.lessons.map((lesson) => ({
         id: lesson.id,
         title: lesson.title,
@@ -80,6 +82,7 @@ function CourseStructure({ data }: IProps) {
           id: chapter.id,
           title: chapter.title,
           order: chapter.position,
+          quizzes: chapter.quizzes,
           isOpen:
             prevItems.find((item) => item.id === chapter.id)?.isOpen ?? true,
           lessons: chapter.lessons.map((lesson) => ({
@@ -283,7 +286,6 @@ function CourseStructure({ data }: IProps) {
 
   //We use rectIntersection to detect collisions between the items and the sensors (It's an algorithm that checks if the items are intersecting with the sensors)
   return (
-    // Remove evert gray color
     <DndContext
       sensors={sensors}
       collisionDetection={rectIntersection}
@@ -314,6 +316,7 @@ function CourseStructure({ data }: IProps) {
                       onOpenChange={() => toggleChapter(item.id)}
                       className="w-full"
                     >
+                      {/* Chapters */}
                       <div className="flex items-center justify-between rounded-t-md p-3">
                         <div className="flex min-w-0 flex-1 items-center gap-2">
                           <Button
@@ -348,12 +351,29 @@ function CourseStructure({ data }: IProps) {
                           </span>
                         </div>
                         <DeleteChapter
-                          chapterId={item.id}
                           courseId={data.id}
+                          chapterId={item.id}
                           chapterName={item.title}
                         />
+
+                        {item.quizzes.length === 0 ? (
+                          <QuizButton
+                            quizType="CHAPTER"
+                            courseId={data.id}
+                            chapterId={item.id}
+                            existingQuiz={item.quizzes[0]}
+                          />
+                        ) : (
+                          <Link
+                            className={buttonVariants()}
+                            href={`/admin/courses/${data.id}/${item.id}`}
+                          >
+                            Update the Quiz
+                          </Link>
+                        )}
                       </div>
 
+                      {/* Lessons */}
                       <CollapsibleContent className="space-y-2 rounded-b-md px-3 py-2">
                         <SortableContext
                           items={item.lessons.map((lesson) => lesson.id)}
