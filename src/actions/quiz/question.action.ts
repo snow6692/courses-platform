@@ -4,7 +4,6 @@ import { requireAdmin } from "@/app/data/admin/require-admin";
 import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { createQuestionSchema } from "@/validation/question.zod";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export async function createQuestion(
@@ -34,9 +33,6 @@ export async function createQuestion(
       },
     });
 
-    revalidatePath(`/admin/courses/${courseId}/quiz`);
-    revalidatePath(`/admin/courses/${courseId}/${chapterId}`);
-
     return { status: "success", message: "Question created successfully" };
   } catch (error) {
     return {
@@ -57,7 +53,6 @@ export async function updateQuestion(
       where: { id: questionId },
       data: values,
     });
-    revalidatePath(`/admin/courses/${courseId}/quiz`);
     return { status: "success", message: "Question updated successfully" };
   } catch (error) {
     return {
@@ -97,7 +92,6 @@ export async function deleteQuestion(
         ),
       );
     });
-    revalidatePath(`/admin/courses/${courseId}/edit/${quizId}`);
     return { status: "success", message: "Question deleted successfully" };
   } catch (error) {
     return {
@@ -120,6 +114,5 @@ export async function reorderQuestions(
       }),
     ),
   );
-  revalidatePath(`/admin/quizzes/${quizId}`);
   return { status: "success" };
 }

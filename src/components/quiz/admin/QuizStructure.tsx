@@ -17,7 +17,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import QuestionForm from "../../questions/QuestionForm";
 import { Card } from "../../ui/card";
 import { Button } from "../../ui/button";
@@ -65,6 +65,11 @@ export function QuizStructure({
     useSensor(KeyboardSensor),
   );
 
+  // Sync state when quiz prop changes (after router.refresh())
+  useEffect(() => {
+    setQuestions(quiz!.questions ?? []);
+  }, [quiz]);
+
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -80,7 +85,7 @@ export function QuizStructure({
     reorderQuestions(
       quiz!.id,
       newOrder.map((q: any, i: number) => ({ id: q.id, position: i + 1 })),
-    );
+    ).then(() => router.refresh()); // Refresh to get updated data
   };
 
   const handleDeleteQuiz = async () => {

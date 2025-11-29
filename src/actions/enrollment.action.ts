@@ -6,23 +6,6 @@ import { env } from "@/lib/config";
 import { requireUser } from "@/app/data/user/require-user";
 import { APIResponse } from "@/lib/types";
 import prisma from "@/lib/db";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { request } from "@arcjet/next";
-
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    }),
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 5,
-    }),
-  );
 
 export async function enrollInCourse(
   courseId: string,
@@ -30,23 +13,6 @@ export async function enrollInCourse(
   const user = await requireUser();
   let checkoutUrl: string;
   try {
-    const req = await request();
-    const decision = await aj.protect(req, {
-      fingerprint: user.id as string,
-    });
-    if (decision.isDenied()) {
-      if (decision.reason.isRateLimit())
-        return {
-          status: "error",
-          message: "Too many requests",
-        };
-      if (decision.reason.isBot())
-        return {
-          status: "error",
-          message: "You are a bot! Please try again later",
-        };
-    }
-
     const course = await prisma.course.findUnique({
       where: { id: courseId },
       select: {

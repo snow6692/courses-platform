@@ -3,6 +3,9 @@ import { QuizStructure } from "@/components/quiz/admin/QuizStructure";
 import { notFound } from "next/navigation";
 import React from "react";
 
+// Force dynamic rendering for always-fresh data
+export const dynamic = "force-dynamic";
+
 async function ChapterPage({
   params,
 }: {

@@ -3,36 +3,12 @@ import { S3 } from "@/lib/S3Client";
 import { env } from "@/lib/config";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
 import { requireUser } from "@/app/data/user/require-user";
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    }),
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 15, //
-    }),
-  );
-
 export async function POST(request: Request) {
-  const session = await requireUser();
+  await requireUser();
 
   try {
-    const decision = await aj.protect(request, {
-      fingerprint: session.id,
-    });
-
-    if (decision.isDenied()) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-    }
-
     const body = await request.json();
     const { key } = body;
 

@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/input-otp";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import React, { Suspense, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useQueryState } from "nuqs";
 
-function VerifyRequestPage() {
+function VerifyRequestContent() {
   const [otp, setOtp] = useState("");
   const [emailPending, startEmailTransition] = useTransition();
   const [email] = useQueryState("email", { defaultValue: "" });
@@ -85,6 +85,38 @@ function VerifyRequestPage() {
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+import { Skeleton } from "@/components/ui/skeleton";
+
+function VerifyRequestSkeleton() {
+  return (
+    <Card className="mx-auto w-full">
+      <CardHeader className="text-center">
+        <Skeleton className="mx-auto h-7 w-48" />
+        <Skeleton className="mx-auto mt-2 h-4 w-64" />
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex gap-2">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-10" />
+            ))}
+          </div>
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <Skeleton className="mt-6 h-10 w-full" />
+      </CardContent>
+    </Card>
+  );
+}
+
+function VerifyRequestPage() {
+  return (
+    <Suspense fallback={<VerifyRequestSkeleton />}>
+      <VerifyRequestContent />
+    </Suspense>
   );
 }
 

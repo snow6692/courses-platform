@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { tryCatch } from "@/hooks/try-catch";
 import { createAnswerSchema, createAnswerType } from "@/validation/answer.zod";
 import { createAnswer } from "@/actions/quiz/answer.action";
+import { useRouter } from "next/navigation";
 
 export default function AnswerForm({
   questionId,
@@ -46,6 +47,7 @@ export default function AnswerForm({
 
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -56,7 +58,9 @@ export default function AnswerForm({
 
   const onSubmit = (values: createAnswerType) => {
     startTransition(async () => {
-      const { data: result, error } = await tryCatch(createAnswer(values,courseId));
+      const { data: result, error } = await tryCatch(
+        createAnswer(values, courseId),
+      );
 
       if (error) {
         toast.error("An unexpected error occurred, Please try again.");
@@ -66,6 +70,7 @@ export default function AnswerForm({
         toast.success(result.message);
         form.reset();
         setOpen(false);
+        router.refresh(); // Instant UI update
       } else if (result.status === "error") {
         toast.error(result.message);
       }

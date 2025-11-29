@@ -4,7 +4,6 @@ import { requireAdmin } from "@/app/data/admin/require-admin";
 import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { createAnswerSchema, createAnswerType } from "@/validation/answer.zod";
-import { revalidatePath } from "next/cache";
 
 export async function createAnswer(values: createAnswerType, courseId: string) {
   await requireAdmin();
@@ -13,7 +12,6 @@ export async function createAnswer(values: createAnswerType, courseId: string) {
 
   try {
     await prisma.answer.create({ data: validated.data });
-    revalidatePath(`/admin/course/${courseId}/quiz`);
     return { status: "success", message: "Answer added" };
   } catch (error) {
     console.log(error);
@@ -34,11 +32,6 @@ export async function toggleAnswerCorrect(
       where: { id: answerId },
       data: { isCorrect },
     });
-    revalidatePath(`/admin/courses/${courseId}/quiz`);
-
-    if (chapterId) {
-      revalidatePath(`/admin/courses/${courseId}/${chapterId}`);
-    }
 
     return {
       message: "Correct answer updated successfully",
@@ -66,7 +59,6 @@ export async function updateAnswer(
       data,
     });
 
-    revalidatePath(`/admin/course/${courseId}/quiz`);
     return { status: "success", message: "Answer updated successfully" };
   } catch (error) {
     console.error(error);
@@ -82,7 +74,6 @@ export async function deleteAnswer(answerId: string, courseId: string) {
       where: { id: answerId },
     });
 
-    revalidatePath(`/admin/course/${courseId}/quiz`);
     return {
       status: "success" as const,
       message: "Answer deleted successfully",

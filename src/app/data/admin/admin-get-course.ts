@@ -1,5 +1,3 @@
-"server only";
-
 import prisma from "@/lib/db";
 import { requireAdmin } from "./require-admin";
 import { notFound } from "next/navigation";
@@ -73,10 +71,14 @@ export async function adminGetCourse(id: string) {
                   timeLimit: true,
                   memes: {
                     select: {
-                      id: true,
-                      fileKey: true,
-                      type: true,
-                      trigger: true,
+                      meme: {
+                        select: {
+                          id: true,
+                          fileKey: true,
+                          type: true,
+                          trigger: true,
+                        },
+                      },
                     },
                   },
                 },

@@ -21,6 +21,7 @@ import RichTextEditor from "../rich-text-editor/Editor";
 import Uploader from "../file-uploader/Uploader";
 import { tryCatch } from "@/hooks/try-catch";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { useRouter } from "next/navigation";
 
 type FormData = z.infer<typeof createQuestionSchema>;
 
@@ -36,6 +37,7 @@ export default function QuestionForm({
   chapterId?: string;
 }) {
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(createQuestionSchema),
@@ -71,9 +73,8 @@ export default function QuestionForm({
         }
         if (result.status === "success") {
           toast.success(result.message);
-
           form.reset();
-
+          router.refresh(); // Instant UI update
           return;
         }
         if (result.status === "error") {
@@ -91,9 +92,8 @@ export default function QuestionForm({
         }
         if (result.status === "success") {
           toast.success(result.message);
-
           form.reset();
-
+          router.refresh(); // Instant UI update
           return;
         }
         if (result.status === "error") {

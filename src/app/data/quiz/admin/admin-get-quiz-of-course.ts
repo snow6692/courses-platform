@@ -8,6 +8,7 @@ export async function adminGetQuizOfCourse(
 ) {
   await requireAdmin();
 
+  // findFirst with proper where clause (findUnique doesn't support null in composite keys)
   const quiz = await prisma.quiz.findFirst({
     where: {
       courseId,
@@ -37,6 +38,9 @@ export async function adminGetQuizOfCourse(
               text: true,
             },
           },
+        },
+        orderBy: {
+          position: "asc",
         },
       },
       memes: {

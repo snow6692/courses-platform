@@ -225,6 +225,9 @@ model Quiz {
   updatedAt DateTime @updatedAt
 
   @@unique([courseId, chapterId, lessonId])
+  @@index([courseId])
+  @@index([courseId, chapterId])
+  @@index([courseId, chapterId, lessonId])
   @@map("quiz")
 }
 
