@@ -39,6 +39,9 @@ import {
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import type { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 import AnswerItem from "@/components/questions/AnswerItem";
+import MemeSelector from "@/components/meme/MemeSelector";
+import RemoveMemeFromQuiz from "@/components/meme/RemoveMemeFromQuiz";
+import { useConstructUrl } from "@/hooks/use-construct-url";
 // components/quiz/QuizStructure.tsx
 
 export function QuizStructure({
@@ -106,6 +109,7 @@ export function QuizStructure({
           {quiz!.title} - Edit Questions
         </h1>
         <div className="flex items-center gap-2">
+          <MemeSelector quizId={quiz!.id} onSuccess={() => router.refresh()} />
           <ConfirmDialog
             trigger={
               <Button variant="destructive" size="sm" disabled={pending}>
@@ -127,6 +131,45 @@ export function QuizStructure({
           />
         </div>
       </div>
+
+      {/* Memes Section */}
+      {quiz!.memes && quiz!.memes.length > 0 && (
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold">Quiz Memes</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            {quiz!.memes.map((quizMeme) => (
+              <Card key={quizMeme.id} className="relative overflow-hidden">
+                <div className="bg-muted flex aspect-video items-center justify-center">
+                  {quizMeme.meme.type === "VIDEO" ? (
+                    <video
+                      src={useConstructUrl(quizMeme.meme.fileKey)}
+                      className="h-full w-full object-cover"
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={useConstructUrl(quizMeme.meme.fileKey)}
+                      alt="Meme"
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+                <div className="absolute top-2 right-2">
+                  <RemoveMemeFromQuiz
+                    memeId={quizMeme.meme.id}
+                    quizId={quiz!.id}
+                  />
+                </div>
+                <div className="p-2">
+                  <span className="bg-secondary rounded px-2 py-1 text-xs font-medium">
+                    {quizMeme.meme.trigger}
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Dialog>
         <DialogTrigger asChild>
@@ -237,7 +280,7 @@ export function SortableQuestion({
               <RenderDescription json={question.text} />
               {question.imageKey && (
                 <img
-                  src={`/api/file/${question.imageKey}`}
+                  src={useConstructUrl(question.imageKey)}
                   alt=""
                   className="mt-4 max-w-md"
                 />

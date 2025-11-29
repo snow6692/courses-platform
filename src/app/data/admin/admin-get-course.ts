@@ -69,6 +69,16 @@ export async function adminGetCourse(id: string) {
                 select: {
                   id: true,
                   title: true,
+                  description: true,
+                  timeLimit: true,
+                  memes: {
+                    select: {
+                      id: true,
+                      fileKey: true,
+                      type: true,
+                      trigger: true,
+                    },
+                  },
                 },
               },
             },

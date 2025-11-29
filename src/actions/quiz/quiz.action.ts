@@ -66,9 +66,6 @@ export async function saveQuiz(
   if (type === "COURSE") {
     redirect(`/admin/courses/${courseId}/quiz`);
   }
-  if (type === "CHAPTER") {
-    redirect(`/admin/courses/${courseId}/${chapterId}`);
-  }
 
   return {
     status: "success",
@@ -76,7 +73,12 @@ export async function saveQuiz(
   };
 }
 
-export async function deleteQuiz(quizId: string, courseId: string, chapterId?: string, lessonId?: string) {
+export async function deleteQuiz(
+  quizId: string,
+  courseId: string,
+  chapterId?: string,
+  lessonId?: string,
+) {
   await requireAdmin();
   try {
     await prisma.quiz.delete({ where: { id: quizId } });

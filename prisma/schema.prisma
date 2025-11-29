@@ -202,7 +202,6 @@ enum QuizType {
   LESSON
 }
 
-// Quiz model - fixed
 model Quiz {
   id          String   @id @default(uuid())
   title       String
@@ -220,7 +219,7 @@ model Quiz {
 
   questions Question[]
   attempts  QuizAttempt[]
-  memes     Meme[]        @relation("QuizMemes")
+  memes     QuizMeme[] // Many-to-many through join table
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -328,14 +327,6 @@ enum MemeTrigger {
 model Meme {
   id String @id @default(uuid())
 
-  // Relation to Quiz (optional)
-  quizId String?
-  quiz   Quiz?   @relation("QuizMemes", fields: [quizId], references: [id], onDelete: Cascade)
-
-  // Relation to Question (optional)
-  questionId String?
-  question   Question? @relation("QuestionMemes", fields: [questionId], references: [id], onDelete: Cascade)
-
   type     MemeType
   fileKey  String
   trigger  MemeTrigger @default(RANDOM)
@@ -343,7 +334,33 @@ model Meme {
 
   createdAt DateTime @default(now())
 
-  @@index([quizId, trigger])
+  // Many-to-many relationship with Quiz
+  quizzes QuizMeme[]
+
+  // Relation to Question (optional)
+  questionId String?
+  question   Question? @relation("QuestionMemes", fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([trigger])
   @@index([questionId, trigger])
   @@map("meme")
+}
+
+// Join table for many-to-many relationship between Quiz and Meme
+model QuizMeme {
+  id String @id @default(uuid())
+
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  memeId String
+  meme   Meme   @relation(fields: [memeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // Ensure a meme can only be added once to a quiz
+  @@unique([quizId, memeId])
+  @@index([quizId])
+  @@index([memeId])
+  @@map("quiz_meme")
 }

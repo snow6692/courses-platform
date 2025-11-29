@@ -11,15 +11,14 @@ export async function adminGetQuizOfCourse(
   const quiz = await prisma.quiz.findFirst({
     where: {
       courseId,
-      chapterId,
-      lessonId,
+      chapterId: chapterId ?? null,
+      lessonId: lessonId ?? null,
     },
     select: {
       id: true,
       title: true,
       description: true,
       timeLimit: true,
-
       type: true,
       isActive: true,
       questions: {
@@ -31,12 +30,24 @@ export async function adminGetQuizOfCourse(
           explanationImageKey: true,
           explanation: true,
           text: true,
-
           answers: {
             select: {
               id: true,
               isCorrect: true,
               text: true,
+            },
+          },
+        },
+      },
+      memes: {
+        select: {
+          id: true,
+          meme: {
+            select: {
+              id: true,
+              fileKey: true,
+              type: true,
+              trigger: true,
             },
           },
         },

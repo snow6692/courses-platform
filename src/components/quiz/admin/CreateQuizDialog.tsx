@@ -34,7 +34,7 @@ type Props = {
   courseId?: string;
   chapterId?: string;
   lessonId?: string;
-  existingQuiz?: AdminGetQuizOfCourse;
+  existingQuiz?: Partial<AdminGetQuizOfCourse>;
   quizType: "COURSE" | "LESSON" | "CHAPTER";
 };
 

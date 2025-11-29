@@ -13,6 +13,9 @@ import {
   CourseLevel,
   CourseStatus,
   Enrollment,
+  MemeTrigger,
+  MemeType,
+  Meme,
 } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 // import type {
@@ -31,6 +34,8 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
+export { MemeTrigger, MemeType, CourseLevel, CourseStatus };
+
 export type {
   Question,
   Answer,
@@ -42,8 +47,7 @@ export type {
   Quiz,
   QuizAnswer,
   QuizAttempt,
-  CourseLevel,
-  CourseStatus,
   Enrollment,
+  Meme,
 };
 export default prisma;

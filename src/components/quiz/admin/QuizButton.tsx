@@ -12,7 +12,7 @@ type Props = {
   chapterId?: string;
   lessonId?: string;
   label?: string;
-  existingQuiz?: AdminGetQuizOfCourse;
+  existingQuiz?: Partial<AdminGetQuizOfCourse>;
 };
 
 export function QuizButton({
