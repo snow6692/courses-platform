@@ -22,27 +22,35 @@ export async function adminGetQuizOfCourse(
       timeLimit: true,
       type: true,
       isActive: true,
-      questions: {
+      sections: {
         select: {
           id: true,
-          imageKey: true,
           position: true,
-          explanationVideoKey: true,
-          explanationImageKey: true,
-          explanation: true,
-          text: true,
-          answers: {
+          timeLimit: true,
+          title: true,
+          questions: {
+            orderBy: { position: "asc" },
             select: {
               id: true,
-              isCorrect: true,
+              imageKey: true,
+              position: true,
+              explanationVideoKey: true,
+              explanationImageKey: true,
+              explanation: true,
+              sectionId: true,
               text: true,
+              answers: {
+                select: {
+                  id: true,
+                  isCorrect: true,
+                  text: true,
+                },
+              },
             },
           },
         },
-        orderBy: {
-          position: "asc",
-        },
       },
+
       memes: {
         select: {
           id: true,

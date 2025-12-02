@@ -1,226 +1,328 @@
+// components/quiz/admin/QuizStructure.tsx
+
 "use client";
+
+import { useState, useTransition } from "react";
 import {
-  deleteQuestion,
-  reorderQuestions,
-} from "@/actions/quiz/question.action";
-import {
-  closestCenter,
   DndContext,
-  KeyboardSensor,
+  closestCenter,
   PointerSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
-  useSortable,
   verticalListSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
-import { useState, useTransition, useEffect } from "react";
-import QuestionForm from "../../questions/QuestionForm";
-import { Card } from "../../ui/card";
-import { Button } from "../../ui/button";
-import { GripVertical, Pencil, Plus } from "lucide-react";
-import AnswerForm from "../../questions/AnswerForm";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ConfirmDialog } from "../../shared/ConfirmDialog";
-import { deleteQuiz } from "@/actions/quiz/quiz.action";
-import { toast } from "sonner";
-import { tryCatch } from "@/hooks/try-catch";
-import { useRouter } from "next/navigation";
-import { QuizButton } from "./QuizButton";
+import { GripVertical, Plus, Pencil, Trash2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import RenderDescription from "@/components/rich-text-editor/RenderDescription";
-import type { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+
+import SectionForm from "./SectionForm";
+import QuestionForm from "../../questions/QuestionForm";
 import AnswerItem from "@/components/questions/AnswerItem";
 import MemeSelector from "@/components/meme/MemeSelector";
 import RemoveMemeFromQuiz from "@/components/meme/RemoveMemeFromQuiz";
+import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import { useConstructUrl } from "@/hooks/use-construct-url";
-// components/quiz/QuizStructure.tsx
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export function QuizStructure({
-  quiz,
+import { deleteQuiz } from "@/actions/quiz/quiz.action";
+import { deleteSection } from "@/actions/quiz/section.action";
+import {
+  reorderSections,
+  reorderQuestionsInSection,
+} from "@/actions/quiz/section.action";
+
+import type { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { tryCatch } from "@/hooks/try-catch";
+import { deleteQuestion } from "@/actions/quiz/question.action";
+import AnswerForm from "@/components/questions/AnswerForm";
+
+export default function QuizStructure({
+  quiz: initialQuiz,
   courseId,
-  chapterId,
-  lessonId,
 }: {
-  quiz?: AdminGetQuizOfCourse;
+  quiz: AdminGetQuizOfCourse;
   courseId: string;
-  chapterId?: string;
-  lessonId?: string;
 }) {
-  // if (!quiz) return notFound();
-
-  const [questions, setQuestions] = useState(quiz!.questions ?? []);
-  const [pending, startTransition] = useTransition();
+  const [sections, setSections] = useState(initialQuiz.sections);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor),
   );
 
-  // Sync state when quiz prop changes (after router.refresh())
-  useEffect(() => {
-    setQuestions(quiz!.questions ?? []);
-  }, [quiz]);
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = questions.findIndex((q: any) => q.id === active.id);
-    const newIndex = questions.findIndex((q: any) => q.id === over.id);
-
-    if (oldIndex === -1 || newIndex === -1) return;
-
-    const newOrder = arrayMove(questions, oldIndex, newIndex);
-    setQuestions(newOrder);
-
-    reorderQuestions(
-      quiz!.id,
-      newOrder.map((q: any, i: number) => ({ id: q.id, position: i + 1 })),
-    ).then(() => router.refresh()); // Refresh to get updated data
+  const handleReorderSections = async (activeId: string, overId: string) => {
+    const oldIndex = sections.findIndex((s) => s.id === activeId);
+    const newIndex = sections.findIndex((s) => s.id === overId);
+    const newOrder = arrayMove(sections, oldIndex, newIndex);
+    setSections(newOrder);
+    await reorderSections(
+      initialQuiz.id,
+      newOrder.map((s, i) => ({ id: s.id, position: i + 1 })),
+    );
+    router.refresh();
   };
 
-  const handleDeleteQuiz = async () => {
-    startTransition(async () => {
-      const { data: result, error } = await tryCatch(
-        deleteQuiz(quiz!.id, courseId, chapterId, lessonId),
-      );
-      if (error) {
-        toast.error("An unexpected error occurred, Please try again.");
-        return;
-      }
-
-      if (result.status === "success") {
-        toast.success(result.message);
-        router.push(`/admin/courses/${courseId}/edit`);
-      } else if (result.status === "error") {
-        toast.error(result.message);
-      }
-    });
+  const handleReorderQuestions = async (
+    sectionId: string,
+    activeId: string,
+    overId: string,
+  ) => {
+    setSections((prev) =>
+      prev.map((section) => {
+        if (section.id !== sectionId) return section;
+        const questions = section.questions;
+        const oldIndex = questions.findIndex((q) => q.id === activeId);
+        const newIndex = questions.findIndex((q) => q.id === overId);
+        const newQuestions = arrayMove(questions, oldIndex, newIndex);
+        reorderQuestionsInSection(
+          sectionId,
+          newQuestions.map((q, i) => ({ id: q.id, position: i + 1 })),
+          courseId,
+        );
+        return { ...section, questions: newQuestions };
+      }),
+    );
+    router.refresh();
   };
 
   return (
-    <div className="p-8">
+    <div className="space-y-8 p-8">
       <div className="flex items-center justify-between">
-        <h1 className="mb-6 text-3xl font-bold">
-          {quiz!.title} - Edit Questions
-        </h1>
-        <div className="flex items-center gap-2">
-          <MemeSelector quizId={quiz!.id} onSuccess={() => router.refresh()} />
-          <ConfirmDialog
-            trigger={
-              <Button variant="destructive" size="sm" disabled={pending}>
-                Delete Quiz
-              </Button>
-            }
-            title="Delete Quiz"
-            description="Are you sure you want to delete this quiz?"
-            confirmLabel="Delete"
-            cancelLabel="Cancel"
-            onConfirm={handleDeleteQuiz}
+        <h1 className="text-3xl font-bold">{initialQuiz.title}</h1>
+        <div className="flex gap-3">
+          <MemeSelector
+            quizId={initialQuiz.id}
+            onSuccess={() => router.refresh()}
           />
-
-          <QuizButton
-            quizType="COURSE"
-            courseId={courseId}
-            chapterId={chapterId}
-            existingQuiz={quiz!}
+          <ConfirmDialog
+            trigger={<Button variant="destructive"> Delete the quiz</Button>}
+            title="Delete the quiz"
+            description="Are you sure you want to delete this quiz?"
+            confirmVariant="destructive"
+            confirmLabel=""
+            onConfirm={() =>
+              startTransition(async () => {
+                const result = await deleteQuiz(initialQuiz.id, courseId);
+                if (result.status === "success") {
+                  toast.success("Quiz deleted successfully");
+                  router.push(`/admin/courses/${courseId}/edit`);
+                } else {
+                  toast.error(result.message);
+                }
+              })
+            }
           />
         </div>
       </div>
 
-      {/* Memes Section */}
-      {quiz!.memes && quiz!.memes.length > 0 && (
-        <div className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold">Quiz Memes</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            {quiz!.memes.map((quizMeme) => (
-              <Card key={quizMeme.id} className="relative overflow-hidden">
-                <div className="bg-muted flex aspect-video items-center justify-center">
-                  {quizMeme.meme.type === "VIDEO" ? (
-                    <video
-                      src={useConstructUrl(quizMeme.meme.fileKey)}
-                      className="h-full w-full object-cover"
-                      controls
-                    />
-                  ) : (
-                    <img
-                      src={useConstructUrl(quizMeme.meme.fileKey)}
-                      alt="Meme"
-                      className="h-full w-full object-cover"
-                    />
-                  )}
-                </div>
-                <div className="absolute top-2 right-2">
-                  <RemoveMemeFromQuiz
-                    memeId={quizMeme.meme.id}
-                    quizId={quiz!.id}
-                  />
-                </div>
-                <div className="p-2">
-                  <span className="bg-secondary rounded px-2 py-1 text-xs font-medium">
-                    {quizMeme.meme.trigger}
-                  </span>
-                </div>
-              </Card>
-            ))}
-          </div>
+      {/* Memes */}
+      {initialQuiz.memes.length > 0 && (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {initialQuiz.memes.map(({ meme }) => (
+            <Card key={meme.id} className="relative overflow-hidden">
+              {meme.type === "VIDEO" ? (
+                <video
+                  src={useConstructUrl(meme.fileKey)}
+                  controls
+                  className="aspect-video w-full"
+                />
+              ) : (
+                <img
+                  src={useConstructUrl(meme.fileKey)}
+                  alt="meme"
+                  className="aspect-video w-full object-cover"
+                />
+              )}
+              <RemoveMemeFromQuiz memeId={meme.id} quizId={initialQuiz.id} />
+              <div className="p-2 text-xs font-medium">{meme.trigger}</div>
+            </Card>
+          ))}
         </div>
       )}
 
+      {/* Add Section Button */}
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="default">
-            <Plus className="size-4" />
-            Add Question
+          <Button size="lg">
+            <Plus className="ml-2" /> Add Section
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
-          <DialogTitle>Edit Question</DialogTitle>
-          <QuestionForm quizId={quiz!.id} courseId={courseId} />
+        <DialogContent>
+          <DialogTitle>Add Section</DialogTitle>
+          <SectionForm quizId={initialQuiz.id} courseId={courseId} />
         </DialogContent>
       </Dialog>
 
-      {questions.length === 0 ? (
-        <Card className="p-12 text-center">
-          <p className="text-muted-foreground text-lg">
-            No questions yet. Click "Add Question" to start building your quiz!
+      {/* Sections List */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={(e) => {
+          const { active, over } = e;
+          if (over)
+            handleReorderSections(active.id as string, over.id as string);
+        }}
+      >
+        <SortableContext
+          items={sections.map((s) => s.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {sections.map((section) => (
+            <SortableSection
+              key={section.id}
+              section={section}
+              quizId={initialQuiz.id}
+              courseId={courseId}
+              onReorderQuestions={handleReorderQuestions}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
+
+      {sections.length === 0 && (
+        <Card className="p-16 text-center">
+          <p className="text-muted-foreground">
+            No sections found. Add a section to start building the quiz!
           </p>
         </Card>
-      ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={questions.map((q) => q.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="mt-8 space-y-6">
-              {questions.map((question) => (
-                <SortableQuestion
-                  key={question.id}
-                  question={question}
-                  quizId={quiz!.id}
-                  courseId={courseId}
-                  chapterId={chapterId}
-                  lessonId={lessonId}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
       )}
     </div>
+  );
+}
+
+function SortableSection({
+  section,
+  quizId,
+  courseId,
+  onReorderQuestions,
+}: any) {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor),
+  );
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: section.id });
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className="p-6"
+    >
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            {...attributes}
+            {...listeners}
+            variant="ghost"
+            size="icon"
+            className="cursor-grab"
+          >
+            <GripVertical />
+          </Button>
+          <div>
+            <h3 className="text-2xl font-bold">{section.title}</h3>
+            <p className="text-muted-foreground text-sm">
+              {section.timeLimit
+                ? `${Math.floor(section.timeLimit / 60)} دقيقة`
+                : "بدون وقت محدد"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <Plus /> New Question
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+              <QuestionForm
+                quizId={quizId}
+                courseId={courseId}
+                sectionId={section.id}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Pencil className="size-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Edit Section</DialogTitle>
+              <SectionForm
+                quizId={quizId}
+                courseId={courseId}
+                section={section}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <ConfirmDialog
+            title="Delete Sections"
+            description="Are you sure you want to delete this section"
+            confirmLabel="Delete"
+            trigger={
+              <Button variant="ghost" size="icon" className="text-red-600">
+                <Trash2 />
+              </Button>
+            }
+            onConfirm={() =>
+              deleteSection(section.id, courseId).then(() => location.reload())
+            }
+          />
+        </div>
+      </div>
+
+      {/* Questions */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={(e) => {
+          const { active, over } = e;
+          if (over) onReorderQuestions(section.id, active.id, over.id);
+        }}
+      >
+        <SortableContext
+          items={section.questions.map((q: any) => q.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-4">
+            {section.questions.map((question: any) => (
+              <SortableQuestion
+                key={question.id}
+                question={question}
+                quizId={quizId}
+                courseId={courseId}
+                sectionId={section.id}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </Card>
   );
 }
 
@@ -230,12 +332,14 @@ export function SortableQuestion({
   courseId,
   chapterId,
   lessonId,
+  sectionId,
 }: {
-  question: AdminGetQuizOfCourse["questions"][number];
+  question: AdminGetQuizOfCourse["sections"][number]["questions"][number];
   quizId: string;
   courseId: string;
   chapterId?: string;
   lessonId?: string;
+  sectionId: string;
 }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -251,7 +355,7 @@ export function SortableQuestion({
   const handleDeleteQuestion = async () => {
     startTransition(async () => {
       const { data: result, error } = await tryCatch(
-        deleteQuestion(question.id, quizId, courseId),
+        deleteQuestion(question.id, quizId, courseId, sectionId),
       );
 
       if (error) {
@@ -323,6 +427,7 @@ export function SortableQuestion({
                     quizId={quizId}
                     courseId={courseId}
                     question={question}
+                    sectionId={question.sectionId}
                   />
                 </DialogContent>
               </Dialog>
@@ -339,7 +444,7 @@ export function SortableQuestion({
               ) : (
                 question.answers.map(
                   (
-                    answer: AdminGetQuizOfCourse["questions"][number]["answers"][number],
+                    answer: AdminGetQuizOfCourse["sections"][number]["questions"][number]["answers"][number],
                   ) => (
                     <AnswerItem
                       key={answer.id}

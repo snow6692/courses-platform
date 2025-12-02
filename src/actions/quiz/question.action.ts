@@ -4,6 +4,7 @@ import { requireAdmin } from "@/app/data/admin/require-admin";
 import prisma from "@/lib/db";
 import { APIResponse } from "@/lib/types";
 import { createQuestionSchema } from "@/validation/question.zod";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export async function createQuestion(
@@ -17,10 +18,10 @@ export async function createQuestion(
   if (!validated.success) return { status: "error", message: "Invalid data" };
 
   try {
-    const { quizId, ...data } = validated.data;
+    const { sectionId, ...data } = validated.data;
 
     const maxPosition = await prisma.question.findFirst({
-      where: { quizId },
+      where: { sectionId },
       orderBy: { position: "desc" },
       select: { position: true },
     });
@@ -28,10 +29,11 @@ export async function createQuestion(
     const question = await prisma.question.create({
       data: {
         ...data,
-        quizId,
+        sectionId,
         position: (maxPosition?.position || 0) + 1,
       },
     });
+    revalidatePath(`/admin/courses/${courseId}/quiz`);
 
     return { status: "success", message: "Question created successfully" };
   } catch (error) {
@@ -66,6 +68,7 @@ export async function deleteQuestion(
   questionId: string,
   quizId: string,
   courseId: string,
+  sectionId: string,
 ): Promise<APIResponse> {
   await requireAdmin();
 
@@ -80,7 +83,7 @@ export async function deleteQuestion(
       await tx.question.delete({ where: { id: questionId } });
       // Reorder remaining
       const remaining = await tx.question.findMany({
-        where: { quizId },
+        where: { sectionId },
         orderBy: { position: "asc" },
       });
       await Promise.all(
@@ -102,7 +105,7 @@ export async function deleteQuestion(
 }
 
 export async function reorderQuestions(
-  quizId: string,
+  sectionId: string,
   questions: { id: string; position: number }[],
 ) {
   await requireAdmin();

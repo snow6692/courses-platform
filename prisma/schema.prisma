@@ -217,9 +217,9 @@ model Quiz {
   lessonId  String?
   lesson    Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-  questions Question[]
+sections    QuizSection[]
   attempts  QuizAttempt[]
-  memes     QuizMeme[] // Many-to-many through join table
+  memes     QuizMeme[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -231,10 +231,29 @@ model Quiz {
   @@map("quiz")
 }
 
+
+model QuizSection {
+  id        String    @id @default(uuid())
+  title     String
+  timeLimit Int?      
+  position  Int       @default(0)
+
+  quizId    String
+  quiz      Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  questions Question[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([quizId, position])
+  @@map("quiz_section")
+}
+
 model Question {
   id       String  @id @default(uuid())
-  quizId   String
-  quiz     Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  sectionId   String
+  section     QuizSection    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   position Int
   text     String
   imageKey String?
@@ -249,7 +268,7 @@ model Question {
   favoriteQuestions FavoriteQuestion[]
   memes             Meme[]             @relation("QuestionMemes")
 
-  @@index([quizId, position])
+  @@index([sectionId, position])
   @@map("question")
 }
 

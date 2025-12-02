@@ -30,11 +30,13 @@ export default function QuestionForm({
   courseId,
   question,
   chapterId,
+  sectionId,
 }: {
   quizId: string;
   courseId: string;
-  question?: AdminGetQuizOfCourse["questions"][number];
+  question?: AdminGetQuizOfCourse["sections"][number]["questions"][number];
   chapterId?: string;
+  sectionId?: string;
 }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -43,7 +45,8 @@ export default function QuestionForm({
     resolver: zodResolver(createQuestionSchema),
     defaultValues: question
       ? {
-          quizId,
+          sectionId,
+
           text: question.text ?? "",
           imageKey: question.imageKey ?? "",
           explanation: question.explanation ?? "",
@@ -51,7 +54,7 @@ export default function QuestionForm({
           explanationVideoKey: question.explanationVideoKey ?? "",
         }
       : {
-          quizId,
+          sectionId,
           text: "",
           imageKey: "",
           explanation: "",
@@ -65,7 +68,7 @@ export default function QuestionForm({
       //create
       if (!question) {
         const { data: result, error } = await tryCatch(
-          createQuestion({ ...data, quizId }, courseId),
+          createQuestion({ ...data }, courseId),
         );
         if (error) {
           toast.error("Failed to Create Questions, Try again later");
@@ -84,7 +87,7 @@ export default function QuestionForm({
       } else {
         //update
         const { data: result, error } = await tryCatch(
-          updateQuestion({ ...data, quizId }, question.id, courseId),
+          updateQuestion({ ...data }, question.id, courseId),
         );
         if (error) {
           toast.error("Failed to Update Questions, Try again later");
