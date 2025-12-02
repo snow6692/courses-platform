@@ -46,6 +46,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
       description: lesson.description ?? "",
       thumbnailKey: lesson.thumbnailKey ?? undefined,
       videoKey: lesson.videoKey ?? undefined,
+      pdfKey: lesson.pdfKey ?? undefined,
     },
   });
   const [pending, startTransition] = useTransition();
@@ -142,6 +143,23 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                         onChange={field.onChange}
                         value={field.value}
                         fileTypeAccepted="video"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="pdfKey"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PDF File</FormLabel>
+                    <FormControl>
+                      <Uploader
+                        onChange={field.onChange}
+                        value={field.value}
+                        fileTypeAccepted="pdf"
                       />
                     </FormControl>
                     <FormMessage />

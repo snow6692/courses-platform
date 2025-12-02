@@ -34,21 +34,28 @@ export async function adminGetCourse(id: string) {
               description: true,
               timeLimit: true,
               isActive: true,
-              questions: {
-                orderBy: { position: "asc" },
+              sections: {
                 select: {
                   id: true,
+                  title: true,
                   position: true,
-                  text: true,
-                  imageKey: true,
-                  explanation: true,
-                  explanationImageKey: true,
-                  explanationVideoKey: true,
-                  answers: {
+                  timeLimit: true,
+                  questions: {
                     select: {
                       id: true,
+                      position: true,
                       text: true,
-                      isCorrect: true,
+                      imageKey: true,
+                      explanation: true,
+                      explanationImageKey: true,
+                      explanationVideoKey: true,
+                      answers: {
+                        select: {
+                          id: true,
+                          text: true,
+                          isCorrect: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -58,6 +65,7 @@ export async function adminGetCourse(id: string) {
           lessons: {
             select: {
               id: true,
+              
               position: true,
               description: true,
               thumbnailKey: true,

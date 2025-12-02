@@ -42,6 +42,7 @@ export default function LessonForm({
       description: "",
       thumbnailKey: "",
       videoKey: "",
+      pdfKey: "",
     },
   });
 
@@ -55,7 +56,6 @@ export default function LessonForm({
   };
 
   const onSubmit = (values: LessonSchemaType) => {
-
     startTransition(async () => {
       const { data: result, error } = await tryCatch(createLesson(values));
 

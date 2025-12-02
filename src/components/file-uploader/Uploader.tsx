@@ -23,12 +23,12 @@ interface UploaderState {
   isDeleting: boolean;
   error: boolean;
   objectUrl?: string; //local url
-  fileType: "image" | "video";
+  fileType: "image" | "video" | "pdf";
 }
 interface IProps {
   value?: string;
   onChange?: (value: string) => void;
-  fileTypeAccepted: "image" | "video";
+  fileTypeAccepted: "image" | "video" | "pdf";
 }
 function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
   const fileUrl = useConstructUrl(value as string);
@@ -241,7 +241,13 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         (rejection) => rejection.errors[0].code === "file-too-large",
       );
       if (fileSize) {
-        toast.error("File size must be less than 5MB");
+        const limit =
+          fileTypeAccepted === "image"
+            ? "5MB"
+            : fileTypeAccepted === "pdf"
+              ? "50MB"
+              : "5GB";
+        toast.error(`File size must be less than ${limit}`);
         return;
       }
 
@@ -249,12 +255,17 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         (rejection) => rejection.errors[0].code === "file-invalid-type",
       );
       if (fileType) {
-        toast.error("File type must be an image");
+        const typeName =
+          fileTypeAccepted === "image"
+            ? "image"
+            : fileTypeAccepted === "pdf"
+              ? "PDF"
+              : "video";
+        toast.error(`File must be a ${typeName}`);
         return;
       }
     }
   }
-
   //render the content based on the file state
   function renderContent() {
     if (fileState.uploading) {
@@ -285,11 +296,19 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept:
-      fileTypeAccepted === "video" ? { "video/*": [] } : { "image/*": [] },
+      fileTypeAccepted === "video"
+        ? { "video/*": [] }
+        : fileTypeAccepted === "pdf"
+          ? { "application/pdf": [] }
+          : { "image/*": [] },
     maxFiles: 1,
     multiple: false,
     maxSize:
-      fileTypeAccepted === "image" ? 1024 * 1024 * 5 : 1024 * 1024 * 5000, // 5MB// 5GB
+      fileTypeAccepted === "image"
+        ? 1024 * 1024 * 5 // image 5mb
+        : fileTypeAccepted === "pdf"
+          ? 1024 * 1024 * 50 // pdf 50mb
+          : 1024 * 1024 * 5000, // video 5gb
     onDropRejected: (files: FileRejection[]) => rejectedFiles(files),
     disabled: fileState.uploading || !!fileState.objectUrl,
   });

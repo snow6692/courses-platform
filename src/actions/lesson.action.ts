@@ -84,6 +84,7 @@ export async function createLesson(
           videoKey: data.videoKey,
           thumbnailKey: data.thumbnailKey,
           position: maxPosition ? maxPosition.position : 1,
+          pdfKey: data.pdfKey,
         },
       });
     });
@@ -202,6 +203,7 @@ export async function updateLesson({
         description: data.description,
         thumbnailKey: data.thumbnailKey,
         videoKey: data.videoKey,
+        pdfKey: data.pdfKey,
       },
     });
 

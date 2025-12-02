@@ -15,13 +15,8 @@ export async function adminGetLesson(id: string) {
       thumbnailKey: true,
       description: true,
       id: true,
+      pdfKey: true,
       position: true,
-      quizzes: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
     },
   });
   if (!data) return notFound();

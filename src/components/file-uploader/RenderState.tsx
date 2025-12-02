@@ -2,8 +2,10 @@ import { cn } from "@/lib/utils";
 import { CloudUploadIcon, ImageIcon, Loader2, TrashIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { FileText } from "lucide-react";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
+  
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="bg-muted border-muted-foreground mb-4 flex size-12 items-center justify-center rounded-full border border-dashed">
@@ -57,19 +59,32 @@ export function RenderUploadedState({
   previewUrl: string;
   onRemoveFile: () => void;
   isDeleting: boolean;
-  fileType: "video" | "image";
+  fileType: "video" | "image" | "pdf";
 }) {
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       {fileType === "video" ? (
-        <video src={previewUrl} controls className="h-[140%] w-full" />
+        <video
+          src={previewUrl}
+          controls
+          className="max-h-full w-full object-contain"
+        />
+      ) : fileType === "pdf" ? (
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <iframe
+            src={previewUrl}
+            className="h-full w-full rounded-lg border"
+            title="PDF Preview"
+          />
+          <p className="text-muted-foreground mt-2 text-sm">PDF Preview</p>
+        </div>
       ) : (
         <Image
           src={previewUrl}
           alt="uploaded file"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           fill
-          className="h-[140%] w-[100%] object-contain p-2"
+          className="object-contain p-2"
         />
       )}
 
@@ -78,10 +93,9 @@ export function RenderUploadedState({
         disabled={isDeleting}
         onClick={(e) => {
           e.stopPropagation();
-
           onRemoveFile();
         }}
-        className="absolute top-2 right-2"
+        className="absolute top-2 right-2 z-10"
         variant={"destructive"}
         size={"icon"}
       >
