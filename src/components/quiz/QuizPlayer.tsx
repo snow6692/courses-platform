@@ -197,12 +197,21 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
                                 value={answer.id}
                                 id={answer.id}
                               />
-                              <Label
-                                htmlFor={answer.id}
-                                className="cursor-pointer text-base font-normal"
-                              >
-                                {answer.text}
-                              </Label>
+                              <div className="flex flex-col gap-2">
+                                {answer.imageKey && (
+                                  <img
+                                    src={useConstructUrl(answer.imageKey)}
+                                    alt="Answer Image"
+                                    className="h-20 w-20 rounded-md object-cover"
+                                  />
+                                )}
+                                <Label
+                                  htmlFor={answer.id}
+                                  className="cursor-pointer text-base font-normal"
+                                >
+                                  {answer.text}
+                                </Label>
+                              </div>
                             </div>
                           ))}
                         </RadioGroup>

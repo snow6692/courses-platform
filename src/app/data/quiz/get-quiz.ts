@@ -8,16 +8,20 @@ export async function getQuizForStudent(quizId: string) {
   const quiz = await prisma.quiz.findUnique({
     where: { id: quizId, isActive: true },
     include: {
-      questions: {
-        where: { quizId },
+      sections: {
         orderBy: { position: "asc" },
         include: {
-          answers: {
-            select: { id: true, text: true }, // hide isCorrect
-            orderBy: { id: "asc" },
-          },
-          favoriteQuestions: {
-            where: { userId: user.id },
+          questions: {
+            orderBy: { position: "asc" },
+            include: {
+              answers: {
+                select: { id: true, text: true, imageKey: true },
+                orderBy: { id: "asc" },
+              },
+              favoriteQuestions: {
+                where: { userId: user.id },
+              },
+            },
           },
         },
       },

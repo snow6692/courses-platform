@@ -44,6 +44,7 @@ export async function adminGetQuizOfCourse(
                   id: true,
                   isCorrect: true,
                   text: true,
+                  imageKey: true,
                 },
               },
             },

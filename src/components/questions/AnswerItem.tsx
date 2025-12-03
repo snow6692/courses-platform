@@ -15,6 +15,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 
+import Image from "next/image";
+import { useConstructUrl } from "@/hooks/use-construct-url";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import AnswerForm from "./AnswerForm";
+
 export default function AnswerItem({
   answer: initialAnswer,
   questionId,
@@ -25,15 +35,16 @@ export default function AnswerItem({
     id: string;
     text: string;
     isCorrect: boolean;
+    imageKey?: string | null;
   };
   questionId: string;
   courseId: string;
   chapterId?: string;
 }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(initialAnswer.text);
+  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const imageUrl = useConstructUrl(initialAnswer.imageKey || "");
 
   // Toggle correct/incorrect
   const handleToggle = () => {
@@ -53,46 +64,6 @@ export default function AnswerItem({
       toast.success(result.message);
       router.refresh();
     });
-  };
-
-  // Save edited text
-  const handleSave = () => {
-    if (text.trim() === initialAnswer.text || text.trim() === "") {
-      if (text.trim() === "") toast.error("Answer cannot be empty");
-      setText(initialAnswer.text);
-      setIsEditing(false);
-      return;
-    }
-
-    startTransition(async () => {
-      const { data: result, error } = await tryCatch(
-        updateAnswer(
-          {
-            id: initialAnswer.id,
-            questionId,
-            text: text.trim(),
-            isCorrect: initialAnswer.isCorrect,
-          },
-          courseId,
-        ),
-      );
-
-      if (error || result?.status === "error") {
-        toast.error(result?.message || "Failed to update");
-        setText(initialAnswer.text);
-        return;
-      }
-
-      toast.success("Answer updated");
-      setIsEditing(false);
-      router.refresh();
-    });
-  };
-
-  // Cancel editing
-  const handleCancel = () => {
-    setText(initialAnswer.text);
-    setIsEditing(false);
   };
 
   // Delete with confirmation
@@ -121,58 +92,48 @@ export default function AnswerItem({
           <Circle className="text-muted-foreground h-5 w-5 flex-shrink-0" />
         )}
 
-        {isEditing ? (
-          <Input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="h-9"
-            autoFocus
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSave();
-              if (e.key === "Escape") handleCancel();
-            }}
-          />
-        ) : (
+        <div className="flex flex-col gap-2">
+          {imageUrl ? (
+            <div className="relative h-20 w-20 overflow-hidden rounded-md border">
+              <Image
+                src={imageUrl}
+                alt="Answer image"
+                fill
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            ""
+          )}
           <span className={initialAnswer.isCorrect ? "font-medium" : ""}>
             {initialAnswer.text}
           </span>
-        )}
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Edit / Save / Cancel */}
-        {isEditing ? (
-          <>
+        {/* Edit Dialog */}
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
             <Button
               size="icon"
               variant="ghost"
               className="h-8 w-8"
-              onClick={handleSave}
               disabled={isPending}
             >
-              <Check className="h-4 w-4 text-green-600" />
+              <Pencil className="h-4 w-4" />
             </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              onClick={handleCancel}
-              disabled={isPending}
-            >
-              <X className="h-4 w-4 text-red-600" />
-            </Button>
-          </>
-        ) : (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8"
-            onClick={() => setIsEditing(true)}
-            disabled={isPending}
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-        )}
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogTitle>Edit Answer</DialogTitle>
+            <AnswerForm
+              questionId={questionId}
+              courseId={courseId}
+              answer={initialAnswer}
+              onSuccess={() => setOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
 
         {/* Delete with ConfirmDialog */}
         <ConfirmDialog
@@ -181,7 +142,7 @@ export default function AnswerItem({
               size="icon"
               variant="ghost"
               className="h-8 w-8"
-              disabled={isPending || isEditing}
+              disabled={isPending}
             >
               <Trash2 className="h-4 w-4 text-red-600" />
             </Button>
@@ -198,7 +159,7 @@ export default function AnswerItem({
         <Switch
           checked={initialAnswer.isCorrect}
           onCheckedChange={handleToggle}
-          disabled={isPending || isEditing}
+          disabled={isPending}
         />
       </div>
     </div>

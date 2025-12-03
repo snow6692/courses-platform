@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -18,10 +18,22 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Plus, Pencil, Trash2 } from "lucide-react";
+import {
+  GripVertical,
+  Plus,
+  Pencil,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -59,7 +71,9 @@ export default function QuizStructure({
   quiz: AdminGetQuizOfCourse;
   courseId: string;
 }) {
-  const [sections, setSections] = useState(initialQuiz.sections);
+  const [sections, setSections] = useState(
+    initialQuiz.sections.map((s) => ({ ...s, isOpen: true })),
+  );
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -67,6 +81,21 @@ export default function QuizStructure({
     useSensor(PointerSensor),
     useSensor(KeyboardSensor),
   );
+
+  useEffect(() => {
+    setSections((prev) =>
+      initialQuiz.sections.map((s) => ({
+        ...s,
+        isOpen: prev.find((p) => p.id === s.id)?.isOpen ?? true,
+      })),
+    );
+  }, [initialQuiz.sections]);
+
+  const toggleSection = (sectionId: string) => {
+    setSections((prev) =>
+      prev.map((s) => (s.id === sectionId ? { ...s, isOpen: !s.isOpen } : s)),
+    );
+  };
 
   const handleReorderSections = async (activeId: string, overId: string) => {
     const oldIndex = sections.findIndex((s) => s.id === activeId);
@@ -173,6 +202,7 @@ export default function QuizStructure({
 
       {/* Sections List */}
       <DndContext
+        id="dnd-sections"
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={(e) => {
@@ -185,6 +215,13 @@ export default function QuizStructure({
           items={sections.map((s) => s.id)}
           strategy={verticalListSortingStrategy}
         >
+          {sections.length === 0 && (
+            <Card className="p-16 text-center">
+              <p className="text-muted-foreground">
+                No sections found. Add a section to start building the quiz!
+              </p>
+            </Card>
+          )}
           {sections.map((section) => (
             <SortableSection
               key={section.id}
@@ -192,18 +229,12 @@ export default function QuizStructure({
               quizId={initialQuiz.id}
               courseId={courseId}
               onReorderQuestions={handleReorderQuestions}
+              isOpen={section.isOpen}
+              onToggle={() => toggleSection(section.id)}
             />
           ))}
         </SortableContext>
       </DndContext>
-
-      {sections.length === 0 && (
-        <Card className="p-16 text-center">
-          <p className="text-muted-foreground">
-            No sections found. Add a section to start building the quiz!
-          </p>
-        </Card>
-      )}
     </div>
   );
 }
@@ -213,6 +244,8 @@ function SortableSection({
   quizId,
   courseId,
   onReorderQuestions,
+  isOpen,
+  onToggle,
 }: any) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -227,101 +260,117 @@ function SortableSection({
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className="p-6"
     >
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            {...attributes}
-            {...listeners}
-            variant="ghost"
-            size="icon"
-            className="cursor-grab"
-          >
-            <GripVertical />
-          </Button>
-          <div>
-            <h3 className="text-2xl font-bold">{section.title}</h3>
-            <p className="text-muted-foreground text-sm">
-              {section.timeLimit
-                ? `${Math.floor(section.timeLimit / 60)} دقيقة`
-                : "بدون وقت محدد"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus /> New Question
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
-              <QuestionForm
-                quizId={quizId}
-                courseId={courseId}
-                sectionId={section.id}
-              />
-            </DialogContent>
-          </Dialog>
-
-          <Dialog>
-            <DialogTrigger asChild>
+      <Collapsible open={isOpen} onOpenChange={onToggle}>
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              {...attributes}
+              {...listeners}
+              variant="ghost"
+              size="icon"
+              className="cursor-grab"
+            >
+              <GripVertical />
+            </Button>
+            <CollapsibleTrigger asChild>
               <Button variant="ghost" size="icon">
-                <Pencil className="size-4" />
+                {isOpen ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
               </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogTitle>Edit Section</DialogTitle>
-              <SectionForm
-                quizId={quizId}
-                courseId={courseId}
-                section={section}
-              />
-            </DialogContent>
-          </Dialog>
-
-          <ConfirmDialog
-            title="Delete Sections"
-            description="Are you sure you want to delete this section"
-            confirmLabel="Delete"
-            trigger={
-              <Button variant="ghost" size="icon" className="text-red-600">
-                <Trash2 />
-              </Button>
-            }
-            onConfirm={() =>
-              deleteSection(section.id, courseId).then(() => location.reload())
-            }
-          />
-        </div>
-      </div>
-
-      {/* Questions */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={(e) => {
-          const { active, over } = e;
-          if (over) onReorderQuestions(section.id, active.id, over.id);
-        }}
-      >
-        <SortableContext
-          items={section.questions.map((q: any) => q.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          <div className="space-y-4">
-            {section.questions.map((question: any) => (
-              <SortableQuestion
-                key={question.id}
-                question={question}
-                quizId={quizId}
-                courseId={courseId}
-                sectionId={section.id}
-              />
-            ))}
+            </CollapsibleTrigger>
+            <div>
+              <h3 className="text-2xl font-bold">{section.title}</h3>
+              <p className="text-muted-foreground text-sm">
+                {section.timeLimit
+                  ? `${Math.floor(section.timeLimit / 60)} دقيقة`
+                  : "بدون وقت محدد"}
+              </p>
+            </div>
           </div>
-        </SortableContext>
-      </DndContext>
+
+          <div className="flex gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <Plus /> New Question
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+                <QuestionForm
+                  quizId={quizId}
+                  courseId={courseId}
+                  sectionId={section.id}
+                />
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Pencil className="size-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Edit Section</DialogTitle>
+                <SectionForm
+                  quizId={quizId}
+                  courseId={courseId}
+                  section={section}
+                />
+              </DialogContent>
+            </Dialog>
+
+            <ConfirmDialog
+              title="Delete Sections"
+              description="Are you sure you want to delete this section"
+              confirmLabel="Delete"
+              trigger={
+                <Button variant="ghost" size="icon" className="text-red-600">
+                  <Trash2 />
+                </Button>
+              }
+              onConfirm={() =>
+                deleteSection(section.id, courseId).then(() =>
+                  location.reload(),
+                )
+              }
+            />
+          </div>
+        </div>
+
+        {/* Questions */}
+        <CollapsibleContent>
+          <DndContext
+            id={`dnd-questions-${section.id}`}
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={(e) => {
+              const { active, over } = e;
+              if (over) onReorderQuestions(section.id, active.id, over.id);
+            }}
+          >
+            <SortableContext
+              items={section.questions.map((q: any) => q.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {section.questions.map((question: any) => (
+                  <SortableQuestion
+                    key={question.id}
+                    question={question}
+                    quizId={quizId}
+                    courseId={courseId}
+                    sectionId={section.id}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 }
@@ -459,7 +508,21 @@ export function SortableQuestion({
             </div>
 
             {/* Add Answer Form */}
-            <AnswerForm questionId={question.id} courseId={courseId} />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-center gap-1"
+                >
+                  <Plus className="size-4" />
+                  New Answer
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogTitle>Create New Answer</DialogTitle>
+                <AnswerForm questionId={question.id} courseId={courseId} />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
