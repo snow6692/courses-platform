@@ -14,6 +14,7 @@ import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +27,7 @@ import { useForm } from "react-hook-form";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
 import { createLesson } from "@/actions/lesson.action";
+import { Switch } from "../ui/switch";
 export default function LessonForm({
   courseId,
   chapterId,
@@ -43,6 +45,7 @@ export default function LessonForm({
       thumbnailKey: "",
       videoKey: "",
       pdfKey: "",
+      isFree: false,
     },
   });
 
@@ -102,6 +105,30 @@ export default function LessonForm({
                 </FormItem>
               )}
             />
+
+            {/* Is free */}
+            <FormField
+              name="isFree"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Free Preview</FormLabel>
+                    <FormDescription>
+                      Allow users to access this lesson without enrolling in the
+                      course
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
             <DialogFooter>
               <Button
                 className={`w-full cursor-pointer`}

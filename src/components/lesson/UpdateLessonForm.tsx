@@ -14,6 +14,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,6 +31,7 @@ import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Switch } from "../ui/switch";
 
 interface IProps {
   lesson: AdminLessonType;
@@ -47,6 +49,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
       thumbnailKey: lesson.thumbnailKey ?? undefined,
       videoKey: lesson.videoKey ?? undefined,
       pdfKey: lesson.pdfKey ?? undefined,
+      isFree: lesson.isFree,
     },
   });
   const [pending, startTransition] = useTransition();
@@ -115,6 +118,30 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                   </FormItem>
                 )}
               />
+
+              {/* Is free */}
+              <FormField
+                name="isFree"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Free Preview</FormLabel>
+                      <FormDescription>
+                        Allow users to access this lesson without enrolling in
+                        the course
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 name="thumbnailKey"
                 control={form.control}

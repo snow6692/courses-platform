@@ -72,6 +72,7 @@ function CourseStructure({ data }: IProps) {
         isOpen: true,
         description: lesson.description,
         quizzes: lesson.quizzes,
+        isFree: lesson.isFree,
       })),
     })) || [];
   const [items, setItems] = useState(initialItems);
@@ -93,6 +94,7 @@ function CourseStructure({ data }: IProps) {
             isOpen: true,
             description: lesson.description,
             quizzes: lesson.quizzes,
+            isFree: lesson.isFree,
           })),
         })) || [];
 

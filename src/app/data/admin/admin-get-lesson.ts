@@ -17,6 +17,7 @@ export async function adminGetLesson(id: string) {
       id: true,
       pdfKey: true,
       position: true,
+      isFree: true,
     },
   });
   if (!data) return notFound();

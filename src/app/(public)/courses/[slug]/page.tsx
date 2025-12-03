@@ -4,6 +4,7 @@ import EnrollmentButton from "@/components/course/EnrollmentButton";
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { FreeLessonBadge } from "@/components/lesson/FreeLessonBadge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Collapsible,
@@ -40,7 +41,7 @@ export async function generateStaticParams() {
     },
   });
   return courses.map((course) => ({
-    slug: course.slug, 
+    slug: course.slug,
   }));
 }
 
@@ -69,11 +70,10 @@ async function CoursePage({ params }: IProps) {
           </div>
           <div className="mt-10 space-y-6">
             <div className="space-y-4">
-            
-                <h1 className="text-4xl font-bold tracking-tight">
-                  {course.title}
-                </h1>
-            
+              <h1 className="text-4xl font-bold tracking-tight">
+                {course.title}
+              </h1>
+
               <p className="text-muted-foreground line-clamp-2 text-lg leading-relaxed">
                 {course.smallDescription}
               </p>
@@ -162,25 +162,51 @@ async function CoursePage({ params }: IProps) {
                     <CollapsibleContent>
                       <div className="bg-muted/20 border-t">
                         <div className="space-y-3 p-6 pt-4">
-                          {chapter.lessons.map((lesson, lessonIndex) => (
-                            <div
-                              className="hover:bg-accent group flex items-center gap-4 rounded-lg p-3 transition-colors"
-                              key={lesson.id}
-                            >
-                              <div className="border-primary/20 flex size-8 items-center justify-center rounded-full border-2">
-                                <IconPlayerPlay className="text-muted-foreground group-hover:text-primary size-4 transition-colors" />
-                              </div>
+                          {chapter.lessons.map((lesson, lessonIndex) => {
+                            const isAccessible = lesson.isFree || isEnrolled;
 
-                              <div className="flex-1">
-                                <p className="text-sm font-medium">
-                                  {lesson.title}
-                                </p>
-                                <p className="text-muted-foreground mt-1 text-xs">
-                                  Lesson {lessonIndex + 1}
-                                </p>
+                            return isAccessible ? (
+                              <Link
+                                href={`/dashboard/${course.slug}/${lesson.id}`}
+                                className="hover:bg-accent group flex items-center gap-4 rounded-lg p-3 transition-colors"
+                                key={lesson.id}
+                              >
+                                <div className="border-primary/20 flex size-8 items-center justify-center rounded-full border-2">
+                                  <IconPlayerPlay className="text-muted-foreground group-hover:text-primary size-4 transition-colors" />
+                                </div>
+
+                                <div className="flex-1">
+                                  <div className="flex items-center">
+                                    <p className="text-sm font-medium">
+                                      {lesson.title}
+                                    </p>
+                                    {lesson.isFree && <FreeLessonBadge />}
+                                  </div>
+                                  <p className="text-muted-foreground mt-1 text-xs">
+                                    Lesson {lessonIndex + 1}
+                                  </p>
+                                </div>
+                              </Link>
+                            ) : (
+                              <div
+                                className="group flex cursor-not-allowed items-center gap-4 rounded-lg p-3 opacity-60"
+                                key={lesson.id}
+                              >
+                                <div className="border-primary/20 flex size-8 items-center justify-center rounded-full border-2">
+                                  <IconPlayerPlay className="text-muted-foreground size-4" />
+                                </div>
+
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium">
+                                    {lesson.title}
+                                  </p>
+                                  <p className="text-muted-foreground mt-1 text-xs">
+                                    Lesson {lessonIndex + 1}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     </CollapsibleContent>

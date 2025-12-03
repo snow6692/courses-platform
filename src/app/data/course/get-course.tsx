@@ -1,4 +1,3 @@
-
 import prisma from "@/lib/db";
 import { notFound } from "next/navigation";
 
@@ -10,6 +9,7 @@ export async function getCourse(slug: string) {
     select: {
       id: true,
       fileKey: true,
+      slug: true,
       title: true,
       level: true,
       price: true,
@@ -25,6 +25,7 @@ export async function getCourse(slug: string) {
             select: {
               id: true,
               title: true,
+              isFree: true,
             },
             orderBy: {
               position: "asc",

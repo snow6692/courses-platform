@@ -10,6 +10,7 @@ export const lessonSchema = z.object({
   thumbnailKey: z.string().optional(),
   pdfKey: z.string().optional(),
   videoKey: z.string().optional(),
+  isFree: z.boolean().optional(),
 });
 
 export type LessonSchemaType = z.infer<typeof lessonSchema>;

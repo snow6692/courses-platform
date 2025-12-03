@@ -44,6 +44,7 @@ export async function adminGetCourse(id: string) {
                     select: {
                       id: true,
                       position: true,
+                      sectionId: true,
                       text: true,
                       imageKey: true,
                       explanation: true,
@@ -65,7 +66,7 @@ export async function adminGetCourse(id: string) {
           lessons: {
             select: {
               id: true,
-              
+              isFree: true,
               position: true,
               description: true,
               thumbnailKey: true,
