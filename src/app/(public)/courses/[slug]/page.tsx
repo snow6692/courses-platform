@@ -167,7 +167,7 @@ async function CoursePage({ params }: IProps) {
 
                             return isAccessible ? (
                               <Link
-                                href={`/dashboard/${course.slug}/${lesson.id}`}
+                                href={`/courses/${course.slug}/${lesson.id}`}
                                 className="hover:bg-accent group flex items-center gap-4 rounded-lg p-3 transition-colors"
                                 key={lesson.id}
                               >

@@ -1,64 +1,67 @@
+// src/components/lesson/CompleteLessonButton.tsx
 "use client";
+
 import React, { useTransition } from "react";
 import { Button } from "../ui/button";
 import { CheckCircle } from "lucide-react";
 import { markLessonCompleted } from "@/actions/lesson.action";
-import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
 import { useConfetti } from "@/hooks/use-confetti";
 
-function CompleteLessonButton({
-  id,
-  slug,
-  lessonProgress,
-}: {
+interface CompleteLessonButtonProps {
   id: string;
   slug: string;
-  lessonProgress: { completed: boolean; lessonId: string }[];
-}) {
+  isCompleted?: boolean;
+}
+
+export default function CompleteLessonButton({
+  id,
+  slug,
+  isCompleted = false,
+}: CompleteLessonButtonProps) {
   const [pending, startTransition] = useTransition();
   const { triggerConfetti } = useConfetti();
-  const onSubmit = () => {
-    //Update Course
-    startTransition(async () => {
-      const { data: result, error } = await tryCatch(
-        markLessonCompleted(id, slug),
-      );
-      //Failed on client side
-      if (error) {
-        toast.error("Failed to update course, Try again later");
-        return;
-      }
-      if (result.status === "success") {
-        toast.success(result.message);
-        triggerConfetti();
 
+  const onSubmit = () => {
+    startTransition(async () => {
+      const result = await markLessonCompleted(id, slug);
+
+      if (!result || result.status === "error") {
+        toast.error(result?.message || "Failed to mark lesson as complete");
         return;
       }
-      if (result.status === "error") {
-        toast.error(result.message);
-        return;
-      }
+
+      toast.success(result.message || "Lesson completed!");
+      triggerConfetti();
     });
   };
-  return (
-    <div className="border-b py-4">
-      {lessonProgress.length > 0 ? (
+
+  if (isCompleted) {
+    return (
+      <div className="border-b py-4">
         <Button
-          variant={"outline"}
-          className="bg-green-500/10 text-green-500 hover:text-green-600"
+          variant="outline"
+          disabled
+          className="bg-green-500/10 text-green-500 hover:bg-green-500/20"
         >
-          <CheckCircle className="mr-2 size-4 text-green-500" />
+          <CheckCircle className="mr-2 size-5" />
           Completed
         </Button>
-      ) : (
-        <Button variant={"outline"} onClick={onSubmit} disabled={pending}>
-          <CheckCircle className="mr-2 size-4 text-green-500" />
-          Mark as complete
-        </Button>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-b py-4">
+      <Button
+        variant="outline"
+        onClick={onSubmit}
+        disabled={pending}
+        className="hover:bg-green-500/10 text-green-600 hover:text-green-700"
+      >
+        <CheckCircle className="mr-2 size-5" />
+        {pending ? "Saving..." : "Mark as Complete"}
+      </Button>
     </div>
   );
 }
-
-export default CompleteLessonButton;

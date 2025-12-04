@@ -7,45 +7,59 @@ import CompleteLessonButton from "./CompleteLessonButton";
 import { FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
-function LessonContent({ lesson }: { lesson: LessonContentType }) {
+interface LessonContentProps {
+  lesson: LessonContentType;
+}
+
+export default function LessonContent({ lesson }: LessonContentProps) {
   const hasVideo = !!lesson.videoKey;
   const hasPdf = !!lesson.pdfKey;
-  console.log("hey " + lesson.thumbnailKey);
-  console.log("hey " + lesson.pdfKey);
+
+  const progress = Array.isArray(lesson.lessonProgress)
+    ? lesson.lessonProgress
+    : [];
+  const isCompleted = progress.length > 0 && progress[0]?.completed === true;
 
   return (
     <div className="bg-background flex h-full flex-col gap-8 pt-6 pr-6 pb-12 pl-6">
+      {/* Video Player */}
       {hasVideo && (
         <VideoPlayer
-          thumbnailKey={lesson.thumbnailKey ?? ""}
-          videoKey={lesson.videoKey ?? ""}
+          thumbnailKey={lesson.thumbnailKey}
+          videoKey={lesson.videoKey!}
         />
       )}
 
+      {/* PDF Viewer */}
       {hasPdf && <PdfViewer pdfKey={lesson.pdfKey!} title={lesson.title} />}
 
+      {/* No Media Fallback */}
       {!hasVideo && !hasPdf && (
-        <Card className="border-dashed">
+        <Card className="border-2 border-dashed">
           <CardHeader>
             <CardTitle className="text-muted-foreground flex items-center gap-3">
               <FileText className="size-8" />
-              No media content
+              لا يوجد ملف وسائط
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              This lesson contains only a text description.
+              هذا الدرس يحتوي فقط على وصف نصي.
             </p>
           </CardContent>
         </Card>
       )}
 
-      <CompleteLessonButton
-        id={lesson.id}
-        slug={lesson.Chapter.Course.slug}
-        lessonProgress={lesson.lessonProgress}
-      />
+      {/* For enrollemnt use=er */}
+      {progress !== null && (
+        <CompleteLessonButton
+          id={lesson.id}
+          slug={lesson.Chapter.Course.slug}
+          isCompleted={isCompleted}
+        />
+      )}
 
+      {/* Lesson Title & Description */}
       <div className="space-y-6">
         <h1 className="text-foreground text-3xl font-bold tracking-tight lg:text-4xl">
           {lesson.title}
@@ -55,12 +69,10 @@ function LessonContent({ lesson }: { lesson: LessonContentType }) {
           <RenderDescription json={JSON.parse(lesson.description)} />
         ) : (
           <p className="text-muted-foreground italic">
-            No description provided.
+            لا يوجد وصف لهذا الدرس.
           </p>
         )}
       </div>
     </div>
   );
 }
-
-export default LessonContent;
