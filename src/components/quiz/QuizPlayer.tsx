@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
@@ -25,6 +25,9 @@ import {
   quizPlayerSchema,
   QuizPlayerSchemaType,
 } from "@/validation/quizPlayer.zod";
+import { submitQuiz } from "@/actions/quiz/student.actions";
+import QuizResult from "./QuizResult";
+import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 
 interface QuizPlayerProps {
   quiz: QuizForStudent;
@@ -34,10 +37,18 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [quizResult, setQuizResult] = useState<any>(null);
+  const [showMeme, setShowMeme] = useState(false);
+  const [memeUrl, setMemeUrl] = useState<string | null>(null);
   const router = useRouter();
 
   const sections = quiz.sections ?? [];
   const currentSection = sections[currentSectionIndex];
+
+  // Calculate time threshold per question (e.g., Section Time / Question Count)
+  const timePerQuestion = currentSection?.timeLimit
+    ? currentSection.timeLimit / (currentSection.questions.length || 1)
+    : 60; // Default 60s if no limit
 
   const form = useForm<QuizPlayerSchemaType>({
     resolver: zodResolver(quizPlayerSchema),
@@ -73,13 +84,41 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  const handleSectionComplete = useCallback(() => {
+  // Meme Timer Logic: Track time spent on current section/questions
+  useEffect(() => {
+    const memeTimer = setInterval(() => {
+      if (currentSection?.timeLimit && timeLeft !== null) {
+        const timeElapsed = currentSection.timeLimit - timeLeft;
+        const answers = form.getValues().answers;
+        const answeredCount = currentSection.questions.filter((q) => {
+          const ans = answers[q.id];
+          return Array.isArray(ans) ? ans.length > 0 : !!ans;
+        }).length;
+
+        // If time elapsed is significantly more than expected for the number of answered questions
+        if (timeElapsed > (answeredCount + 1) * timePerQuestion + 10) {
+          // +10s buffer
+          const tooSlowMeme = quiz.memes.find((m) => m.trigger === "TOO_SLOW");
+          if (tooSlowMeme && !showMeme) {
+            setMemeUrl(useConstructUrl(tooSlowMeme.fileKey));
+            setShowMeme(true);
+            setTimeout(() => setShowMeme(false), 3000);
+          }
+        }
+      }
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(memeTimer);
+  }, [timeLeft, currentSection, form, showMeme, quiz.memes, timePerQuestion]);
+
+  const handleSectionComplete = useCallback(async () => {
     if (currentSectionIndex < sections.length - 1) {
       toast.info("Time's up! Moving to the next section.");
       setCurrentSectionIndex((prev) => prev + 1);
+      window.scrollTo(0, 0);
     } else {
       toast.info("Time's up! Submitting quiz.");
-      handleSubmit(form.getValues());
+      await handleSubmit(form.getValues());
     }
   }, [currentSectionIndex, sections.length, form]);
 
@@ -88,9 +127,10 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
     // Validate current section questions are answered
     const currentQuestions = currentSection?.questions || [];
-    const unansweredQuestions = currentQuestions.filter(
-      (q) => !values.answers[q.id],
-    );
+    const unansweredQuestions = currentQuestions.filter((q) => {
+      const ans = values.answers[q.id];
+      return !ans || (Array.isArray(ans) && ans.length === 0);
+    });
 
     if (unansweredQuestions.length > 0) {
       toast.error(
@@ -109,16 +149,30 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
   const handleSubmit = async (values: QuizPlayerSchemaType) => {
     setIsSubmitting(true);
-    // TODO: Implement submission logic
-    // const result = await submitQuiz(quiz.id, values.answers);
-    // if (result.success) {
-    //   router.push(`/courses/${quiz.courseId}/quiz/${quiz.id}/result`);
-    // }
-    setTimeout(() => {
+    try {
+      const result = await submitQuiz(quiz.id, values.answers);
+      if (result.success) {
+        setQuizResult(result);
+        toast.success("Quiz submitted successfully!");
+      } else {
+        toast.error("Failed to submit quiz.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while submitting the quiz.");
+    } finally {
       setIsSubmitting(false);
-      toast.success("Quiz submitted! (Mock)");
-    }, 1000);
+    }
   };
+
+  if (quizResult) {
+    return (
+      <QuizResult
+        result={quizResult}
+        onRetry={() => window.location.reload()}
+      />
+    );
+  }
 
   if (!currentSection) {
     return (
@@ -136,7 +190,17 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-6">
+    <div className="relative mx-auto max-w-4xl space-y-8 p-6">
+      {showMeme && memeUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <img
+            src={memeUrl}
+            alt="Meme"
+            className="animate-in zoom-in max-w-md rounded-lg shadow-2xl duration-300"
+          />
+        </div>
+      )}
+
       <div className="bg-background/95 sticky top-0 z-10 flex items-center justify-between border-b py-4 backdrop-blur">
         <div>
           <h2 className="text-xl font-bold">{currentSection.title}</h2>
@@ -158,71 +222,130 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-12">
-          {currentSection.questions.map((question, index) => (
-            <Card key={question.id} className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <span className="bg-muted flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold">
-                    {index + 1}
-                  </span>
-                  <div className="flex-1 space-y-2">
-                    <RenderDescription json={question.text} />
-                    {question.imageKey && (
-                      <img
-                        src={useConstructUrl(question.imageKey)}
-                        alt="Question Image"
-                        className="mt-2 h-auto max-w-full rounded-lg"
-                      />
-                    )}
-                  </div>
-                </div>
+          {currentSection.questions.map((question, index) => {
+            const isMultipleChoice =
+              question.answers.filter((a) => a.isCorrect).length > 1;
 
-                <FormField
-                  control={form.control}
-                  name={`answers.${question.id}`}
-                  render={({ field }) => (
-                    <FormItem className="pl-12">
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          className="space-y-3"
-                        >
-                          {question.answers.map((answer) => (
-                            <div
-                              key={answer.id}
-                              className="flex items-center space-x-2"
-                            >
-                              <RadioGroupItem
-                                value={answer.id}
-                                id={answer.id}
-                              />
-                              <div className="flex flex-col gap-2">
-                                {answer.imageKey && (
-                                  <img
-                                    src={useConstructUrl(answer.imageKey)}
-                                    alt="Answer Image"
-                                    className="h-20 w-20 rounded-md object-cover"
-                                  />
-                                )}
-                                <Label
-                                  htmlFor={answer.id}
-                                  className="cursor-pointer text-base font-normal"
+            return (
+              <Card key={question.id} className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex flex-1 items-start gap-4">
+                      <span className="bg-muted flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold">
+                        {index + 1}
+                      </span>
+                      <div className="flex-1 space-y-2">
+                        <RenderDescription json={question.text} />
+                        {question.imageKey && (
+                          <img
+                            src={useConstructUrl(question.imageKey)}
+                            alt="Question Image"
+                            className="mt-2 h-auto max-w-full rounded-lg"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <ToggleFavoriteButton
+                      questionId={question.id}
+                      isFavorited={question.favoriteQuestions?.length > 0}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name={`answers.${question.id}`}
+                    render={({ field }) => (
+                      <FormItem className="pl-12">
+                        <FormControl>
+                          {isMultipleChoice ? (
+                            <div className="space-y-3">
+                              {question.answers.map((answer) => (
+                                <div
+                                  key={answer.id}
+                                  className="flex items-center space-x-2"
                                 >
-                                  {answer.text}
-                                </Label>
-                              </div>
+                                  <Checkbox
+                                    id={answer.id}
+                                    checked={
+                                      Array.isArray(field.value) &&
+                                      field.value.includes(answer.id)
+                                    }
+                                    onCheckedChange={(checked) => {
+                                      const current = Array.isArray(field.value)
+                                        ? field.value
+                                        : [];
+                                      if (checked) {
+                                        field.onChange([...current, answer.id]);
+                                      } else {
+                                        field.onChange(
+                                          current.filter(
+                                            (val: string) => val !== answer.id,
+                                          ),
+                                        );
+                                      }
+                                    }}
+                                  />
+                                  <div className="flex flex-col gap-2">
+                                    {answer.imageKey && (
+                                      <img
+                                        src={useConstructUrl(answer.imageKey)}
+                                        alt="Answer Image"
+                                        className="h-20 w-20 rounded-md object-cover"
+                                      />
+                                    )}
+                                    <Label
+                                      htmlFor={answer.id}
+                                      className="cursor-pointer text-base font-normal"
+                                    >
+                                      {answer.text}
+                                    </Label>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </Card>
-          ))}
+                          ) : (
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value as string}
+                              className="space-y-3"
+                            >
+                              {question.answers.map((answer) => (
+                                <div
+                                  key={answer.id}
+                                  className="flex items-center space-x-2"
+                                >
+                                  <RadioGroupItem
+                                    value={answer.id}
+                                    id={answer.id}
+                                  />
+                                  <div className="flex flex-col gap-2">
+                                    {answer.imageKey && (
+                                      <img
+                                        src={useConstructUrl(answer.imageKey)}
+                                        alt="Answer Image"
+                                        className="h-20 w-20 rounded-md object-cover"
+                                      />
+                                    )}
+                                    <Label
+                                      htmlFor={answer.id}
+                                      className="cursor-pointer text-base font-normal"
+                                    >
+                                      {answer.text}
+                                    </Label>
+                                  </div>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          )}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </Card>
+            );
+          })}
 
           <div className="flex justify-end pt-8">
             <Button

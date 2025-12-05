@@ -6,6 +6,8 @@ import PdfViewer from "./PdfViewer";
 import CompleteLessonButton from "./CompleteLessonButton";
 import { FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface LessonContentProps {
   lesson: LessonContentType;
@@ -25,7 +27,7 @@ export default function LessonContent({ lesson }: LessonContentProps) {
       {/* Video Player */}
       {hasVideo && (
         <VideoPlayer
-          thumbnailKey={lesson.thumbnailKey}
+          thumbnailKey={lesson.thumbnailKey ?? ""}
           videoKey={lesson.videoKey!}
         />
       )}
@@ -52,11 +54,22 @@ export default function LessonContent({ lesson }: LessonContentProps) {
 
       {/* For enrollemnt use=er */}
       {progress !== null && (
-        <CompleteLessonButton
-          id={lesson.id}
-          slug={lesson.Chapter.Course.slug}
-          isCompleted={isCompleted}
-        />
+        <div className="flex flex-col gap-4">
+          <CompleteLessonButton
+            id={lesson.id}
+            slug={lesson.Chapter.Course.slug}
+            isCompleted={isCompleted}
+          />
+          {lesson.quizzes && lesson.quizzes.length > 0 && (
+            <Button asChild variant="secondary" className="w-full">
+              <Link
+                href={`/courses/${lesson.Chapter.Course.slug}/quiz/${lesson.quizzes[0].id}`}
+              >
+                Start Quiz
+              </Link>
+            </Button>
+          )}
+        </div>
       )}
 
       {/* Lesson Title & Description */}

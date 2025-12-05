@@ -31,6 +31,9 @@ export async function getLessonContent(lessonId: string) {
           select: { completed: true },
         },
       }),
+      quizzes: {
+        select: { id: true },
+      },
     },
   });
 

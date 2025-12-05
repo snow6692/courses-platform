@@ -1,5 +1,6 @@
 import { adminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
-import { QuizStructure } from "@/components/quiz/admin/QuizStructure";
+import QuizStructure from "@/components/quiz/admin/QuizStructure";
+
 import { notFound } from "next/navigation";
 import React from "react";
 
