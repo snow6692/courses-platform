@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "badge": "The First Education Platform in the Kingdom",
+    "title": "Start your journey towards",
+    "highlight": "Excellence",
+    "sub_highlight": "in Achievement",
+    "description": "Spider Platform provides you with the latest interactive educational methods, simplified explanations, and realistic tests to ensure your admission to the university of your dreams.",
+    "subscribe": "Subscribe Now Free",
+    "browse": "Browse Subjects",
+    "stats": {
+      "students": "Thousand Students",
+      "courses": "Educational Course",
+      "rating": "3.9"
+    }
+  },
+  "navbar": {
+    "home": "Home",
+    "courses": "Courses",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "get_started": "Get Started"
+  }
+}

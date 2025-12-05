@@ -2,27 +2,13 @@
 import Link from "next/link";
 
 import Image from "next/image";
-import { ModeToggle } from "@/components/ui/ModeToggle";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/hooks/useAuthUser";
 import { Button, buttonVariants } from "@/components/ui/button";
 import UserDropDown from "../auth/UserDropDown";
-
-const navItems = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Courses",
-    href: "/courses",
-  },
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-  },
-];
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useLanguage } from "@/providers/LanguageContext";
 
 function Navbar() {
   const pathname = usePathname();
@@ -31,27 +17,42 @@ function Navbar() {
     session: { user },
     isPending,
   } = useSession();
+  const { t } = useLanguage();
+
+  const navItems = [
+    {
+      label: t("navbar.home"),
+      href: "/",
+    },
+    {
+      label: t("navbar.courses"),
+      href: "/courses",
+    },
+    {
+      label: t("navbar.dashboard"),
+      href: "/dashboard",
+    },
+  ];
 
   return (
     <header className="bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b">
       <div className="container mx-auto flex min-h-16 items-center justify-between px-4 py-4 md:px-6 lg:px-8">
-        <Link href={"/"} className="mr-4 flex items-center space-x-2">
+        <Link href={"/"} className="flex items-center gap-2">
           <Image
-            src={"/logo.jpg"}
+            src={"/images/logo.svg"}
             alt="logo"
             width={50}
             height={50}
             className="size-9 rounded-full transition-all duration-[3000] hover:animate-spin"
           />
-          <span className="text-2xl font-bold">Courses</span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex md:flex-1 md:items-center md:justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-6 ltr:ml-6 rtl:mr-6">
             {navItems.map((item) => (
               <Link
-                key={item.label}
+                key={item.href}
                 href={item.href}
                 className={cn(
                   "text-muted-foreground hover:text-foreground text-sm font-medium",
@@ -62,17 +63,17 @@ function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center space-x-4">
-            <ModeToggle />
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             {isPending ? null : user ? (
               <></>
             ) : (
-              <Link href={"/login"}>Login</Link>
+              <Link href={"/login"}>{t("navbar.login")}</Link>
             )}
             {user ? (
               <>
                 <Link href={"/dashboard"}>
-                  <Button>Dashboard</Button>
+                  <Button>{t("navbar.dashboard")}</Button>
                 </Link>
 
                 <UserDropDown
@@ -86,7 +87,7 @@ function Navbar() {
                 href={"/login"}
                 className={buttonVariants({ variant: "outline" })}
               >
-                Get Started
+                {t("navbar.get_started")}
               </Link>
             )}
           </div>
