@@ -1,8 +1,9 @@
 "use client";
 import { useLanguage } from "@/providers/LanguageContext";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function HeroSection({
   coursesCount,
@@ -11,13 +12,13 @@ export function HeroSection({
   usersCount: number;
   coursesCount: number;
 }) {
-  const { t, dir } = useLanguage();
+  const { t } = useLanguage();
 
   return (
-    <section className="bg-bg-hero relative min-h-[85vh] w-full overflow-hidden px-6 py-12 md:px-12 lg:px-24">
-      <div className="container mx-auto grid h-full grid-cols-1 items-center gap-12 lg:grid-cols-2">
+    <section className="bg-bg-hero relative min-h-screen w-full overflow-hidden pt-20 lg:pt-0">
+      <div className="container mx-auto grid h-full min-h-[90vh] grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
         {/* Text Content */}
-        <div className="flex flex-col items-start space-y-8">
+        <div className="flex flex-col items-start space-y-8 py-12 lg:py-0">
           {/* Badge */}
           <div className="inline-flex items-center rounded-full bg-white px-4 py-2 shadow-sm">
             <span className="text-foreground text-sm font-medium">
@@ -27,23 +28,23 @@ export function HeroSection({
           </div>
 
           {/* Title */}
-          <h1 className="text-foreground text-4xl leading-tight font-bold md:text-6xl lg:text-7xl">
+          <h1 className="text-foreground text-5xl leading-tight font-extrabold md:text-6xl lg:text-7xl">
             {t("hero.title")}
             <br />
-            <span className="text-primary relative inline-block">
+            <span className="text-primary relative mt-2 inline-block">
               {t("hero.highlight")}
               {/* Underline decoration */}
               <svg
-                className="absolute -bottom-2 left-0 w-full"
+                className="absolute right-0 -bottom-2 w-full"
                 viewBox="0 0 100 10"
                 preserveAspectRatio="none"
               >
                 <path
                   d="M0 5 Q 50 10 100 5"
                   stroke="currentColor"
-                  strokeWidth="4"
+                  strokeWidth="8"
                   fill="none"
-                  className="text-blue-200 opacity-50"
+                  className="text-blue-200/50"
                 />
               </svg>
             </span>
@@ -52,77 +53,103 @@ export function HeroSection({
           </h1>
 
           {/* Description */}
-          <p className="text-muted-foreground max-w-xl text-lg font-semibold md:text-xl">
+          <p className="text-muted-foreground max-w-lg text-lg leading-relaxed font-medium md:text-xl">
             {t("hero.description")}
           </p>
 
           {/* Buttons */}
           <div className="flex w-full flex-col gap-4 sm:flex-row">
-            <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg font-semibold text-white"
+            <Link
+              href={"/login"}
+              className={buttonVariants({
+                size: "lg",
+                className:
+                  "bg-primary hover:bg-primary/90 min-w-[200px] text-lg font-bold text-white shadow-lg shadow-red-500/20",
+              })}
             >
               {t("hero.subscribe")}
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-primary text-foreground hover:bg-primary/5 px-8 py-6 text-lg font-semibold"
+            </Link>
+            <Link
+              href={"/courses"}
+              className={buttonVariants({
+                size: "lg",
+                className:
+                  "border-primary min-w-[200px] border-2 bg-transparent text-lg font-bold text-[black!important] hover:bg-red-50",
+              })}
             >
               {t("hero.browse")}
-            </Button>
+            </Link>
           </div>
 
           {/* Stats */}
-          <div className="border-border mt-8 flex w-full items-center justify-between border-t pt-8 sm:w-auto sm:gap-12">
-            <div className="flex flex-col items-center">
-              <span className="text-foreground text-2xl font-bold">
-                {usersCount}
-              </span>
-              <span className="text-muted-foreground text-sm">
-                {t("hero.stats.students")}
-              </span>
-            </div>
-            <div className="bg-border h-10 w-px"></div>
-            <div className="flex flex-col items-center">
-              <span className="text-foreground text-2xl font-bold">
-                {coursesCount}
-              </span>
-              <span className="text-muted-foreground text-sm">
-                {t("hero.stats.courses")}
-              </span>
-            </div>
-            <div className="bg-border h-10 w-px"></div>
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-1">
-                <span className="text-foreground text-2xl font-bold">
-                  {t("hero.stats.rating")}
+          <div className="mt-8 flex w-full flex-col gap-6 sm:flex-row sm:items-center sm:gap-12">
+            <div className="flex items-center justify-between gap-8 border-t pt-8 sm:justify-start sm:border-t-0 sm:pt-0">
+              <div className="flex flex-col items-start">
+                <span className="text-3xl font-bold text-black">
+                  {usersCount}
                 </span>
-                <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                <span className="text-muted-foreground text-sm font-medium">
+                  {t("hero.stats.students")}
+                </span>
+              </div>
+              <div className="bg-border h-12 w-px"></div>
+              <div className="flex flex-col items-start">
+                <span className="text-3xl font-bold text-black">
+                  {coursesCount}
+                </span>
+                <span className="text-muted-foreground text-sm font-medium">
+                  {t("hero.stats.courses")}
+                </span>
+              </div>
+              <div className="bg-border h-12 w-px"></div>
+              <div className="flex flex-col items-start">
+                <div className="flex items-center gap-1">
+                  <span className="text-3xl font-bold text-black">
+                    {t("hero.stats.rating")}
+                  </span>
+                  <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                </div>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="text-muted-foreground/30 h-3 w-3 fill-current"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Image/Illustration */}
-        <div className="relative flex h-full min-h-[400px] w-full items-center justify-center lg:min-h-[600px]">
-          {/* Decorative elements */}
-          <div className="border-primary absolute top-10 left-10 h-12 w-12 rotate-12 rounded-xl border-4 opacity-80"></div>
-          <div className="bg-primary absolute right-10 bottom-20 h-8 w-8 rounded-full opacity-20"></div>
-          <div className="absolute top-20 right-20 h-6 w-6 rounded-full bg-yellow-400 opacity-60"></div>
-
-          {/* Main Illustration */}
-          <div className="relative z-10 flex h-full w-full items-center justify-center">
+        <div className="relative flex h-full min-h-[500px] w-full items-center justify-center lg:min-h-[700px]">
+          <div className="relative z-10 h-full w-full">
             <Image
               src="/images/hero.svg"
               alt={t("hero.title")}
-              width={600}
-              height={600}
+              fill
               className="object-contain"
               priority
             />
           </div>
         </div>
+      </div>
+
+      {/* Bottom Wave Divider */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+        <svg
+          className="relative block h-[30px] w-[calc(100%+1.3px)] sm:h-[60px]"
+          data-name="Layer 1"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M985.66,92.83C906.67,72,823.78,31,432.84,52.47,276.53,60.83,109.25,32.38,32,0L0,0V120H1200V75.1C1154.27,99.37,1065.19,113.67,985.66,92.83Z"
+            className="fill-background"
+          ></path>
+        </svg>
       </div>
     </section>
   );

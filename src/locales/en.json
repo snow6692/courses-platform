@@ -13,6 +13,45 @@
       "rating": "3.9"
     }
   },
+  "home": {
+    "best_selling": {
+      "title": "Best Selling Materials",
+      "view_all": "View All",
+      "students": "Students",
+      "hours": "Hours",
+      "details": "View Details",
+      "currency": "SAR"
+    },
+    "learn_your_way": {
+      "title_part1": "Learn your way,",
+      "title_part2": "at the time that",
+      "highlight": "suits you",
+      "description": "We don't just provide courses, we provide a complete educational experience. With Spider, you can access a huge library of video explanations, mind maps, and interactive quizzes that ensure deep understanding of the subject.",
+      "button": "Explore More"
+    },
+    "start_journey": {
+      "title": "Are you ready to start your educational journey?",
+      "description": "Join thousands of successful students and start achieving your dreams today",
+      "button": "Subscribe Now"
+    }
+  },
+  "footer": {
+    "slogan": "Your constant companion in the journey of academic excellence.",
+    "links": {
+      "title": "Quick Links",
+      "about": "About Us",
+      "terms": "Terms & Conditions",
+      "privacy": "Privacy Policy"
+    },
+    "support": {
+      "title": "Support",
+      "help_center": "Help Center",
+      "contact": "Contact Us"
+    },
+    "follow": {
+      "title": "Follow Us"
+    }
+  },
   "navbar": {
     "home": "Home",
     "courses": "Courses",

@@ -35,7 +35,7 @@ function Navbar() {
   ];
 
   return (
-    <header className="bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b">
+    <header className="border-border/40 bg-background/60 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-xl">
       <div className="container mx-auto flex min-h-16 items-center justify-between px-4 py-4 md:px-6 lg:px-8">
         <Link href={"/"} className="flex items-center gap-2">
           <Image
