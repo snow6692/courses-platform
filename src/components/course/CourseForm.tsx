@@ -70,8 +70,8 @@ function CourseForm({ course }: CourseFormProps) {
           fileKey: course.fileKey ?? "",
           price: course.price ?? 0,
           duration: course.duration ?? 1,
-          level: course.level ?? "BEGINNER",
-          status: course.status ?? "DRAFT",
+          level: course.level ?? CourseLevelEnum.BEGINNER,
+          status: course.status ?? CourseStatusEnum.DRAFT,
           category: (course.category ??
             CATEGORIES[0]) as CourseSchemaType["category"],
           smallDescription: course.smallDescription ?? "",
@@ -83,11 +83,11 @@ function CourseForm({ course }: CourseFormProps) {
           fileKey: "",
           price: 0,
           duration: 1,
-          level: "BEGINNER",
+          level: CourseLevelEnum.BEGINNER,
           category: "Development",
           smallDescription: "",
           slug: "",
-          status: "DRAFT",
+          status: CourseStatusEnum.DRAFT,
         },
   });
 

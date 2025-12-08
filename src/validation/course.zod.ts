@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CATEGORIES } from "../lib/constants";
-import { CourseLevelEnum, CourseStatusEnum } from "@/lib/course-enums";
+import { CourseLevelEnum, CourseStatusEnum } from "../lib/course-enums";
 export const courseSchema = z.object({
   title: z
     .string()
