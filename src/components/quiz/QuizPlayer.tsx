@@ -98,9 +98,11 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
         // If time elapsed is significantly more than expected for the number of answered questions
         if (timeElapsed > (answeredCount + 1) * timePerQuestion + 10) {
           // +10s buffer
-          const tooSlowMeme = quiz.memes.find((m) => m.trigger === "TOO_SLOW");
+          const tooSlowMeme = quiz.memes.find(
+            (m) => m.meme.trigger === "TOO_SLOW",
+          );
           if (tooSlowMeme && !showMeme) {
-            setMemeUrl(useConstructUrl(tooSlowMeme.fileKey));
+            setMemeUrl(useConstructUrl(tooSlowMeme.meme.fileKey));
             setShowMeme(true);
             setTimeout(() => setShowMeme(false), 3000);
           }

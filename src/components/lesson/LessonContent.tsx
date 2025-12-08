@@ -8,18 +8,38 @@ import { FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { PublicLessonType } from "@/app/data/lesson/getFreelessons";
+
+// Unified interface compatible with both types
+interface LessonProps {
+  id: string;
+  title: string;
+  description: string | null;
+  videoKey: string | null;
+  thumbnailKey: string | null;
+  pdfKey: string | null;
+  Chapter: {
+    Course: {
+      slug: string;
+      title: string;
+    };
+  };
+  lessonProgress?: { completed: boolean }[] | any[]; // Relaxed type to handle both Prisma result and manual array
+  quizzes?: { id: string }[];
+}
 
 interface LessonContentProps {
-  lesson: LessonContentType;
+  lesson: LessonProps | LessonContentType | PublicLessonType;
 }
 
 export default function LessonContent({ lesson }: LessonContentProps) {
   const hasVideo = !!lesson.videoKey;
   const hasPdf = !!lesson.pdfKey;
 
-  const progress = Array.isArray(lesson.lessonProgress)
-    ? lesson.lessonProgress
-    : [];
+  const progress =
+    lesson.lessonProgress && Array.isArray(lesson.lessonProgress)
+      ? lesson.lessonProgress
+      : [];
   const isCompleted = progress.length > 0 && progress[0]?.completed === true;
 
   return (

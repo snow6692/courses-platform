@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 export default async function PublicLessonPage({
   params,
 }: {
-  params: { lessonId: string };
+  params: Promise<{ lessonId: string }>;
 }) {
-  const lesson = await getPublicLesson(params.lessonId);
+  const { lessonId } = await params;
+  const lesson = await getPublicLesson(lessonId);
 
   return (
     <div className="bg-background min-h-screen">

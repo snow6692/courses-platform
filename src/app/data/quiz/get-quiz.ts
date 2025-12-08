@@ -15,7 +15,12 @@ export async function getQuizForStudent(quizId: string) {
             orderBy: { position: "asc" },
             include: {
               answers: {
-                select: { id: true, text: true, imageKey: true },
+                select: {
+                  id: true,
+                  text: true,
+                  imageKey: true,
+                  isCorrect: true,
+                },
                 orderBy: { id: "asc" },
               },
               favoriteQuestions: {
@@ -23,6 +28,11 @@ export async function getQuizForStudent(quizId: string) {
               },
             },
           },
+        },
+      },
+      memes: {
+        include: {
+          meme: true,
         },
       },
     },

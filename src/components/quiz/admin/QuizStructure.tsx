@@ -67,9 +67,13 @@ import AnswerForm from "@/components/questions/AnswerForm";
 export default function QuizStructure({
   quiz: initialQuiz,
   courseId,
+  chapterId,
+  lessonId,
 }: {
   quiz: AdminGetQuizOfCourse;
   courseId: string;
+  chapterId?: string;
+  lessonId?: string;
 }) {
   const [sections, setSections] = useState(
     initialQuiz.sections.map((s) => ({ ...s, isOpen: true })),
@@ -228,6 +232,7 @@ export default function QuizStructure({
               section={section}
               quizId={initialQuiz.id}
               courseId={courseId}
+              lessonId={lessonId}
               onReorderQuestions={handleReorderQuestions}
               isOpen={section.isOpen}
               onToggle={() => toggleSection(section.id)}
@@ -243,6 +248,7 @@ function SortableSection({
   section,
   quizId,
   courseId,
+  lessonId,
   onReorderQuestions,
   isOpen,
   onToggle,
@@ -363,6 +369,7 @@ function SortableSection({
                     question={question}
                     quizId={quizId}
                     courseId={courseId}
+                    lessonId={lessonId}
                     sectionId={section.id}
                   />
                 ))}

@@ -5,26 +5,34 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 export async function getPublicLesson(lessonId: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+
   const lesson = await prisma.lesson.findUnique({
     where: { id: lessonId },
     select: {
       id: true,
       title: true,
       description: true,
+      thumbnailKey: true,
       videoKey: true,
       pdfKey: true,
-      thumbnailKey: true,
       isFree: true,
+      position: true,
       Chapter: {
         select: {
           courseId: true,
-          Course: {
-            select: {
-              slug: true,
-              title: true,
-            },
-          },
+          Course: { select: { slug: true, title: true } },
         },
+      },
+      // لو في session نجيب الـ progress من الأول
+      ...(session?.user && {
+        lessonProgress: {
+          where: { userId: session.user.id },
+          select: { completed: true },
+        },
+      }),
+      quizzes: {
+        select: { id: true },
       },
     },
   });
@@ -37,7 +45,6 @@ export async function getPublicLesson(lessonId: string) {
   }
 
   // الدرس مجاني → الكل يشوفه (حتى بدون تسجيل)
-  const session = await auth.api.getSession({ headers: await headers() });
 
   if (session?.user) {
     const progress = await prisma.lessonProgress.findUnique({
