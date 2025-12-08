@@ -1,7 +1,5 @@
-import type { CourseLevel, CourseStatus } from "@prisma/client";
 
 // Re-export types for type safety
-export type { CourseLevel, CourseStatus };
 
 export const CourseLevelEnum = {
   BEGINNER: "BEGINNER",
