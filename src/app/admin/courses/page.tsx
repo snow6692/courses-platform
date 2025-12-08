@@ -6,7 +6,7 @@ import AdminCourseCard, {
   AdminCourseCardSkeleton,
 } from "../../../components/course/AdminCourseCard";
 import EmptyState from "@/components/shared/EmptyState";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import {   ViewTransition } from "react";
 
 function CoursesPage() {
   return (

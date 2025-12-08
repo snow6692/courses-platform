@@ -26,7 +26,7 @@ import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import {   ViewTransition } from "react";
 interface IProps {
   params: Promise<{ slug: string }>;
 }

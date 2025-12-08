@@ -3,7 +3,7 @@ import PublicCourseCard, {
   PublicCourseCardSkeleton,
 } from "@/components/course/PublicCourseCard";
 import React, { Suspense } from "react";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import {   ViewTransition } from "react";
 function PublicCoursesPage() {
   return (
     <ViewTransition enter={"slide-in"} exit={"slide-out"}>
