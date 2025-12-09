@@ -17,7 +17,10 @@ export function Footer() {
       <div className="relative container mx-auto px-6">
         <div className="grid grid-cols-1 gap-12 text-center md:grid-cols-2 lg:grid-cols-4 lg:text-start">
           {/* Column 1: Logo & Slogan */}
-          <div className="flex flex-col items-center gap-6 lg:items-start">
+          <Link
+            href={"/"}
+            className="flex flex-col items-center gap-6 lg:items-start"
+          >
             <Image
               src="/images/logo.svg"
               alt="Logo"
@@ -28,7 +31,7 @@ export function Footer() {
             <p className="text-muted-foreground max-w-xs text-center font-medium lg:text-start">
               {t("footer.slogan")}
             </p>
-          </div>
+          </Link>
 
           {/* Column 2: Quick Links */}
           <div className="flex flex-col gap-4">

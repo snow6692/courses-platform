@@ -2,8 +2,9 @@
 
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useLanguage } from "@/providers/LanguageContext";
+import Link from "next/link";
 
 export function StartJourneySection() {
   const { t } = useLanguage();
@@ -34,12 +35,16 @@ export function StartJourneySection() {
             <p className="text-muted-foreground text-lg md:text-xl">
               {t("home.start_journey.description")}
             </p>
-            <Button
-              size="lg"
-              className="mt-4 bg-[#D32F2F] px-8 text-lg font-bold text-white shadow-lg hover:bg-[#B71C1C]"
+            <Link
+              href={"/courses"}
+              className={buttonVariants({
+                size: "lg",
+                className:
+                  "bg-primary hover:bg-primary/90 min-w-[200px] text-lg font-bold text-white shadow-lg shadow-red-500/20",
+              })}
             >
               {t("home.start_journey.button")}
-            </Button>
+            </Link>
           </div>
         </div>
       </div>

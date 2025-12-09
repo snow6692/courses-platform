@@ -2,9 +2,10 @@
 
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useLanguage } from "@/providers/LanguageContext";
 import { MoveLeft } from "lucide-react";
+import Link from "next/link";
 
 export function LearnYourWaySection() {
   const { t, dir } = useLanguage();
@@ -59,9 +60,13 @@ export function LearnYourWaySection() {
             {t("home.learn_your_way.description")}
           </p>
 
-          <Button
-            size="lg"
-            className="group mt-4 bg-[#D32F2F] text-lg font-bold text-white hover:bg-[#B71C1C]"
+          <Link
+            href={"/courses"}
+            className={buttonVariants({
+              size: "lg",
+              className:
+                "bg-primary hover:bg-primary/90 min-w-[200px] text-lg font-bold text-white shadow-lg shadow-red-500/20",
+            })}
           >
             <span>{t("home.learn_your_way.button")}</span>
             <MoveLeft
@@ -71,7 +76,7 @@ export function LearnYourWaySection() {
                   : "rotate-180 group-hover:translate-x-1"
               }`}
             />
-          </Button>
+          </Link>
         </div>
       </div>
     </section>

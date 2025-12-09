@@ -60,7 +60,7 @@ export function HeroSection({
           {/* Buttons */}
           <div className="flex w-full flex-col gap-4 sm:flex-row">
             <Link
-              href={"/login"}
+              href={"/courses"}
               className={buttonVariants({
                 size: "lg",
                 className:
