@@ -58,5 +58,16 @@
     "dashboard": "Dashboard",
     "login": "Login",
     "get_started": "Get Started"
+  },
+  "courses": {
+    "title": "Explore Courses",
+    "description": "Discover our wide range of courses designed to help you achieve your learning goals.",
+    "search_placeholder": "Search for courses...",
+    "card": {
+      "students": "Students",
+      "hours": "Hours",
+      "details": "View Details",
+      "currency": "SAR"
+    }
   }
 }

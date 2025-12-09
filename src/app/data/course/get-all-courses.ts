@@ -1,9 +1,25 @@
 import prisma from "@/lib/db";
 
-export async function getAllCourses() {
+export async function getAllCourses(search?: string) {
   const data = await prisma.course.findMany({
     where: {
       status: "PUBLISHED",
+      ...(search && {
+        OR: [
+          {
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            smallDescription: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      }),
     },
     select: {
       title: true,
@@ -15,6 +31,16 @@ export async function getAllCourses() {
       level: true,
       duration: true,
       category: true,
+      user: {
+        select: {
+          name: true,
+        },
+      },
+      _count: {
+        select: {
+          enrollments: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",

@@ -24,3 +24,18 @@ export async function getLocale(): Promise<Locale> {
 export async function getDictionary(locale: Locale) {
   return dictionaries[locale];
 }
+
+export async function getServerLocale() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+
+  return {
+    locale,
+    t: (key: string) => {
+      const value = key
+        .split(".")
+        .reduce((acc: any, part: string) => acc?.[part], dictionary);
+      return value ?? key;
+    },
+  };
+}
