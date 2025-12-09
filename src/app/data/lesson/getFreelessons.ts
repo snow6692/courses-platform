@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+// Get lesson for public route - handles both free and paid lessons
 export async function getPublicLesson(lessonId: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -21,16 +22,11 @@ export async function getPublicLesson(lessonId: string) {
       Chapter: {
         select: {
           courseId: true,
-          Course: { select: { slug: true, title: true } },
+          Course: {
+            select: { id: true, slug: true, title: true, price: true },
+          },
         },
       },
-      // لو في session نجيب الـ progress من الأول
-      ...(session?.user && {
-        lessonProgress: {
-          where: { userId: session.user.id },
-          select: { completed: true },
-        },
-      }),
       quizzes: {
         select: { id: true },
       },
@@ -39,24 +35,48 @@ export async function getPublicLesson(lessonId: string) {
 
   if (!lesson) notFound();
 
-  // لو الدرس مش مجاني → ممنوع يفتح في المسار العام
-  if (!lesson.isFree) {
-    notFound(); // أو redirect(`/courses/${lesson.Chapter.Course.slug}`)
-  }
-
-  // الدرس مجاني → الكل يشوفه (حتى بدون تسجيل)
-
+  // Check if user is enrolled in the course
+  let isEnrolled = false;
   if (session?.user) {
-    const progress = await prisma.lessonProgress.findUnique({
+    const enrollment = await prisma.enrollment.findUnique({
       where: {
-        userId_lessonId: { userId: session.user.id, lessonId },
+        userId_courseId: {
+          userId: session.user.id,
+          courseId: lesson.Chapter.courseId,
+        },
       },
-      select: { completed: true },
     });
-    return { ...lesson, lessonProgress: progress ? [progress] : [] };
+    isEnrolled = !!enrollment;
   }
 
-  return { ...lesson, lessonProgress: [] };
+  // If lesson is free → everyone can view it
+  if (lesson.isFree) {
+    // Get progress if user is logged in
+    if (session?.user) {
+      const progress = await prisma.lessonProgress.findUnique({
+        where: {
+          userId_lessonId: { userId: session.user.id, lessonId },
+        },
+        select: { completed: true },
+      });
+      return {
+        ...lesson,
+        lessonProgress: progress ? [progress] : [],
+        isEnrolled,
+        canAccess: true,
+      };
+    }
+    return { ...lesson, lessonProgress: [], isEnrolled, canAccess: true };
+  }
+
+  // Lesson is NOT free
+  // Return lesson info but mark canAccess based on enrollment
+  return {
+    ...lesson,
+    lessonProgress: [],
+    isEnrolled,
+    canAccess: isEnrolled,
+  };
 }
 
 export type PublicLessonType = Awaited<ReturnType<typeof getPublicLesson>>;

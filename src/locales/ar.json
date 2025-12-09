@@ -69,5 +69,42 @@
       "details": "عرض التفاصيل",
       "currency": "ر.س"
     }
+  },
+  "course_detail": {
+    "level": "المستوى",
+    "category": "التصنيف",
+    "duration": "المدة",
+    "hours": "ساعة",
+    "students": "طالب",
+    "price": "السعر",
+    "what_you_get": "ما ستحصل عليه:",
+    "course_duration": "مدة الدورة",
+    "course_level": "مستوى الدورة",
+    "course_category": "تصنيف الدورة",
+    "total_lessons": "إجمالي الدروس",
+    "lessons": "دروس",
+    "this_course_includes": "تتضمن هذه الدورة:",
+    "full_lifetime_access": "وصول كامل مدى الحياة",
+    "mobile_desktop_access": "الوصول على الهاتف المحمول وسطح المكتب",
+    "certificate": "شهادة عند الإنتهاء",
+    "watch_now": "شاهد الآن",
+    "enroll_now": "سجل الآن",
+    "money_back_guarantee": "ضمان استرداد الأموال لمدة 30 يومًا",
+    "course_description": "وصف الدورة",
+    "course_content": "محتوى الدورة",
+    "chapters": "فصول",
+    "lesson": "درس",
+    "free_preview": "معاينة مجانية"
+  },
+  "lesson": {
+    "free_lesson_from": "درس مجاني من كورس:",
+    "view_full_course": "شاهد الكورس كاملاً",
+    "enroll_to_access": "سجل للوصول إلى هذا الدرس",
+    "enroll_message": "هذا الدرس جزء من الكورس. سجل الآن للحصول على جميع الدروس.",
+    "course_price": "سعر الكورس:",
+    "enroll_now": "سجل الآن",
+    "go_to_dashboard": "اذهب إلى لوحة التحكم",
+    "free_lesson": "درس مجاني",
+    "paid_lesson": "درس مدفوع"
   }
 }

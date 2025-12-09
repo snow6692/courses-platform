@@ -69,5 +69,42 @@
       "details": "View Details",
       "currency": "SAR"
     }
+  },
+  "course_detail": {
+    "level": "Level",
+    "category": "Category",
+    "duration": "Duration",
+    "hours": "hours",
+    "students": "Students",
+    "price": "Price",
+    "what_you_get": "What you will get:",
+    "course_duration": "Course Duration",
+    "course_level": "Course Level",
+    "course_category": "Course Category",
+    "total_lessons": "Total Lessons",
+    "lessons": "Lessons",
+    "this_course_includes": "This course includes:",
+    "full_lifetime_access": "Full lifetime access",
+    "mobile_desktop_access": "Access on mobile and desktop",
+    "certificate": "Certificate on completion",
+    "watch_now": "Watch Now",
+    "enroll_now": "Enroll Now",
+    "money_back_guarantee": "30-day money back guarantee",
+    "course_description": "Course Description",
+    "course_content": "Course Content",
+    "chapters": "Chapters",
+    "lesson": "Lesson",
+    "free_preview": "Free Preview"
+  },
+  "lesson": {
+    "free_lesson_from": "Free lesson from course:",
+    "view_full_course": "View Full Course",
+    "enroll_to_access": "Enroll to Access This Lesson",
+    "enroll_message": "This lesson is part of the course. Enroll now to get access to all lessons.",
+    "course_price": "Course Price:",
+    "enroll_now": "Enroll Now",
+    "go_to_dashboard": "Go to Dashboard",
+    "paid_lesson": "Paid Lesson",
+    "free_lesson": "Free Lesson"
   }
 }

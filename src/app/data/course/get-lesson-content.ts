@@ -21,16 +21,11 @@ export async function getLessonContent(lessonId: string) {
       Chapter: {
         select: {
           courseId: true,
-          Course: { select: { slug: true } },
+          Course: {
+            select: { id: true, slug: true, title: true, price: true },
+          },
         },
       },
-      // لو في session نجيب الـ progress من الأول
-      ...(session?.user && {
-        lessonProgress: {
-          where: { userId: session.user.id },
-          select: { completed: true },
-        },
-      }),
       quizzes: {
         select: { id: true },
       },
@@ -39,18 +34,40 @@ export async function getLessonContent(lessonId: string) {
 
   if (!lesson) notFound();
 
-  // الدرس مجاني → الكل يشوفه (حتى لو مفيش session)
+  // Free lessons → everyone can view (even without login)
   if (lesson.isFree) {
+    // Get progress if user is logged in
+    let lessonProgress: { completed: boolean }[] = [];
+    if (session?.user) {
+      const progress = await prisma.lessonProgress.findUnique({
+        where: {
+          userId_lessonId: { userId: session.user.id, lessonId },
+        },
+        select: { completed: true },
+      });
+      lessonProgress = progress ? [progress] : [];
+    }
+
     return {
       ...lesson,
-      lessonProgress: lesson.lessonProgress ?? [],
+      lessonProgress,
+      canAccess: true,
+      isEnrolled: false, // Doesn't matter for free lessons
     };
   }
 
-  // الدرس مدفوع → لازم session + اشتراك
-  if (!session?.user) notFound();
+  // Paid lesson → check enrollment
+  if (!session?.user) {
+    // Not logged in → can't access paid lesson
+    return {
+      ...lesson,
+      lessonProgress: [],
+      canAccess: false,
+      isEnrolled: false,
+    };
+  }
 
-  // لو وصلنا هنا والدرس مش مجاني → نتحقق من الاشتراك
+  // Check enrollment status
   const enrollment = await prisma.enrollment.findUnique({
     where: {
       userId_courseId: {
@@ -61,11 +78,31 @@ export async function getLessonContent(lessonId: string) {
     select: { status: true },
   });
 
-  if (!enrollment || enrollment.status !== "SUCCESSFUL") notFound();
+  const isEnrolled = enrollment?.status === "SUCCESSFUL";
+
+  if (!isEnrolled) {
+    // Not enrolled → show buy prompt
+    return {
+      ...lesson,
+      lessonProgress: [],
+      canAccess: false,
+      isEnrolled: false,
+    };
+  }
+
+  // Enrolled → get progress and show content
+  const progress = await prisma.lessonProgress.findUnique({
+    where: {
+      userId_lessonId: { userId: session.user.id, lessonId },
+    },
+    select: { completed: true },
+  });
 
   return {
     ...lesson,
-    lessonProgress: lesson.lessonProgress ?? [],
+    lessonProgress: progress ? [progress] : [],
+    canAccess: true,
+    isEnrolled: true,
   };
 }
 

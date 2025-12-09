@@ -1,31 +1,18 @@
 import { getCourse } from "@/app/data/course/get-course";
 import { checkIfCourseBought } from "@/app/data/user/user-is-enrolled";
-import EnrollmentButton from "@/components/course/EnrollmentButton";
-import RenderDescription from "@/components/rich-text-editor/RenderDescription";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
-import { FreeLessonBadge } from "@/components/lesson/FreeLessonBadge";
-import { Card, CardContent } from "@/components/ui/card";
+import { CourseEnrollmentCard } from "@/components/course/CourseEnrollmentCard";
+import { CourseHeroSection } from "@/components/course/CourseHeroSection";
+import { CourseDescriptionSection } from "@/components/course/CourseDescriptionSection";
+import { CourseContentSection } from "@/components/course/CourseContentSection";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Separator } from "@/components/ui/separator";
-import { useConstructUrl } from "@/hooks/use-construct-url";
+  CourseHeroSkeleton,
+  CourseEnrollmentCardSkeleton,
+  CourseContentSkeleton,
+} from "@/components/course/CourseDetailSkeletons";
 import prisma from "@/lib/db";
-import {
-  IconBook,
-  IconCategory,
-  IconChartBar,
-  IconChevronDown,
-  IconClock,
-  IconPlayerPlay,
-} from "@tabler/icons-react";
-import { Check } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+
 interface IProps {
   params: Promise<{ slug: string }>;
 }
@@ -46,292 +33,89 @@ export async function generateStaticParams() {
 
 async function CoursePage({ params }: IProps) {
   const { slug } = await params;
-  const course = await getCourse(slug);
-  if (!course) {
-    notFound();
-  }
 
-  const isEnrolled = await checkIfCourseBought(course.id);
-  const thumbnailImage = useConstructUrl(course.fileKey);
   return (
-    <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-3">
-      <div className="order-1 lg:col-span-2">
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-lg">
-          <Image
-            src={thumbnailImage}
-            alt="Course thumbnail"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
-        </div>
-        <div className="mt-10 space-y-6">
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight">
-              {course.title}
-            </h1>
-
-            <p className="text-muted-foreground line-clamp-2 text-lg leading-relaxed">
-              {course.smallDescription}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <Badge className="flex items-center gap-1 px-3 py-1">
-              <IconChartBar className="size-4" />
-              <span>{course.level}</span>
-            </Badge>
-            <Badge className="flex items-center gap-1 px-3 py-1">
-              <IconCategory className="size-4" />
-              <span>{course.category}</span>
-            </Badge>
-            <Badge className="flex items-center gap-1 px-3 py-1">
-              <IconClock className="size-4" />
-              <span>{course.duration} hours</span>
-            </Badge>
-          </div>
-
-          <Separator className="my-8" />
-
-          <div className="space-y-6">
-            <h2 className="text-3xl font-semibold tracking-tight">
-              Course Description
-            </h2>
-            <RenderDescription json={JSON.parse(course.description)} />
-          </div>
-        </div>
-
-        <div className="mt-12 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-semibold tracking-tight">
-              Course Content
-            </h2>
-            <div className="">
-              {course.chapters.length} Chapters |{" "}
-              {course.chapters.reduce(
-                (total, chapter) => total + chapter.lessons.length,
-                0,
-              ) || 0}{" "}
-              Lessons
+    <div className="min-h-screen">
+      {/* Hero Section with bg-bg-hero background */}
+      <section className="bg-bg-hero px-4 py-12 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            {/* Enrollment Card - Left Side (Sticky) */}
+            <div className="order-2 lg:col-span-1">
+              <Suspense fallback={<CourseEnrollmentCardSkeleton />}>
+                <EnrollmentCardContent slug={slug} />
+              </Suspense>
+            </div>
+            {/* Course Hero - Right Side */}
+            <div className="order-1 lg:col-span-2">
+              <Suspense fallback={<CourseHeroSkeleton />}>
+                <CourseHeroContent slug={slug} />
+              </Suspense>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="space-y-4">
-            {course.chapters.map((chapter, index) => (
-              <Collapsible key={chapter.id} defaultOpen={index === 0}>
-                <Card className="gap-0 overflow-hidden border-2 p-0 transition-all duration-200 hover:shadow-md">
-                  <CollapsibleTrigger>
-                    <div className="">
-                      <CardContent className="hover:bg-muted/50 p-6 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <p className="bg-primary/20 text-primary flex size-10 items-center justify-center rounded-full font-semibold">
-                              {index + 1}
-                            </p>
-                            <div>
-                              <h3 className="text-left text-xl font-semibold">
-                                {chapter.title}
-                              </h3>
-                              <p className="text-muted-foreground m-1 text-left text-sm">
-                                {chapter.lessons.length}
-                                {chapter.lessons.length <= 1
-                                  ? " Lesson"
-                                  : " Lessons"}
-                              </p>
-                            </div>
-                          </div>
+      
 
-                          <div className="flex items-center gap-3">
-                            <Badge variant={"outline"} className="text-xs">
-                              {chapter.lessons.length}
-                              {chapter.lessons.length <= 1
-                                ? " Lesson"
-                                : " Lessons"}
-                            </Badge>
+      {/* Content Section with white background */}
+      <section className="bg-white px-4 py-12 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            {/* Course Description and Content - Left Side */}
+            <div className="lg:col-span-2">
+              <Suspense fallback={<div className="h-64" />}>
+                <CourseDescriptionContent slug={slug} />
+              </Suspense>
 
-                            <IconChevronDown className="text-muted-foreground size-5" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </div>
-                  </CollapsibleTrigger>
+              <div className="mt-12">
+                <Suspense fallback={<CourseContentSkeleton />}>
+                  <CourseContentSectionWrapper slug={slug} />
+                </Suspense>
+              </div>
+            </div>
 
-                  <CollapsibleContent>
-                    <div className="bg-muted/20 border-t">
-                      <div className="space-y-3 p-6 pt-4">
-                        {chapter.lessons.map((lesson, lessonIndex) => {
-                          const isAccessible = lesson.isFree || isEnrolled;
-
-                          return isAccessible ? (
-                            <Link
-                              href={`/courses/${course.slug}/${lesson.id}`}
-                              className="hover:bg-accent group flex items-center gap-4 rounded-lg p-3 transition-colors"
-                              key={lesson.id}
-                            >
-                              <div className="border-primary/20 flex size-8 items-center justify-center rounded-full border-2">
-                                <IconPlayerPlay className="text-muted-foreground group-hover:text-primary size-4 transition-colors" />
-                              </div>
-
-                              <div className="flex-1">
-                                <div className="flex items-center">
-                                  <p className="text-sm font-medium">
-                                    {lesson.title}
-                                  </p>
-                                  {lesson.isFree && <FreeLessonBadge />}
-                                </div>
-                                <p className="text-muted-foreground mt-1 text-xs">
-                                  Lesson {lessonIndex + 1}
-                                </p>
-                              </div>
-                            </Link>
-                          ) : (
-                            <div
-                              className="group flex cursor-not-allowed items-center gap-4 rounded-lg p-3 opacity-60"
-                              key={lesson.id}
-                            >
-                              <div className="border-primary/20 flex size-8 items-center justify-center rounded-full border-2">
-                                <IconPlayerPlay className="text-muted-foreground size-4" />
-                              </div>
-
-                              <div className="flex-1">
-                                <p className="text-sm font-medium">
-                                  {lesson.title}
-                                </p>
-                                <p className="text-muted-foreground mt-1 text-xs">
-                                  Lesson {lessonIndex + 1}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            ))}
+            {/* Empty space to align with enrollment card */}
+            <div className="hidden lg:col-span-1 lg:block" />
           </div>
         </div>
-      </div>
-
-      {/* Enrollment Card */}
-
-      <div className="order-2 lg:col-span-1">
-        <div className="sticky top-20">
-          <Card className="py-0">
-            <CardContent className="p-6">
-              <div className="mb-6 flex items-center justify-between">
-                <span className="text-lg font-medium">Price: </span>
-                <span className="text-primary text-2xl font-bold">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  }).format(course.price)}
-                </span>
-              </div>
-
-              <div className="mb-6 space-y-3 rounded-lg border-2 p-4">
-                <h4 className="font-medium"> What you will get:</h4>
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full">
-                      <IconClock className="size-4" />
-                    </div>
-                    <div className="">
-                      <p className="text-sm font-medium">Course Duration</p>
-                      <p className="text-muted-foreground text-sm">
-                        {course.duration}/ hours
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full">
-                      <IconChartBar className="size-4" />
-                    </div>
-                    <div className="">
-                      <p className="text-sm font-medium">Course Level</p>
-                      <p className="text-muted-foreground text-sm">
-                        {course.level}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full">
-                      <IconCategory className="size-4" />
-                    </div>
-                    <div className="">
-                      <p className="text-sm font-medium">Course Category</p>
-                      <p className="text-muted-foreground text-sm">
-                        {course.category}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full">
-                      <IconBook className="size-4" />
-                    </div>
-                    <div className="">
-                      <p className="text-sm font-medium">Total Lessons</p>
-                      <p className="text-muted-foreground text-sm">
-                        {course.chapters.reduce(
-                          (total, ch) => total + ch.lessons.length,
-                          0,
-                        ) || 0}{" "}
-                        Lessons
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-6 space-y-3">
-                <h4 className="">This course includes:</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <div className="rounded-full bg-green-500/10 p-1 text-green-500">
-                      <Check className="size-3" />
-                    </div>
-                    <span>Full lifetime access</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <div className="rounded-full bg-green-500/10 p-1 text-green-500">
-                      <Check className="size-3" />
-                    </div>
-                    <span>Access on mobile and desktop</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <div className="rounded-full bg-green-500/10 p-1 text-green-500">
-                      <Check className="size-3" />
-                    </div>
-                    <span>Certificate on completion</span>
-                  </li>
-                </ul>
-              </div>
-
-              {isEnrolled ? (
-                <Link
-                  href={"/dashboard"}
-                  className={buttonVariants({ className: "w-full" })}
-                >
-                  Watch Now
-                </Link>
-              ) : (
-                <EnrollmentButton courseId={course.id} />
-              )}
-
-              <p className="text-muted-foreground mt-3 text-center text-xs">
-                30-day money back guarantee
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
 
 export default CoursePage;
+
+// Separate async components for Suspense boundaries
+
+async function CourseHeroContent({ slug }: { slug: string }) {
+  const course = await getCourse(slug);
+  if (!course) notFound();
+
+  return <CourseHeroSection course={course} />;
+}
+
+async function EnrollmentCardContent({ slug }: { slug: string }) {
+  const course = await getCourse(slug);
+  if (!course) notFound();
+
+  const isEnrolled = await checkIfCourseBought(course.id);
+
+  return <CourseEnrollmentCard course={course} isEnrolled={isEnrolled} />;
+}
+
+async function CourseDescriptionContent({ slug }: { slug: string }) {
+  const course = await getCourse(slug);
+  if (!course) notFound();
+
+  return <CourseDescriptionSection description={course.description} />;
+}
+
+async function CourseContentSectionWrapper({ slug }: { slug: string }) {
+  const course = await getCourse(slug);
+  if (!course) notFound();
+
+  const isEnrolled = await checkIfCourseBought(course.id);
+
+  return <CourseContentSection course={course} isEnrolled={isEnrolled} />;
+}
