@@ -6,11 +6,10 @@ import AdminCourseCard, {
   AdminCourseCardSkeleton,
 } from "../../../components/course/AdminCourseCard";
 import EmptyState from "@/components/shared/EmptyState";
-import {   ViewTransition } from "react";
 
 function CoursesPage() {
   return (
-    <ViewTransition enter={"slide-in"} exit={"slide-out"}>
+    <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Your courses</h1>
         <Link
@@ -24,7 +23,7 @@ function CoursesPage() {
       <Suspense fallback={<AdminCourseCardSkeletonLayout />}>
         <RenderCourses />
       </Suspense>
-    </ViewTransition>
+    </div>
   );
 }
 
