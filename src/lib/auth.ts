@@ -34,7 +34,7 @@ export const auth = betterAuth({
   ],
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      const newSession = ctx.context.session;
+      const newSession = ctx.context.newSession;
       if (newSession) {
         await prisma.session.deleteMany({
           where: {
