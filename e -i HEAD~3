@@ -1,0 +1,18 @@
+[33m3873e54[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m clean history - remove twilio secrets
+[33m8333bf8[m  add one session to the user
+[33m23bd85a[m[33m ([m[1;31morigin/main[m[33m)[m  remove public lesson page, show the lesson in  the same page with restrictions
+[33m2e5ff56[m  add server side translationt and search in courses page
+[33m1cb5cec[m  change button to links in home page
+[33mb537603[m  remove view transtion
+[33m4aab6f4[m  update nextjs
+[33me41cbeb[m update packages
+[33m0e56c49[m  for deployment test 3
+[33mdaedce7[m  fix for deployment v2
+[33m5296dda[m  fix for deployment
+[33m0b2cfb1[m  change prisma for deployment
+[33mf4b3c36[m  add radio group
+[33m8f7f391[m  landing page added
+[33m832fa06[m  hero section added
+[33m61a8459[m  unstable quiz v1 added
+[33m7a819bc[m  free lessons added
+[33m06482dd[m  update the lesson to be free
