@@ -1,16 +1,18 @@
-
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./db";
-import { admin, emailOTP } from "better-auth/plugins";
+import { admin, createAuthMiddleware, emailOTP } from "better-auth/plugins";
 import { env } from "./config";
 import { resend } from "./resend";
 // If your Prisma file is located elsewhere, you can change the path
 
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
+  database: (options: any) => {
+    const adapter = prismaAdapter(prisma, {
+      provider: "postgresql",
+    })(options) as any;
+    return adapter;
+  },
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
@@ -28,6 +30,18 @@ export const auth = betterAuth({
         });
       },
     }),
-    admin()
-  ],//
+    admin(),
+  ],
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      const newSession = ctx.context.session;
+      if (newSession) {
+        await prisma.session.deleteMany({
+          where: {
+            userId: newSession.user.id,
+          },
+        });
+      }
+    }),
+  },
 });
