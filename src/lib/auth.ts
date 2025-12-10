@@ -39,6 +39,9 @@ export const auth = betterAuth({
         await prisma.session.deleteMany({
           where: {
             userId: newSession.user.id,
+            NOT: {
+              id: newSession.session.id,
+            },
           },
         });
       }
