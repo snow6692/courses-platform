@@ -14,7 +14,7 @@ export function LearnYourWaySection() {
     <section className="relative w-full overflow-hidden py-12 md:py-24">
       {/* Web Decorator */}
 
-      <div className="absolute top-0 right-0 h-96 w-96 bg-[url('/images/web.svg')] bg-contain bg-right-top bg-no-repeat opacity-50" />
+      <div className="absolute top-0 right-0 h-96 w-96 bg-[url('/images/web.svg')] bg-contain bg-top-right bg-no-repeat opacity-50" />
 
       <div className="container mx-auto grid grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
         {/* Image Side */}
