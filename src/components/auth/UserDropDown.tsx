@@ -1,6 +1,7 @@
 "use client";
 import {
   BookOpen,
+  BriefcaseBusinessIcon,
   ChevronDownIcon,
   HomeIcon,
   LayoutDashboardIcon,
@@ -23,6 +24,7 @@ import Logout from "./Logout";
 interface UserDropDownProps {
   email: string;
   name: string;
+  role: string;
   image?: string;
 }
 
@@ -30,6 +32,7 @@ export default function UserDropDown({
   image,
   name,
   email,
+  role,
 }: UserDropDownProps) {
   if (!image || !name || !email) {
     return null; // Hide dropdown if no user
@@ -73,6 +76,18 @@ export default function UserDropDown({
               <span>Home</span>
             </Link>
           </DropdownMenuItem>
+          {role === "admin" && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin">
+                <BriefcaseBusinessIcon
+                  size={16}
+                  className="opacity-60"
+                  aria-hidden="true"
+                />
+                <span>Admin</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href="/courses">
               <BookOpen size={16} className="opacity-60" aria-hidden="true" />
