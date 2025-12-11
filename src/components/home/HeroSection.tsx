@@ -101,23 +101,6 @@ export function HeroSection({
                   {t("hero.stats.courses")}
                 </span>
               </div>
-              <div className="bg-border h-12 w-px"></div>
-              <div className="flex flex-col items-start">
-                <div className="flex items-center gap-1">
-                  <span className="text-3xl font-bold text-black">
-                    {t("hero.stats.rating")}
-                  </span>
-                  <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                </div>
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="text-muted-foreground/30 h-3 w-3 fill-current"
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
