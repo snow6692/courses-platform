@@ -106,5 +106,15 @@
     "go_to_dashboard": "Go to Dashboard",
     "paid_lesson": "Paid Lesson",
     "free_lesson": "Free Lesson"
+  },
+  "login_page": {
+    "welcome_back": "Welcome back!",
+    "login_methods_desc": "Login With Google or Email Account",
+    "sign_in_google": "Sign in with Google",
+    "or_continue_with": "Or Continue With",
+    "email_label": "Email",
+    "continue_email": "Continue With Email",
+    "verification_sent": "Verification code sent to email",
+    "signed_in_google": "Signed in with Google successfully"
   }
 }

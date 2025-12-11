@@ -189,4 +189,17 @@ body {
   }
 }
 
-/* For accessability if user don't want animation */
+
+.ProseMirror {
+  color: #000 !important;
+}
+
+.ProseMirror p,
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror li,
+.ProseMirror strong {
+  color: #000 !important;
+}

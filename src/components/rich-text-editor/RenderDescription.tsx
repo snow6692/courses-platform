@@ -51,7 +51,7 @@ export default function RenderDescription({ json }: Props) {
   if (!html) return null;
 
   return (
-    <div className="prose dark:prose-invert prose-li:marker:text-primary max-w-none">
+    <div className="prose prose-p:text-black prose-li:text-black prose-strong:text-black max-w-none text-black dark:text-black">
       {parse(html)}
     </div>
   );
