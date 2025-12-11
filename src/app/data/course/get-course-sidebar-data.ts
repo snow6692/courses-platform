@@ -34,6 +34,7 @@ export async function getCourseSidebarData(slug: string) {
 
               position: true,
               description: true,
+              isFree: true,
               lessonProgress: {
                 where: {
                   userId: user.id,
@@ -60,12 +61,15 @@ export async function getCourseSidebarData(slug: string) {
         userId: user.id,
       },
     },
+    select: {
+      status: true,
+    },
   });
 
   // if (!enrollment || enrollment.status !== "SUCCESSFUL") return notFound();
-  if (!enrollment) return notFound();
+  // if (!enrollment) return notFound();
 
-  return course;
+  return { ...course, isEnrolled: enrollment?.status === "SUCCESSFUL" };
 }
 
 export type CourseSidebarData = Awaited<

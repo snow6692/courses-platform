@@ -67,6 +67,8 @@ function CourseSidebar({ course }: IProps) {
                   lesson={lesson}
                   slug={course.slug}
                   key={lesson.id}
+                  isLocked={!course.isEnrolled && !lesson.isFree}
+                  isPurchased={course.isEnrolled}
                   completed={
                     lesson.lessonProgress.find(
                       (progress) => progress.lessonId === lesson.id,

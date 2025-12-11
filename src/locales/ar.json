@@ -105,7 +105,9 @@
     "enroll_now": "سجل الآن",
     "go_to_dashboard": "اذهب إلى لوحة التحكم",
     "free_lesson": "درس مجاني",
-    "paid_lesson": "درس مدفوع"
+    "paid_lesson": "درس مدفوع",
+    "badge_free": "مجاني",
+    "badge_paid": "مدفوع"
   },
   "login_page": {
     "welcome_back": "مرحباً بعودتك!",

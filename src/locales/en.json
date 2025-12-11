@@ -105,7 +105,8 @@
     "enroll_now": "Enroll Now",
     "go_to_dashboard": "Go to Dashboard",
     "paid_lesson": "Paid Lesson",
-    "free_lesson": "Free Lesson"
+    "badge_free": "Free",
+    "badge_paid": "Paid"
   },
   "login_page": {
     "welcome_back": "Welcome back!",
