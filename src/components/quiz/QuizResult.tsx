@@ -21,6 +21,7 @@ interface QuizResultProps {
     score: number;
     totalQuestions: number;
     correctAnswers: number;
+    timeTaken?: number;
     questions: {
       questionId: string;
       text: string;
@@ -64,6 +65,13 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
   const isPassed = result.score >= 50;
   const scorePercentage = Math.round(result.score);
 
+  // Format time from seconds to mm:ss
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
   return (
     <div
       className="min-h-screen py-8"
@@ -94,7 +102,9 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
                 <Clock className="h-5 w-5 text-red-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">--</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {result.timeTaken ? formatTime(result.timeTaken) : "--"}
+            </p>
             <p className="text-sm text-gray-500">
               {t("quiz.result.time_taken")}
             </p>

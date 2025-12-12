@@ -31,6 +31,7 @@ export async function toggleFavoriteQuestion(
 export async function submitQuiz(
   quizId: string,
   answers: Record<string, string | string[]>,
+  timeTaken: number = 0,
 ) {
   const user = await requireUser();
 
@@ -166,6 +167,7 @@ export async function submitQuiz(
     score,
     totalQuestions,
     correctAnswers: correctCount,
+    timeTaken,
     questions: questionResults,
   };
 }

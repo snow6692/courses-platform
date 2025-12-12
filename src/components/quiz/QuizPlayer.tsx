@@ -2,12 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { QuizForStudent } from "@/app/data/quiz/get-quiz";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useConstructUrl } from "@/hooks/use-construct-url";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +14,13 @@ import {
 } from "@/validation/quizPlayer.zod";
 import { submitQuiz } from "@/actions/quiz/student.actions";
 import QuizResult from "./QuizResult";
-import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import QuizSettingsModal, { QuizSettings } from "./QuizSettingsModal";
 import { useLanguage } from "@/providers/LanguageContext";
 import { QuizHeader } from "./QuizHeader";
 import { MemePanel } from "./MemePanel";
 import { QuestionNavigation, SectionNavigation } from "./QuizNavigation";
+import { QuestionCard } from "./QuestionCard";
+import { QuizNavigationButtons } from "./QuizNavigationButtons";
 
 interface QuizPlayerProps {
   quiz: QuizForStudent;
@@ -38,6 +36,7 @@ interface StoredQuizState {
   sectionTimers: Record<string, number>;
   expiredSections: string[];
   answers: Record<string, string | string[]>;
+  startTime: number;
   timestamp: number;
 }
 
@@ -62,6 +61,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   );
   const [timerExpired, setTimerExpired] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   const { t, dir } = useLanguage();
 
@@ -80,6 +80,12 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       answers: {},
     },
   });
+
+  // Calculate time taken in seconds
+  const calculateTimeTaken = useCallback(() => {
+    if (!startTime) return 0;
+    return Math.floor((Date.now() - startTime) / 1000);
+  }, [startTime]);
 
   // Load saved state
   useEffect(() => {
@@ -106,6 +112,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
           setCurrentQuestionIndex(state.currentQuestionIndex || 0);
           setSectionTimers(state.sectionTimers);
           setExpiredSections(state.expiredSections || []);
+          setStartTime(state.startTime || Date.now());
           form.reset({ answers: state.answers });
           setQuizStarted(true);
         } else {
@@ -123,7 +130,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
   // Save state
   useEffect(() => {
-    if (!isInitialized || !quizStarted || !quizSettings) return;
+    if (!isInitialized || !quizStarted || !quizSettings || !startTime) return;
     const state: StoredQuizState = {
       quizSettings,
       currentSectionIndex,
@@ -131,6 +138,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       sectionTimers,
       expiredSections,
       answers: formValues.answers || {},
+      startTime,
       timestamp: Date.now(),
     };
     try {
@@ -148,6 +156,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     expiredSections,
     formValues,
     storageKey,
+    startTime,
   ]);
 
   const clearSavedState = useCallback(() => {
@@ -200,6 +209,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       setQuizStarted(true);
       setExpiredSections([]);
       setCurrentQuestionIndex(0);
+      setStartTime(Date.now());
     },
     [initializeSectionTimers],
   );
@@ -228,36 +238,34 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const handleSectionTimeUp = useCallback(async () => {
     if (!currentSection) return;
 
-    // Mark current section as expired
     const newExpiredSections = [...expiredSections, currentSection.id];
     setExpiredSections(newExpiredSections);
 
-    // Check if there are any non-expired sections after this one
     const nextSectionIndex = sections.findIndex(
       (s, idx) =>
         idx > currentSectionIndex && !newExpiredSections.includes(s.id),
     );
 
     if (nextSectionIndex !== -1) {
-      toast.info("انتهى الوقت! الانتقال للقسم التالي.");
+      toast.info(t("quiz.player.time_up_next_section"));
       setCurrentSectionIndex(nextSectionIndex);
       setCurrentQuestionIndex(0);
     } else {
-      // This is the last section or all sections expired - submit immediately
-      toast.info("انتهى الوقت! جاري تسليم الاختبار...");
+      toast.info(t("quiz.player.time_up_submitting"));
       const values = form.getValues();
+      const timeTaken = calculateTimeTaken();
       setIsSubmitting(true);
       try {
-        const result = await submitQuiz(quiz.id, values.answers);
+        const result = await submitQuiz(quiz.id, values.answers, timeTaken);
         if (result.success) {
           clearSavedState();
           saveResult(result);
           setQuizResult(result);
-          toast.success("تم تسليم الاختبار بنجاح!");
+          toast.success(t("quiz.player.submit_success"));
         }
       } catch (error) {
         console.error(error);
-        toast.error("حدث خطأ أثناء التسليم.");
+        toast.error(t("quiz.player.submit_error"));
       } finally {
         setIsSubmitting(false);
       }
@@ -271,6 +279,8 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     quiz.id,
     clearSavedState,
     saveResult,
+    calculateTimeTaken,
+    t,
   ]);
 
   useEffect(() => {
@@ -324,20 +334,20 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       const targetSection = sections[sectionIndex];
       if (!targetSection) return;
       if (expiredSections.includes(targetSection.id)) {
-        toast.error("هذا القسم انتهى وقته.");
+        toast.error(t("quiz.player.section_expired"));
         return;
       }
       if (quizSettings?.enableTimer) {
         const sectionTime = sectionTimers[targetSection.id];
         if (sectionTime !== undefined && sectionTime <= 0) {
-          toast.error("انتهى وقت هذا القسم.");
+          toast.error(t("quiz.player.section_time_expired"));
           return;
         }
       }
       setCurrentSectionIndex(sectionIndex);
       setCurrentQuestionIndex(0);
     },
-    [sections, expiredSections, quizSettings?.enableTimer, sectionTimers],
+    [sections, expiredSections, quizSettings?.enableTimer, sectionTimers, t],
   );
 
   const navigateToQuestion = (questionIndex: number) => {
@@ -354,7 +364,6 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     if (currentQuestionIndex < currentSection.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     } else if (currentSectionIndex < sections.length - 1) {
-      // Move to next section
       const nextSectionIndex = sections.findIndex(
         (s, idx) =>
           idx > currentSectionIndex && !expiredSections.includes(s.id),
@@ -374,20 +383,21 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
   const handleSubmit = async () => {
     const values = form.getValues();
+    const timeTaken = calculateTimeTaken();
     setIsSubmitting(true);
     try {
-      const result = await submitQuiz(quiz.id, values.answers);
+      const result = await submitQuiz(quiz.id, values.answers, timeTaken);
       if (result.success) {
         clearSavedState();
         saveResult(result);
         setQuizResult(result);
-        toast.success("تم تسليم الاختبار بنجاح!");
+        toast.success(t("quiz.player.submit_success"));
       } else {
-        toast.error("فشل في تسليم الاختبار.");
+        toast.error(t("quiz.player.submit_failed"));
       }
     } catch (error) {
       console.error(error);
-      toast.error("حدث خطأ أثناء التسليم.");
+      toast.error(t("quiz.player.submit_error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -403,6 +413,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     setSectionTimers({});
     setExpiredSections([]);
     setMemeShownForSection(null);
+    setStartTime(null);
     form.reset({ answers: {} });
   };
 
@@ -432,12 +443,6 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     return ans && (Array.isArray(ans) ? ans.length > 0 : true);
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
   if (!isInitialized) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center">
@@ -462,8 +467,6 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     );
   }
 
-  const isMultipleChoice =
-    currentQuestion.answers.filter((a) => a.isCorrect).length > 1;
   const isLastQuestion =
     currentQuestionIndex === currentSection.questions.length - 1 &&
     currentSectionIndex === sections.length - 1;
@@ -493,171 +496,22 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
       {/* Question Content */}
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <div
-          className="rounded-2xl bg-white p-8 shadow-lg"
-          style={{ backgroundColor: "#FDFDFD" }}
-        >
-          {/* Question Header */}
-          <div
-            className={`mb-6 flex ${dir === "rtl" ? "justify-end" : "justify-start"}`}
-          >
-            <span className="rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
-              {t("quiz.player.question")} {currentQuestionIndex + 1}
-            </span>
-          </div>
-
-          {/* Question Text */}
-          <div className="mb-8 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-              {typeof currentQuestion.text === "string" &&
-              currentQuestion.text.startsWith("{")
-                ? JSON.parse(currentQuestion.text)?.content?.[0]?.content?.[0]
-                    ?.text || currentQuestion.text
-                : currentQuestion.text}
-            </h2>
-            {currentQuestion.imageKey && (
-              <img
-                src={useConstructUrl(currentQuestion.imageKey)}
-                alt="Question"
-                className="mx-auto max-h-64 rounded-lg"
-              />
-            )}
-          </div>
-
-          {/* Favorite Button */}
-          <div className="mb-4 flex justify-end">
-            <ToggleFavoriteButton
-              questionId={currentQuestion.id}
-              isFavorited={currentQuestion.favoriteQuestions?.length > 0}
-            />
-          </div>
-
-          {/* Answers */}
-          <Form {...form}>
-            <FormField
-              control={form.control}
-              name={`answers.${currentQuestion.id}`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    {isMultipleChoice ? (
-                      <div className="space-y-3">
-                        {currentQuestion.answers.map((answer, idx) => {
-                          const letters = ["A", "B", "C", "D", "E", "F"];
-                          const isChecked =
-                            Array.isArray(field.value) &&
-                            field.value.includes(answer.id);
-                          return (
-                            <label
-                              key={answer.id}
-                              className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all ${
-                                isChecked
-                                  ? "border-red-500"
-                                  : "border-gray-200 hover:border-gray-300"
-                              }`}
-                              style={{ backgroundColor: "#FDFDFD" }}
-                            >
-                              <Checkbox
-                                checked={isChecked}
-                                onCheckedChange={(checked) => {
-                                  const current = Array.isArray(field.value)
-                                    ? field.value
-                                    : [];
-                                  if (checked) {
-                                    field.onChange([...current, answer.id]);
-                                  } else {
-                                    field.onChange(
-                                      current.filter(
-                                        (val: string) => val !== answer.id,
-                                      ),
-                                    );
-                                  }
-                                }}
-                                className="h-5 w-5"
-                              />
-                              <span className="flex-1 text-lg text-black">
-                                {answer.text}
-                              </span>
-                              <span className="font-semibold text-gray-500">
-                                {letters[idx]}
-                              </span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value as string}
-                        className="space-y-3"
-                      >
-                        {currentQuestion.answers.map((answer, idx) => {
-                          const letters = ["A", "B", "C", "D", "E", "F"];
-                          const isSelected = field.value === answer.id;
-                          return (
-                            <label
-                              key={answer.id}
-                              className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all ${
-                                isSelected
-                                  ? "border-red-500"
-                                  : "border-gray-200 hover:border-gray-300"
-                              }`}
-                              style={{ backgroundColor: "#FDFDFD" }}
-                            >
-                              <RadioGroupItem
-                                value={answer.id}
-                                className="h-5 w-5"
-                              />
-                              <span className="flex-1 text-lg text-black">
-                                {answer.text}
-                              </span>
-                              <span className="font-semibold text-gray-500">
-                                {letters[idx]}
-                              </span>
-                            </label>
-                          );
-                        })}
-                      </RadioGroup>
-                    )}
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </Form>
-        </div>
+        <Form {...form}>
+          <QuestionCard
+            question={currentQuestion}
+            questionIndex={currentQuestionIndex}
+            control={form.control}
+          />
+        </Form>
 
         {/* Navigation Buttons */}
-        <div className="mt-6 flex items-center justify-between">
-          <Button
-            onClick={isLastQuestion ? handleSubmit : goToNextQuestion}
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-lg bg-red-600 px-6 py-3 text-white hover:bg-red-700"
-          >
-            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isLastQuestion
-              ? t("quiz.player.submit_quiz")
-              : t("quiz.player.next_question")}
-            {dir === "rtl" ? (
-              <ChevronLeft className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </Button>
-
-          <Button
-            onClick={goToPrevQuestion}
-            disabled={currentQuestionIndex === 0}
-            variant="outline"
-            className="flex items-center gap-2 rounded-lg px-6 py-3"
-          >
-            {dir === "rtl" ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-            {t("quiz.player.prev_question")}
-          </Button>
-        </div>
+        <QuizNavigationButtons
+          onNext={isLastQuestion ? handleSubmit : goToNextQuestion}
+          onPrev={goToPrevQuestion}
+          isLastQuestion={isLastQuestion}
+          isFirstQuestion={currentQuestionIndex === 0}
+          isSubmitting={isSubmitting}
+        />
 
         {/* Question Navigation */}
         <QuestionNavigation
