@@ -19,13 +19,11 @@ export async function toggleFavoriteQuestion(
     await prisma.favoriteQuestion.delete({
       where: { id: existing.id },
     });
-    revalidatePath("/dashboard/favorites");
     return { success: true, isFavorited: false };
   } else {
     await prisma.favoriteQuestion.create({
       data: { userId: user.id, questionId },
     });
-    revalidatePath("/dashboard/favorites");
     return { success: true, isFavorited: true };
   }
 }
@@ -67,6 +65,7 @@ export async function submitQuiz(
     selectedAnswerIds: string[];
     correctAnswerIds: string[];
     isCorrect: boolean;
+    isFavorited: boolean;
     answers: {
       id: string;
       text: string;
@@ -74,6 +73,19 @@ export async function submitQuiz(
       isCorrect: boolean;
     }[];
   }[] = [];
+
+  // Get user's favorites for these questions
+  const allQuestionIds = quiz.sections.flatMap((s) =>
+    s.questions.map((q) => q.id),
+  );
+  const userFavorites = await prisma.favoriteQuestion.findMany({
+    where: {
+      userId: user.id,
+      questionId: { in: allQuestionIds },
+    },
+    select: { questionId: true },
+  });
+  const favoritedQuestionIds = new Set(userFavorites.map((f) => f.questionId));
 
   for (const section of quiz.sections) {
     for (const question of section.questions) {
@@ -108,6 +120,7 @@ export async function submitQuiz(
         selectedAnswerIds,
         correctAnswerIds: correctAnswers,
         isCorrect,
+        isFavorited: favoritedQuestionIds.has(question.id),
         answers: question.answers.map((a) => ({
           id: a.id,
           text: a.text,

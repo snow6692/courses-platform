@@ -94,7 +94,14 @@
     "course_content": "Course Content",
     "chapters": "Chapters",
     "lesson": "Lesson",
-    "free_preview": "Free Preview"
+    "free_preview": "Free Preview",
+    "one_payment_label": "One-time payment",
+    "video_content": "Video Content",
+    "quizzes": "Interactive Quizzes",
+    "resources": "Downloadable Resources",
+    "rating": "Ratings",
+    "instructor_name": "Mr. Mohammed Al-Otaibi",
+    "instructor_title": "Math Professor with 15 years experience"
   },
   "lesson": {
     "free_lesson_from": "Free lesson from course:",
@@ -117,5 +124,53 @@
     "continue_email": "Continue With Email",
     "verification_sent": "Verification code sent to email",
     "signed_in_google": "Signed in with Google successfully"
+  },
+  "quiz": {
+    "settings": {
+      "title": "Quiz Settings",
+      "enable_timer": "Enable Timer",
+      "enable_memes": "Enable Memes",
+      "sections_overview": "Sections Overview",
+      "questions": "questions",
+      "start_quiz": "Start Quiz Now"
+    },
+    "player": {
+      "section": "Section",
+      "of": "of",
+      "question": "Question",
+      "question_number": "Question {number}",
+      "next_question": "Next Question",
+      "prev_question": "Previous Question",
+      "submit_quiz": "Submit Quiz",
+      "all_questions": "All Questions",
+      "sections": "Sections",
+      "time_up_next": "Time's up! Moving to next section.",
+      "time_up_submit": "Time's up! Submitting quiz...",
+      "submit_success": "Quiz submitted successfully!",
+      "submit_error": "An error occurred while submitting.",
+      "section_expired": "This section has expired.",
+      "answer_all": "Please answer all questions before continuing",
+      "remaining": "remaining",
+      "add_to_favorites": "Add to Favorites",
+      "meme_message": "Come on, you got this!"
+    },
+    "result": {
+      "passed_title": "Congratulations! You Passed",
+      "failed_title": "Unfortunately, you didn't pass this time",
+      "passed_message": "Great job! Keep learning",
+      "failed_message": "Don't worry, you can try again",
+      "time_taken": "Time Taken",
+      "percentage": "Percentage",
+      "correct_answers": "Correct Answers",
+      "review_answers": "Review Answers",
+      "your_answer": "Your Answer",
+      "correct_answer": "Correct Answer",
+      "no_answer": "Not answered",
+      "explanation": "Explanation",
+      "correct_badge": "Correct Answer",
+      "wrong_badge": "Wrong Answer",
+      "retry": "Try Again",
+      "finish": "Finish Quiz"
+    }
   }
 }

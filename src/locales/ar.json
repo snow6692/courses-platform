@@ -94,7 +94,14 @@
     "course_content": "محتوى الدورة",
     "chapters": "فصول",
     "lesson": "درس",
-    "free_preview": "معاينة مجانية"
+    "free_preview": "معاينة مجانية",
+    "one_payment_label": "دفعة واحدة",
+    "video_content": "فيديو تعليمي",
+    "quizzes": "اختبارات تقييمية تفاعلية",
+    "resources": "مواد تعليمية قابلة للتحميل",
+    "rating": "تقييم",
+    "instructor_name": "أ.محمد العتيبي",
+    "instructor_title": "أستاذ الرياضيات بخبرة 15 عاماً في تدريس التحصيلي"
   },
   "lesson": {
     "free_lesson_from": "درس مجاني من كورس:",
@@ -118,5 +125,53 @@
     "continue_email": "الاستمرار بالبريد الإلكتروني",
     "verification_sent": "تم إرسال رمز التحقق إلى البريد الإلكتروني",
     "signed_in_google": "تم تسجيل الدخول باستخدام جوجل بنجاح"
+  },
+  "quiz": {
+    "settings": {
+      "title": "إعدادات الاختبار",
+      "enable_timer": "تفعيل المؤقت",
+      "enable_memes": "تفعيل الميمز",
+      "sections_overview": "نظرة عامة على الأقسام",
+      "questions": "أسئلة",
+      "start_quiz": "ابدأ الاختبار الآن"
+    },
+    "player": {
+      "section": "القسم",
+      "of": "من",
+      "question": "السؤال",
+      "question_number": "السؤال {number}",
+      "next_question": "السؤال التالي",
+      "prev_question": "السؤال السابق",
+      "submit_quiz": "تسليم الاختبار",
+      "all_questions": "جميع الأسئلة",
+      "sections": "الأقسام",
+      "time_up_next": "انتهى الوقت! الانتقال للقسم التالي.",
+      "time_up_submit": "انتهى الوقت! جاري تسليم الاختبار...",
+      "submit_success": "تم تسليم الاختبار بنجاح!",
+      "submit_error": "حدث خطأ أثناء التسليم.",
+      "section_expired": "هذا القسم انتهى وقته.",
+      "answer_all": "الرجاء الإجابة على جميع الأسئلة قبل المتابعة",
+      "remaining": "متبقي",
+      "add_to_favorites": "أضف للمفضلة",
+      "meme_message": "يلا شد حيلك!"
+    },
+    "result": {
+      "passed_title": "تهانينا! لقد نجحت",
+      "failed_title": "للأسف، لم تنجح هذه المرة",
+      "passed_message": "أحسنت! استمر في التعلم",
+      "failed_message": "لا تقلق، يمكنك المحاولة مرة أخرى",
+      "time_taken": "الوقت المستغرق",
+      "percentage": "نسبة مئوية",
+      "correct_answers": "إجابات صحيحة",
+      "review_answers": "مراجعة الإجابات",
+      "your_answer": "إجابتك",
+      "correct_answer": "الإجابة الصحيحة",
+      "no_answer": "لم تجب",
+      "explanation": "الشرح",
+      "correct_badge": "إجابة صحيحة",
+      "wrong_badge": "إجابة خاطئة",
+      "retry": "أعد المحاولة",
+      "finish": "إنهاء الاختبار"
+    }
   }
 }

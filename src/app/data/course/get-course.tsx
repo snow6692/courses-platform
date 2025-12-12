@@ -17,6 +17,16 @@ export async function getCourse(slug: string) {
       description: true,
       category: true,
       smallDescription: true,
+      user: {
+        select: {
+          name: true,
+        },
+      },
+      _count: {
+        select: {
+          enrollments:true,
+        },
+      },
       chapters: {
         select: {
           id: true,
