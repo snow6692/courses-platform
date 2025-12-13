@@ -180,5 +180,18 @@
   "common": {
     "show_more": "عرض المزيد",
     "show_less": "عرض أقل"
+  },
+  "dashboard": {
+    "my_courses": "كورساتي",
+    "my_courses_description": "هنا تجد جميع الكورسات التي اشتركت فيها",
+    "no_courses": "لا توجد كورسات",
+    "no_courses_description": "لم تشترك في أي كورس بعد، استكشف الكورسات المتاحة وابدأ رحلة التعلم!",
+    "browse_courses": "تصفح الكورسات",
+    "courses_count": "كورس مسجل",
+    "continue_learning": "أكمل التعلم",
+    "progress": "التقدم",
+    "completed_courses": "كورس مكتمل",
+    "review_course": "مراجعة الكورس",
+    "completed": "مكتمل"
   }
 }
