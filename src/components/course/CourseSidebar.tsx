@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronDown, Play } from "lucide-react";
+import { ChevronDown, Play, FileQuestion, GraduationCap } from "lucide-react";
 import { CourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 import {
   Collapsible,
@@ -9,6 +9,7 @@ import {
 import { Button } from "../ui/button";
 import { LessonItem } from "../lesson/LessonItem";
 import { CourseProgressClient } from "./CourseProgressClient";
+import Link from "next/link";
 
 interface IProps {
   course: CourseSidebarData;
@@ -25,7 +26,6 @@ function CourseSidebar({ course }: IProps) {
 
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-base leading-tight font-semibold">
-              {" "}
               {course.title}
             </h1>
             <p className="text-muted-foreground mt-1 text-xs">
@@ -35,6 +35,28 @@ function CourseSidebar({ course }: IProps) {
         </div>
 
         <CourseProgressClient course={course} />
+
+        {/* Course Quiz Button - Full width below progress */}
+        {course.quizzes && course.quizzes.length > 0 && (
+          <Link
+            href={`/dashboard/${course.slug}/quiz/${course.quizzes[0].id}`}
+            className="mt-3 block"
+          >
+            <div className="flex items-center gap-3 rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 transition-all hover:from-purple-100 hover:to-indigo-100">
+              <div className="flex size-8 items-center justify-center rounded-full bg-purple-600">
+                <GraduationCap className="size-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-purple-900">
+                  اختبار الكورس النهائي
+                </p>
+                <p className="text-xs text-purple-600">
+                  {course.quizzes[0].title}
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
       </div>
 
       <div className="space-y-3 py-4 pr-4">
@@ -48,20 +70,25 @@ function CourseSidebar({ course }: IProps) {
                 <div className="shrink-0">
                   <ChevronDown className="text-primary size-4" />
                 </div>
-                <div className="min-w-0 flex-1 space-x-4 text-left">
+                <div className="min-w-0 flex-1 text-left">
                   <p className="text-foreground truncate text-sm font-semibold">
-                    {chapter.position}: {chapter.title}
+                    Chapter {chapter.position}: {chapter.title}
                   </p>
-                  <div className="flex items-center justify-start gap-2">
-                    <p className="text-muted-foreground size-[8px] truncate pb-5 text-xs font-medium">
-                      {chapter.lessons.length}{" "}
-                    </p>
-                    <p className="">lessons</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="text-muted-foreground text-xs">
+                      {chapter.lessons.length} lessons
+                    </span>
+                    {chapter.quizzes && chapter.quizzes.length > 0 && (
+                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-600">
+                        Quiz
+                      </span>
+                    )}
                   </div>
                 </div>
               </Button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="mt-3 space-y-3 border-l-2 pl-6">
+            <CollapsibleContent className="mt-2 space-y-2 border-l-2 border-gray-200 pl-4">
+              {/* Lessons first */}
               {chapter.lessons.map((lesson) => (
                 <LessonItem
                   lesson={lesson}
@@ -74,8 +101,31 @@ function CourseSidebar({ course }: IProps) {
                       (progress) => progress.lessonId === lesson.id,
                     )?.completed || false
                   }
+                  hasQuiz={lesson.quizzes && lesson.quizzes.length > 0}
                 />
               ))}
+
+              {/* Chapter Quiz Button - Below lessons */}
+              {chapter.quizzes && chapter.quizzes.length > 0 && (
+                <Link
+                  href={`/dashboard/${course.slug}/quiz/${chapter.quizzes[0].id}`}
+                  className="block pt-2"
+                >
+                  <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 p-2.5 transition-all hover:from-red-100 hover:to-orange-100">
+                    <div className="flex size-7 items-center justify-center rounded-full bg-red-600">
+                      <FileQuestion className="size-3.5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-red-900">
+                        اختبار الفصل
+                      </p>
+                      <p className="text-[10px] text-red-600">
+                        {chapter.quizzes[0].title}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              )}
             </CollapsibleContent>
           </Collapsible>
         ))}

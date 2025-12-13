@@ -86,16 +86,14 @@ export async function CourseEnrollmentCard({
 
         <CardContent className="p-0">
           {/* Price Section */}
-          <div className="mb-6 flex items-center justify-center gap-3 text-center">
+          <div className="mb-6 flex items-center gap-3 text-center">
+            <span className="text-foreground text-3xl font-bold">
+              {course.price}
+              <span className="text-xl">{t("courses.card.currency")}</span>
+            </span>
+
             <span className="text-muted-foreground text-sm font-medium">
               {t("course_detail.one_payment_label")}
-            </span>
-            <span className="text-foreground text-3xl font-bold">
-              {new Intl.NumberFormat("ar-SA", {
-                style: "decimal",
-                minimumFractionDigits: 0,
-              }).format(course.price)}{" "}
-              <span className="text-xl">{t("courses.card.currency")}</span>
             </span>
           </div>
 

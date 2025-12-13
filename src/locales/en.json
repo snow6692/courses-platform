@@ -8,9 +8,8 @@
     "subscribe": "Subscribe Now Free",
     "browse": "Browse Subjects",
     "stats": {
-      "students": "Thousand Students",
-      "courses": "Educational Course",
-      "rating": "3.9"
+      "students": " Students",
+      "courses": "Educational Course"
     }
   },
   "home": {
@@ -177,5 +176,9 @@
       "retry": "Try Again",
       "finish": "Finish Quiz"
     }
+  },
+  "common": {
+    "show_more": "Show more",
+    "show_less": "Show less"
   }
 }

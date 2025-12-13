@@ -14,6 +14,7 @@ import {
   CourseHeroSkeleton,
   CourseEnrollmentCardSkeleton,
   CourseContentSkeleton,
+  CourseDescriptionSkeleton,
 } from "@/components/course/CourseDetailSkeletons";
 import { getServerLocale } from "@/lib/i18n";
 
@@ -51,11 +52,7 @@ async function CoursePage({ params }: IProps) {
                 <CourseHeroContent slug={slug} />
               </Suspense>
 
-              <Suspense
-                fallback={
-                  <div className="h-64 w-full animate-pulse rounded-lg bg-gray-100" />
-                }
-              >
+              <Suspense fallback={<CourseDescriptionSkeleton />}>
                 <CourseDescriptionContent slug={slug} />
               </Suspense>
             </div>

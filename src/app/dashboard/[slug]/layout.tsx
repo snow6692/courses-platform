@@ -1,5 +1,6 @@
 import { getCourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 import CourseSidebar from "@/components/course/CourseSidebar";
+import { MobileSidebar } from "@/components/course/MobileSidebar";
 import React, { ReactNode } from "react";
 
 interface IProps {
@@ -13,15 +14,20 @@ async function CourseLayout({ children, params }: IProps) {
 
   return (
     <div className="flex flex-1">
-      {/* Sidebar 30% */}
-      <div className="border-border w-80 shrink-0 border-r">
-        <CourseSidebar course={course} />
+      {/* Desktop Sidebar - Hidden on mobile */}
+      <div className="border-border hidden w-80 shrink-0 border-r lg:block">
+        <div className="sticky top-0 h-screen overflow-y-auto">
+          <CourseSidebar course={course} />
+        </div>
       </div>
-      {/* Main content */}
+
+      {/* Mobile Sidebar - Floating button + Sheet */}
+      <MobileSidebar course={course} />
+
+      {/* Main content - Full width on mobile */}
       <div className="flex-1 overflow-hidden">{children}</div>
     </div>
   );
 }
 
 export default CourseLayout;
- 

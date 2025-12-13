@@ -16,6 +16,17 @@ export async function getCourseSidebarData(slug: string) {
       level: true,
       category: true,
       slug: true,
+      // Course-level quizzes
+      quizzes: {
+        where: {
+          type: "COURSE",
+          isActive: true,
+        },
+        select: {
+          id: true,
+          title: true,
+        },
+      },
       chapters: {
         orderBy: {
           position: "asc",
@@ -24,6 +35,17 @@ export async function getCourseSidebarData(slug: string) {
           id: true,
           title: true,
           position: true,
+          // Chapter-level quizzes
+          quizzes: {
+            where: {
+              type: "CHAPTER",
+              isActive: true,
+            },
+            select: {
+              id: true,
+              title: true,
+            },
+          },
           lessons: {
             orderBy: {
               position: "asc",
@@ -31,10 +53,20 @@ export async function getCourseSidebarData(slug: string) {
             select: {
               id: true,
               title: true,
-
               position: true,
               description: true,
               isFree: true,
+              // Lesson-level quizzes
+              quizzes: {
+                where: {
+                  type: "LESSON",
+                  isActive: true,
+                },
+                select: {
+                  id: true,
+                  title: true,
+                },
+              },
               lessonProgress: {
                 where: {
                   userId: user.id,

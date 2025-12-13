@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { Check, Play, Lock } from "lucide-react";
+import { Check, Play, Lock, FileQuestion } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { useLanguage } from "@/providers/LanguageContext";
@@ -19,6 +19,7 @@ interface IProps {
   completed: boolean;
   isLocked: boolean;
   isPurchased: boolean;
+  hasQuiz?: boolean;
 }
 export function LessonItem({
   lesson,
@@ -26,6 +27,7 @@ export function LessonItem({
   completed,
   isLocked,
   isPurchased,
+  hasQuiz,
 }: IProps) {
   const { t } = useLanguage();
   const pathname = usePathname();
@@ -45,20 +47,20 @@ export function LessonItem({
         className: cn(
           "h-auto w-full justify-start p-3 transition-all",
 
-          // 1. Active + Completed
+          // 1. Active + Completed - Vibrant green
           isActive &&
             completed &&
-            "border-green-600 bg-green-500 text-white shadow-sm hover:bg-green-600",
+            "border-emerald-600 bg-emerald-500 text-white shadow-lg ring-2 ring-emerald-300 hover:bg-emerald-600",
 
-          // 2. Completed only
+          // 2. Completed only - Light green
           completed &&
             !isActive &&
             "border-green-400 bg-green-100 text-green-800 hover:bg-green-200",
 
-          // 3. Active only (not completed)
+          // 3. Active only (not completed) - Vibrant green outline
           isActive &&
             !completed &&
-            "bg-primary/10 text-primary border-primary hover:bg-primary/20",
+            "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-lg ring-2 ring-emerald-200 hover:bg-emerald-100",
 
           // 4. Locked
           showLocked &&
@@ -125,6 +127,13 @@ export function LessonItem({
                   {t("lesson.badge_paid")}
                 </span>
               ))}
+
+            {/* Quiz Badge */}
+            {hasQuiz && (
+              <span className="rounded-full bg-purple-100 px-1.5 py-0.5 text-[10px] font-medium text-purple-700">
+                <FileQuestion className="inline size-3" />
+              </span>
+            )}
           </div>
 
           {/* Subtext */}

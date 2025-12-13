@@ -1,5 +1,6 @@
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import { getServerLocale } from "@/lib/i18n";
+import { ExpandableDescription } from "./ExpandableDescription";
 
 interface CourseDescriptionSectionProps {
   description: string | null;
@@ -8,7 +9,7 @@ interface CourseDescriptionSectionProps {
 export async function CourseDescriptionSection({
   description,
 }: CourseDescriptionSectionProps) {
-  const { t, dir } = await getServerLocale();
+  const { dir } = await getServerLocale();
 
   if (!description) return null;
 
@@ -23,9 +24,11 @@ export async function CourseDescriptionSection({
 
   return (
     <div className="space-y-4" dir={dir}>
-      <div className="prose prose-lg max-w-none text-right text-gray-600">
-        <RenderDescription json={parsedDescription} />
-      </div>
+      <ExpandableDescription maxHeight={200}>
+        <div className="prose prose-lg max-w-none text-gray-600">
+          <RenderDescription json={parsedDescription} />
+        </div>
+      </ExpandableDescription>
     </div>
   );
 }

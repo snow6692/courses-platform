@@ -43,7 +43,7 @@ export default function LessonContent({ lesson }: LessonContentProps) {
   const isCompleted = progress.length > 0 && progress[0]?.completed === true;
 
   return (
-    <div className="bg-background flex h-full flex-col gap-8 pt-6 pr-6 pb-12 pl-6">
+    <div className="bg-background flex h-full flex-col gap-6 p-4 pb-20 md:gap-8 md:p-6 md:pb-12 lg:pr-6">
       {/* Video Player */}
       {hasVideo && (
         <VideoPlayer
@@ -72,7 +72,7 @@ export default function LessonContent({ lesson }: LessonContentProps) {
         </Card>
       )}
 
-      {/* For enrollemnt use=er */}
+      {/* For enrollemnt user */}
       {progress !== null && (
         <div className="flex flex-col gap-4">
           <CompleteLessonButton
@@ -83,7 +83,7 @@ export default function LessonContent({ lesson }: LessonContentProps) {
           {lesson.quizzes && lesson.quizzes.length > 0 && (
             <Button asChild variant="secondary" className="w-full">
               <Link
-                href={`/courses/${lesson.Chapter.Course.slug}/quiz/${lesson.quizzes[0].id}`}
+                href={`/dashboard/${lesson.Chapter.Course.slug}/quiz/${lesson.quizzes[0].id}`}
               >
                 Start Quiz
               </Link>
@@ -93,8 +93,8 @@ export default function LessonContent({ lesson }: LessonContentProps) {
       )}
 
       {/* Lesson Title & Description */}
-      <div className="space-y-6">
-        <h1 className="text-foreground text-3xl font-bold tracking-tight lg:text-4xl">
+      <div className="space-y-4 md:space-y-6">
+        <h1 className="text-foreground text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
           {lesson.title}
         </h1>
 

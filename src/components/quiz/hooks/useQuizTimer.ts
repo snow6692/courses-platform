@@ -182,6 +182,6 @@ export function useQuizTimer({
   return {
     timeLeft,
     timerExpired,
-    isSubmitting: isSubmittingLocal,
+    isSubmitting,
   };
 }
