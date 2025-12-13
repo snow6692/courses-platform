@@ -6,6 +6,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useConstructUrl } from "@/hooks/use-construct-url";
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
+import {
+  IconClock,
+  IconBook,
+  IconClipboardCheck,
+  IconDownload,
+  IconInfinity,
+  IconCertificate,
+} from "@tabler/icons-react";
 
 interface CourseEnrollmentCardProps {
   course: {
@@ -17,7 +25,7 @@ interface CourseEnrollmentCardProps {
     category: string;
     fileKey: string;
     description: string | null;
-    chapters: { lessons: unknown[] }[];
+    chapters: { lessons: { id: string; title: string; isFree: boolean }[] }[];
   };
   isEnrolled: boolean;
 }
@@ -29,11 +37,44 @@ export async function CourseEnrollmentCard({
   const { t } = await getServerLocale();
   const thumbnailImage = useConstructUrl(course.fileKey);
 
+  // Calculate total chapters
+  const totalChapters = course.chapters.length;
+
+  const courseIncludes = [
+    {
+      icon: IconClock,
+      text: `${course.duration} ${t("course_detail.hours")} ${t("course_detail.video_content")}`,
+    },
+    {
+      icon: IconBook,
+      text: `${totalChapters} ${t("course_detail.chapters_count")}`,
+    },
+    {
+      icon: IconClipboardCheck,
+      text: t("course_detail.quizzes"),
+    },
+    {
+      icon: IconDownload,
+      text: t("course_detail.resources"),
+    },
+    {
+      icon: IconInfinity,
+      text: t("course_detail.full_lifetime_access"),
+    },
+    {
+      icon: IconCertificate,
+      text: t("course_detail.certificate"),
+    },
+  ];
+
   return (
     <div className="sticky top-20">
-      <Card className="overflow-hidden border-none bg-transparent shadow-none">
-        {/* Course Image - Top of Card */}
-        <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-xl shadow-lg">
+      <Card
+        className="overflow-hidden rounded-2xl border-none p-4 shadow-lg"
+        style={{ backgroundColor: "#FDFDFD" }}
+      >
+        {/* Course Image */}
+        <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-xl">
           <Image
             src={thumbnailImage}
             alt="Course thumbnail"
@@ -44,25 +85,28 @@ export async function CourseEnrollmentCard({
         </div>
 
         <CardContent className="p-0">
-          {/* Price */}
-          <div className="mb-4 flex items-center justify-end gap-2 text-right">
+          {/* Price Section */}
+          <div className="mb-6 flex items-center justify-center gap-3 text-center">
             <span className="text-muted-foreground text-sm font-medium">
-              {t("course_detail.one_payment_label") || "دفعة واحدة"}
+              {t("course_detail.one_payment_label")}
             </span>
             <span className="text-foreground text-3xl font-bold">
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "SAR",
-              }).format(course.price)}
+              {new Intl.NumberFormat("ar-SA", {
+                style: "decimal",
+                minimumFractionDigits: 0,
+              }).format(course.price)}{" "}
+              <span className="text-xl">{t("courses.card.currency")}</span>
             </span>
           </div>
 
-          <div className="mb-8 flex flex-col gap-3">
+          {/* CTA Button */}
+          <div className="mb-8">
             {isEnrolled ? (
               <Link
                 href={`/dashboard/${course.slug}`}
                 className={buttonVariants({
-                  className: "w-full py-6 text-lg font-bold",
+                  className:
+                    "bg-primary hover:bg-primary/90 w-full rounded-lg py-6 text-lg font-bold",
                 })}
               >
                 {t("course_detail.watch_now")}
@@ -72,12 +116,28 @@ export async function CourseEnrollmentCard({
             )}
           </div>
 
-          <div className="mb-6 space-y-3">
-            <div className="bg-border/40 mb-4 h-px w-full" />
+          {/* Divider */}
+          <div className="mb-6 h-px w-full bg-gray-200" />
 
-            {/* Dynamic Description Rendering */}
-            <div className="text-right" dir="rtl">
-              <RenderDescription json={course.description} />
+          {/* This Course Includes Section */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-right text-lg font-bold text-gray-800">
+              {t("course_detail.this_course_includes")}
+            </h3>
+            <div className="space-y-3">
+              {courseIncludes.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-end gap-3 text-right"
+                >
+                  <span className="text-muted-foreground text-sm">
+                    {item.text}
+                  </span>
+                  <div className="bg-primary/10 flex size-6 items-center justify-center rounded-full">
+                    <item.icon className="text-primary size-3.5" />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>

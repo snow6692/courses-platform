@@ -1,13 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { getServerLocale } from "@/lib/i18n";
-import {
-  IconBook,
-  IconCategory,
-  IconChartBar,
-  IconClock,
-  IconStar,
-  IconUsers,
-} from "@tabler/icons-react";
+import { IconClock, IconUsers } from "@tabler/icons-react";
 
 interface CourseHeroSectionProps {
   course: {
@@ -24,22 +16,22 @@ interface CourseHeroSectionProps {
 }
 
 export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
-  const { t } = await getServerLocale();
+  const { t, dir } = await getServerLocale();
 
   return (
-    <div className="flex flex-col items-end space-y-6 text-right">
+    <div className="mb-4 flex flex-col space-y-6 text-right" dir={dir}>
       {/* Category Badge */}
-      <div className="mb-4 inline-flex items-center rounded-full bg-white px-4 py-1.5 shadow-sm">
-        <span className="text-foreground text-sm font-medium">
-          {course.category}
-        </span>
-        <span className="text-primary mx-2">•</span>
+      <div className="mb-2 inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 shadow-sm">
         <span className="text-foreground text-sm font-medium">
           {course.level}
         </span>
+        <span className="text-primary bg-primary mx-2 size-3 animate-pulse rounded-full"></span>
+        <span className="text-foreground text-sm font-medium">
+          {course.category}
+        </span>
       </div>
 
-      {/* Course Info */}
+      {/* Course Title */}
       <div className="space-y-4">
         <h1 className="text-foreground text-4xl font-extrabold tracking-tight lg:text-5xl">
           {course.title}
@@ -50,11 +42,11 @@ export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="text-muted-foreground flex flex-wrap items-center justify-end gap-6 text-sm">
+      {/* Stats Row */}
+      <div className="text-muted-foreground flex flex-wrap items-center gap-6 text-sm">
         <div className="flex items-center gap-1.5">
           <span>
-            {course._count.enrollments} {t("course_detail.students") || "طالب"}
+            {course._count.enrollments} {t("course_detail.students")}
           </span>
           <IconUsers className="size-4" />
         </div>
@@ -67,12 +59,11 @@ export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
         </div>
       </div>
 
-      {/* Instructor */}
-      <div className="pt-8 text-right">
-        <h3 className="mb-1 text-lg font-bold">
-          {course.user?.name || "Unknown Instructor"}
+      {/* Instructor Section */}
+      <div className="pt-6 text-right">
+        <h3 className="text-primary mb-1 text-lg font-bold">
+          {course.user?.name}
         </h3>
-        <p className="text-muted-foreground text-sm">Creator of the course</p>
       </div>
     </div>
   );

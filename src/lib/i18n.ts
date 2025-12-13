@@ -37,5 +37,6 @@ export async function getServerLocale() {
         .reduce((acc: any, part: string) => acc?.[part], dictionary);
       return value ?? key;
     },
+    dir: locale === "ar" ? "rtl" : "ltr",
   };
 }

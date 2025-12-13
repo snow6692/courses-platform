@@ -1,7 +1,8 @@
 import prisma from "@/lib/db";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
-export async function getCourse(slug: string) {
+export const getCourse = cache(async (slug: string) => {
   const course = await prisma.course.findUnique({
     where: {
       slug,
@@ -24,7 +25,7 @@ export async function getCourse(slug: string) {
       },
       _count: {
         select: {
-          enrollments:true,
+          enrollments: true,
         },
       },
       chapters: {
@@ -53,4 +54,4 @@ export async function getCourse(slug: string) {
     return notFound();
   }
   return course;
-}
+});

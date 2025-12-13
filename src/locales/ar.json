@@ -94,13 +94,13 @@
     "course_content": "محتوى الدورة",
     "chapters": "فصول",
     "lesson": "درس",
+    "chapters_count": "فصل دراسي متكامل",
     "free_preview": "معاينة مجانية",
     "one_payment_label": "دفعة واحدة",
     "video_content": "فيديو تعليمي",
     "quizzes": "اختبارات تقييمية تفاعلية",
     "resources": "مواد تعليمية قابلة للتحميل",
     "rating": "تقييم",
-    "instructor_name": "أ.محمد العتيبي",
     "instructor_title": "أستاذ الرياضيات بخبرة 15 عاماً في تدريس التحصيلي"
   },
   "lesson": {
