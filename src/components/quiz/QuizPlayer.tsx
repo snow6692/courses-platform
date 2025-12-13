@@ -438,9 +438,9 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     ],
   );
 
-  const isQuestionAnswered = (questionId: string) => {
+  const isQuestionAnswered = (questionId: string): boolean => {
     const ans = formValues.answers?.[questionId];
-    return ans && (Array.isArray(ans) ? ans.length > 0 : true);
+    return Boolean(ans && (Array.isArray(ans) ? ans.length > 0 : true));
   };
 
   if (!isInitialized) {
