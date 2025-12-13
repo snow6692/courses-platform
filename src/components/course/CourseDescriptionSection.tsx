@@ -23,9 +23,6 @@ export async function CourseDescriptionSection({
 
   return (
     <div className="space-y-4" dir={dir}>
-      <h2 className="text-2xl font-bold text-gray-800">
-        {t("course_detail.course_description")}
-      </h2>
       <div className="prose prose-lg max-w-none text-right text-gray-600">
         <RenderDescription json={parsedDescription} />
       </div>

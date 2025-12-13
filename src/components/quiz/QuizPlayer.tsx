@@ -12,7 +12,10 @@ import {
   quizPlayerSchema,
   QuizPlayerSchemaType,
 } from "@/validation/quizPlayer.zod";
-import { submitQuiz } from "@/actions/quiz/student.actions";
+import {
+  submitQuiz,
+  submitFavoritesQuiz,
+} from "@/actions/quiz/student.actions";
 import QuizResult from "./QuizResult";
 import QuizSettingsModal, { QuizSettings } from "./QuizSettingsModal";
 import { useLanguage } from "@/providers/LanguageContext";
@@ -256,7 +259,21 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       const timeTaken = calculateTimeTaken();
       setIsSubmitting(true);
       try {
-        const result = await submitQuiz(quiz.id, values.answers, timeTaken);
+        let result;
+        const isFavoritesQuizLocal = quiz.id === "favorites-quiz";
+        if (isFavoritesQuizLocal) {
+          // For favorites quiz, collect all question IDs from the virtual quiz
+          const questionIds = sections.flatMap((s) =>
+            s.questions.map((q) => q.id),
+          );
+          result = await submitFavoritesQuiz(
+            questionIds,
+            values.answers,
+            timeTaken,
+          );
+        } else {
+          result = await submitQuiz(quiz.id, values.answers, timeTaken);
+        }
         if (result.success) {
           clearSavedState();
           saveResult(result);
@@ -381,12 +398,27 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     }
   };
 
+  const isFavoritesQuiz = quiz.id === "favorites-quiz";
+
   const handleSubmit = async () => {
     const values = form.getValues();
     const timeTaken = calculateTimeTaken();
     setIsSubmitting(true);
     try {
-      const result = await submitQuiz(quiz.id, values.answers, timeTaken);
+      let result;
+      if (isFavoritesQuiz) {
+        // For favorites quiz, collect all question IDs from the virtual quiz
+        const questionIds = sections.flatMap((s) =>
+          s.questions.map((q) => q.id),
+        );
+        result = await submitFavoritesQuiz(
+          questionIds,
+          values.answers,
+          timeTaken,
+        );
+      } else {
+        result = await submitQuiz(quiz.id, values.answers, timeTaken);
+      }
       if (result.success) {
         clearSavedState();
         saveResult(result);

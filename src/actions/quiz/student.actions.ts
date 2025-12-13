@@ -189,3 +189,104 @@ export async function getFavoriteQuestions() {
 
   return favorites.map((f) => f.question);
 }
+
+/**
+ * Submit a favorites quiz (virtual quiz, not stored in database)
+ * This fetches questions directly by their IDs instead of looking for a quiz entity
+ */
+export async function submitFavoritesQuiz(
+  questionIds: string[],
+  answers: Record<string, string | string[]>,
+  timeTaken: number = 0,
+) {
+  const user = await requireUser();
+
+  // Fetch questions directly by their IDs
+  const questions = await prisma.question.findMany({
+    where: { id: { in: questionIds } },
+    include: {
+      answers: true,
+    },
+  });
+
+  if (questions.length === 0) {
+    throw new Error("No questions found");
+  }
+
+  let correctCount = 0;
+  const questionResults: {
+    questionId: string;
+    text: string;
+    imageKey: string | null;
+    explanation: string | null;
+    explanationImageKey: string | null;
+    explanationVideoKey: string | null;
+    selectedAnswerIds: string[];
+    correctAnswerIds: string[];
+    isCorrect: boolean;
+    isFavorited: boolean;
+    answers: {
+      id: string;
+      text: string;
+      imageKey: string | null;
+      isCorrect: boolean;
+    }[];
+  }[] = [];
+
+  for (const question of questions) {
+    const rawAnswer = answers[question.id];
+    const selectedAnswerIds = Array.isArray(rawAnswer)
+      ? rawAnswer
+      : rawAnswer
+        ? [rawAnswer]
+        : [];
+
+    const correctAnswers = question.answers
+      .filter((a) => a.isCorrect)
+      .map((a) => a.id);
+
+    // Check if selected answers match correct answers exactly (ignoring order)
+    const isCorrect =
+      selectedAnswerIds.length === correctAnswers.length &&
+      selectedAnswerIds.every((id) => correctAnswers.includes(id));
+
+    if (isCorrect) {
+      correctCount++;
+    }
+
+    questionResults.push({
+      questionId: question.id,
+      text: question.text,
+      imageKey: question.imageKey,
+      explanation: question.explanation,
+      explanationImageKey: question.explanationImageKey,
+      explanationVideoKey: question.explanationVideoKey,
+      selectedAnswerIds,
+      correctAnswerIds: correctAnswers,
+      isCorrect,
+      isFavorited: true, // All questions in favorites quiz are favorited
+      answers: question.answers.map((a) => ({
+        id: a.id,
+        text: a.text,
+        imageKey: a.imageKey,
+        isCorrect: a.isCorrect,
+      })),
+    });
+  }
+
+  const totalQuestions = questions.length;
+  const score = (correctCount / totalQuestions) * 100;
+
+  // Note: We don't create a QuizAttempt for favorites quiz
+  // since there's no actual quiz entity in the database
+
+  return {
+    success: true,
+    attemptId: null, // No attempt ID for favorites quiz
+    score,
+    totalQuestions,
+    correctAnswers: correctCount,
+    timeTaken,
+    questions: questionResults,
+  };
+}

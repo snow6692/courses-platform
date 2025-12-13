@@ -1,5 +1,6 @@
 import { getServerLocale } from "@/lib/i18n";
 import { IconClock, IconUsers } from "@tabler/icons-react";
+import { Badge } from "../ui/badge";
 
 interface CourseHeroSectionProps {
   course: {
@@ -21,15 +22,12 @@ export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
   return (
     <div className="mb-4 flex flex-col space-y-6 text-right" dir={dir}>
       {/* Category Badge */}
-      <div className="mb-2 inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 shadow-sm">
-        <span className="text-foreground text-sm font-medium">
-          {course.level}
-        </span>
+      <Badge className="mb-2 flex items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 shadow-sm">
         <span className="text-primary bg-primary mx-2 size-3 animate-pulse rounded-full"></span>
         <span className="text-foreground text-sm font-medium">
           {course.category}
         </span>
-      </div>
+      </Badge>
 
       {/* Course Title */}
       <div className="space-y-4">
@@ -57,13 +55,6 @@ export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
           </span>
           <IconClock className="size-4" />
         </div>
-      </div>
-
-      {/* Instructor Section */}
-      <div className="pt-6 text-right">
-        <h3 className="text-primary mb-1 text-lg font-bold">
-          {course.user?.name}
-        </h3>
       </div>
     </div>
   );
