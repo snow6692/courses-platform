@@ -1,7 +1,7 @@
 "use client";
 
-import { X } from "lucide-react";
-import { useLanguage } from "@/providers/LanguageContext";
+import { useEffect, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MemePanelProps {
   show: boolean;
@@ -11,50 +11,78 @@ interface MemePanelProps {
 }
 
 export function MemePanel({ show, url, type, onClose }: MemePanelProps) {
-  const { t, dir } = useLanguage();
+  const [isVisible, setIsVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
-  if (!show || !url) return null;
+  const handleAnimationComplete = useCallback(() => {
+    if (!isVisible) {
+      setShouldRender(false);
+      onClose();
+    }
+  }, [isVisible, onClose]);
+
+  useEffect(() => {
+    if (show && url) {
+      setShouldRender(true);
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
+
+      // Remove after 8 seconds
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 8000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [show, url]);
+
+  if (!shouldRender || !url) return null;
 
   return (
-    <div
-      className={`animate-in ${dir === "rtl" ? "slide-in-from-left" : "slide-in-from-right"} fixed bottom-4 ${dir === "rtl" ? "left-4" : "right-4"} z-50 duration-500`}
-      style={{ maxWidth: "300px" }}
-    >
-      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-purple-600 via-pink-500 to-orange-400 p-1 shadow-2xl">
-        <div className="relative overflow-hidden rounded-xl bg-white">
-          <button
-            onClick={onClose}
-            className={`absolute top-2 ${dir === "rtl" ? "left-2" : "right-2"} z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/30 text-white transition-colors hover:bg-black/50`}
-          >
-            <X className="h-4 w-4" />
-          </button>
-          <div className="bg-linear-to-r from-purple-600 to-pink-500 px-4 py-2">
-            <p className="text-sm font-medium text-white">
-              😅 {t("quiz.player.meme_message")}
-            </p>
-          </div>
-          <div className="p-2">
+    <AnimatePresence onExitComplete={handleAnimationComplete}>
+      {isVisible && (
+        <motion.div
+          key="meme-panel"
+          initial={{ opacity: 0, scale: 0.5, y: 100, rotate: -10 }}
+          animate={{
+            opacity: [0, 1, 1, 0.8, 0.5, 0.2, 0],
+            scale: [0.5, 1.1, 1, 1, 1, 1, 0.95],
+            y: [100, -10, 0, 0, 0, 0, 20],
+            rotate: [-10, 5, 0, 0, 0, 0, 0],
+          }}
+          transition={{
+            duration: 8,
+            times: [0, 0.08, 0.12, 0.5, 0.7, 0.85, 1],
+            ease: "easeOut",
+          }}
+          onAnimationComplete={() => setIsVisible(false)}
+          className="fixed right-8 bottom-8 z-50"
+          style={{ maxWidth: "400px" }}
+        >
+          <div className="overflow-hidden rounded-2xl shadow-2xl ring-4 ring-white/20">
             {type === "VIDEO" ? (
               <video
                 src={url}
                 autoPlay
                 loop
-                muted
                 playsInline
-                className="w-full rounded-lg"
-                style={{ maxHeight: "200px" }}
+                className="w-full rounded-2xl"
+                style={{ maxHeight: "350px", objectFit: "cover" }}
               />
             ) : (
               <img
                 src={url}
                 alt="Meme"
-                className="w-full rounded-lg object-cover"
-                style={{ maxHeight: "200px" }}
+                className="w-full rounded-2xl object-cover"
+                style={{ maxHeight: "350px" }}
               />
             )}
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

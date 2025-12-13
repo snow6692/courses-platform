@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { QuizForStudent } from "@/app/data/quiz/get-quiz";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { QuizPlayerSkeleton } from "./QuizSkeletons";
 import { useConstructUrl } from "@/hooks/use-construct-url";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,9 +59,6 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const [memeType, setMemeType] = useState<"IMAGE" | "GIF" | "VIDEO" | null>(
     null,
   );
-  const [memeShownForSection, setMemeShownForSection] = useState<string | null>(
-    null,
-  );
   const [timerExpired, setTimerExpired] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -82,6 +79,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     defaultValues: {
       answers: {},
     },
+    shouldUnregister: false, // Keep field values when switching between questions
   });
 
   // Calculate time taken in seconds
@@ -194,8 +192,18 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     (settings: QuizSettings) => {
       if (!settings.enableTimer) return {};
       const timers: Record<string, number> = {};
+
+      // For favorites quiz with custom timer, apply to all sections
+      const customTimerSeconds = settings.customTimerMinutes
+        ? settings.customTimerMinutes * 60
+        : null;
+
       sections.forEach((section) => {
-        if (section.timeLimit) {
+        if (customTimerSeconds) {
+          // Use custom timer (for favorites quiz)
+          timers[section.id] = customTimerSeconds;
+        } else if (section.timeLimit) {
+          // Use section's default timer
           timers[section.id] = section.timeLimit;
         }
       });
@@ -213,8 +221,19 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       setExpiredSections([]);
       setCurrentQuestionIndex(0);
       setStartTime(Date.now());
+
+      // Pre-initialize all question answers to prevent form field issues
+      const initialAnswers: Record<string, string | string[]> = {};
+      sections.forEach((section) => {
+        section.questions.forEach((question) => {
+          const isMultipleChoice =
+            question.answers.filter((a) => a.isCorrect).length > 1;
+          initialAnswers[question.id] = isMultipleChoice ? [] : "";
+        });
+      });
+      form.reset({ answers: initialAnswers });
     },
-    [initializeSectionTimers],
+    [initializeSectionTimers, sections, form],
   );
 
   // Timer logic
@@ -244,16 +263,26 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     const newExpiredSections = [...expiredSections, currentSection.id];
     setExpiredSections(newExpiredSections);
 
-    const nextSectionIndex = sections.findIndex(
+    // Find ANY section that still has time remaining (not just ones after current)
+    // First check sections after current, then sections before
+    let nextSectionIndex = sections.findIndex(
       (s, idx) =>
         idx > currentSectionIndex && !newExpiredSections.includes(s.id),
     );
+
+    // If no section found after current, check sections before current
+    if (nextSectionIndex === -1) {
+      nextSectionIndex = sections.findIndex(
+        (s) => !newExpiredSections.includes(s.id),
+      );
+    }
 
     if (nextSectionIndex !== -1) {
       toast.info(t("quiz.player.time_up_next_section"));
       setCurrentSectionIndex(nextSectionIndex);
       setCurrentQuestionIndex(0);
     } else {
+      // All sections have expired, now submit
       toast.info(t("quiz.player.time_up_submitting"));
       const values = form.getValues();
       const timeTaken = calculateTimeTaken();
@@ -307,19 +336,28 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     }
   }, [timerExpired, handleSectionTimeUp]);
 
-  // Meme Logic
+  // Meme Logic - Show when 25% time remaining or at section start
+  const [memeShownAt25Percent, setMemeShownAt25Percent] = useState<Set<string>>(
+    new Set(),
+  );
+  const [sectionStartMemeShown, setSectionStartMemeShown] = useState<
+    Set<string>
+  >(new Set());
+
+  // Show meme at 25% time remaining
   useEffect(() => {
     if (!quizStarted || !quizSettings?.enableMemes || !currentSection) return;
     if (quiz.memes.length === 0) return;
-    if (memeShownForSection === currentSection.id) return;
+    if (!quizSettings.enableTimer || timeLeft === null) return;
 
-    const delaySeconds = currentSection.timeLimit
-      ? Math.floor(currentSection.timeLimit * 0.25)
-      : 15;
+    const totalTime = currentSection.timeLimit;
+    if (!totalTime) return;
 
-    const memeTimeout = setTimeout(() => {
-      if (memeShownForSection === currentSection.id) return;
+    const twentyFivePercent = Math.floor(totalTime * 0.25);
+    const alreadyShown = memeShownAt25Percent.has(currentSection.id);
 
+    // Show meme when time hits 25% remaining
+    if (timeLeft <= twentyFivePercent && timeLeft > 0 && !alreadyShown) {
       let memeToShow = quiz.memes.find((m) => m.meme.trigger === "TOO_SLOW");
       if (!memeToShow && quiz.memes.length > 0) {
         memeToShow = quiz.memes[Math.floor(Math.random() * quiz.memes.length)];
@@ -330,17 +368,118 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
         setMemeUrl(url);
         setMemeType(memeToShow.meme.type as "IMAGE" | "GIF" | "VIDEO");
         setShowMeme(true);
-        setMemeShownForSection(currentSection.id);
+        setMemeShownAt25Percent(
+          (prev) => new Set([...prev, currentSection.id]),
+        );
       }
-    }, delaySeconds * 1000);
-
-    return () => clearTimeout(memeTimeout);
+    }
   }, [
     quizStarted,
     currentSection?.id,
     quizSettings?.enableMemes,
+    quizSettings?.enableTimer,
     quiz.memes,
-    memeShownForSection,
+    timeLeft,
+    memeShownAt25Percent,
+  ]);
+
+  // Show meme at start of some sections (every 2nd or 3rd section)
+  useEffect(() => {
+    if (!quizStarted || !quizSettings?.enableMemes || !currentSection) return;
+    if (quiz.memes.length === 0) return;
+    if (sectionStartMemeShown.has(currentSection.id)) return;
+
+    // Only show for specific sections (not the first, and every 2-3 sections)
+    const shouldShowAtStart =
+      currentSectionIndex > 0 &&
+      (currentSectionIndex % 2 === 0 || sections.length <= 3);
+
+    if (!shouldShowAtStart) return;
+
+    // Small delay to let section transition complete
+    const timer = setTimeout(() => {
+      let memeToShow = quiz.memes.find((m) => m.meme.trigger === "RANDOM");
+      if (!memeToShow && quiz.memes.length > 0) {
+        memeToShow = quiz.memes[Math.floor(Math.random() * quiz.memes.length)];
+      }
+
+      if (memeToShow) {
+        const url = useConstructUrl(memeToShow.meme.fileKey);
+        setMemeUrl(url);
+        setMemeType(memeToShow.meme.type as "IMAGE" | "GIF" | "VIDEO");
+        setShowMeme(true);
+        setSectionStartMemeShown(
+          (prev) => new Set([...prev, currentSection.id]),
+        );
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [
+    quizStarted,
+    currentSection?.id,
+    currentSectionIndex,
+    sections.length,
+    quizSettings?.enableMemes,
+    quiz.memes,
+    sectionStartMemeShown,
+  ]);
+
+  // Show meme when user spends too long on a question (NO TIMER mode)
+  const [questionStartTime, setQuestionStartTime] = useState<number>(
+    Date.now(),
+  );
+  const [slowQuestionMemeShown, setSlowQuestionMemeShown] = useState<
+    Set<string>
+  >(new Set());
+
+  // Reset question timer when question changes
+  useEffect(() => {
+    if (currentQuestion) {
+      setQuestionStartTime(Date.now());
+    }
+  }, [currentQuestion?.id]);
+
+  // Check if user is taking too long on a question (only when timer is disabled)
+  useEffect(() => {
+    if (!quizStarted || !quizSettings?.enableMemes || !currentQuestion) return;
+    if (quiz.memes.length === 0) return;
+    if (quizSettings?.enableTimer) return; // Only for NO TIMER mode
+    if (slowQuestionMemeShown.has(currentQuestion.id)) return;
+
+    // Check every 5 seconds if user spent more than 45 seconds on this question
+    const checkInterval = setInterval(() => {
+      const timeSpent = (Date.now() - questionStartTime) / 1000;
+
+      if (timeSpent > 45) {
+        let memeToShow = quiz.memes.find((m) => m.meme.trigger === "TOO_SLOW");
+        if (!memeToShow && quiz.memes.length > 0) {
+          memeToShow =
+            quiz.memes[Math.floor(Math.random() * quiz.memes.length)];
+        }
+
+        if (memeToShow) {
+          const url = useConstructUrl(memeToShow.meme.fileKey);
+          setMemeUrl(url);
+          setMemeType(memeToShow.meme.type as "IMAGE" | "GIF" | "VIDEO");
+          setShowMeme(true);
+          setSlowQuestionMemeShown(
+            (prev) => new Set([...prev, currentQuestion.id]),
+          );
+        }
+        clearInterval(checkInterval);
+      }
+    }, 5000);
+
+    return () => clearInterval(checkInterval);
+  }, [
+    quizStarted,
+    currentQuestion?.id,
+    quizSettings?.enableMemes,
+    quizSettings?.enableTimer,
+    quiz.memes,
+    questionStartTime,
+    slowQuestionMemeShown,
   ]);
 
   const closeMeme = () => setShowMeme(false);
@@ -444,7 +583,8 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     setCurrentQuestionIndex(0);
     setSectionTimers({});
     setExpiredSections([]);
-    setMemeShownForSection(null);
+    setMemeShownAt25Percent(new Set());
+    setSectionStartMemeShown(new Set());
     setStartTime(null);
     form.reset({ answers: {} });
   };
@@ -475,12 +615,17 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     return Boolean(ans && (Array.isArray(ans) ? ans.length > 0 : true));
   };
 
+  const isSectionComplete = useCallback(
+    (sectionIndex: number): boolean => {
+      const section = sections[sectionIndex];
+      if (!section) return false;
+      return section.questions.every((q) => isQuestionAnswered(q.id));
+    },
+    [sections, formValues.answers],
+  );
+
   if (!isInitialized) {
-    return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <QuizPlayerSkeleton />;
   }
 
   if (!quizStarted) {
@@ -492,11 +637,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   }
 
   if (!currentSection || !currentQuestion) {
-    return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <QuizPlayerSkeleton />;
   }
 
   const isLastQuestion =
@@ -559,6 +700,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
           currentIndex={currentSectionIndex}
           onNavigate={navigateToSection}
           getSectionStatus={getSectionStatus}
+          isSectionComplete={isSectionComplete}
         />
       </div>
     </div>

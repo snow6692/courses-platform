@@ -2,11 +2,10 @@
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useConstructUrl } from "@/hooks/use-construct-url";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import { useLanguage } from "@/providers/LanguageContext";
-import { Control } from "react-hook-form";
+import { Control, useWatch, useFormContext } from "react-hook-form";
 import { QuizPlayerSchemaType } from "@/validation/quizPlayer.zod";
 
 interface Answer {
@@ -36,9 +35,16 @@ export function QuestionCard({
   control,
 }: QuestionCardProps) {
   const { t, dir } = useLanguage();
+  const { setValue } = useFormContext<QuizPlayerSchemaType>();
 
   const isMultipleChoice =
     question.answers.filter((a) => a.isCorrect).length > 1;
+
+  // Use useWatch to get the current value from form state
+  const fieldValue = useWatch({
+    control,
+    name: `answers.${question.id}`,
+  });
 
   // Parse question text if it's JSON
   const questionText =
@@ -46,6 +52,25 @@ export function QuestionCard({
       ? JSON.parse(question.text)?.content?.[0]?.content?.[0]?.text ||
         question.text
       : question.text;
+
+  const handleSingleChoiceChange = (value: string) => {
+    setValue(`answers.${question.id}`, value, { shouldDirty: true });
+  };
+
+  const handleMultipleChoiceChange = (answerId: string, checked: boolean) => {
+    const currentValue = Array.isArray(fieldValue) ? fieldValue : [];
+    if (checked) {
+      setValue(`answers.${question.id}`, [...currentValue, answerId], {
+        shouldDirty: true,
+      });
+    } else {
+      setValue(
+        `answers.${question.id}`,
+        currentValue.filter((val: string) => val !== answerId),
+        { shouldDirty: true },
+      );
+    }
+  };
 
   return (
     <div
@@ -84,92 +109,84 @@ export function QuestionCard({
       </div>
 
       {/* Answers */}
-      <FormField
-        control={control}
-        name={`answers.${question.id}`}
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              {isMultipleChoice ? (
-                <div className="space-y-3">
-                  {question.answers.map((answer, idx) => {
-                    const letters = ["A", "B", "C", "D", "E", "F"];
-                    const isChecked =
-                      Array.isArray(field.value) &&
-                      field.value.includes(answer.id);
-                    return (
-                      <label
-                        key={answer.id}
-                        className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all ${
-                          isChecked
-                            ? "border-red-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                        style={{ backgroundColor: "#FDFDFD" }}
-                      >
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={(checked) => {
-                            const current = Array.isArray(field.value)
-                              ? field.value
-                              : [];
-                            if (checked) {
-                              field.onChange([...current, answer.id]);
-                            } else {
-                              field.onChange(
-                                current.filter(
-                                  (val: string) => val !== answer.id,
-                                ),
-                              );
-                            }
-                          }}
-                          className="h-5 w-5"
-                        />
-                        <span className="flex-1 text-lg text-black">
-                          {answer.text}
-                        </span>
-                        <span className="font-semibold text-gray-500">
-                          {letters[idx]}
-                        </span>
-                      </label>
-                    );
-                  })}
+      {isMultipleChoice ? (
+        <div className="space-y-3">
+          {question.answers.map((answer, idx) => {
+            const letters = ["A", "B", "C", "D", "E", "F"];
+            const currentValue = Array.isArray(fieldValue) ? fieldValue : [];
+            const isChecked = currentValue.includes(answer.id);
+            return (
+              <label
+                key={answer.id}
+                className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all ${
+                  isChecked
+                    ? "border-red-500"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+                style={{ backgroundColor: "#FDFDFD" }}
+              >
+                <Checkbox
+                  checked={isChecked}
+                  onCheckedChange={(checked) =>
+                    handleMultipleChoiceChange(answer.id, !!checked)
+                  }
+                  className="h-5 w-5"
+                />
+                <div className="flex flex-1 flex-col gap-2">
+                  <span className="text-lg text-black">{answer.text}</span>
+                  {answer.imageKey && (
+                    <img
+                      src={useConstructUrl(answer.imageKey)}
+                      alt="Answer"
+                      className="max-h-32 rounded-lg object-contain"
+                    />
+                  )}
                 </div>
-              ) : (
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  value={field.value as string}
-                  className="space-y-3"
-                >
-                  {question.answers.map((answer, idx) => {
-                    const letters = ["A", "B", "C", "D", "E", "F"];
-                    const isSelected = field.value === answer.id;
-                    return (
-                      <label
-                        key={answer.id}
-                        className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all ${
-                          isSelected
-                            ? "border-red-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                        style={{ backgroundColor: "#FDFDFD" }}
-                      >
-                        <RadioGroupItem value={answer.id} className="h-5 w-5" />
-                        <span className="flex-1 text-lg text-black">
-                          {answer.text}
-                        </span>
-                        <span className="font-semibold text-gray-500">
-                          {letters[idx]}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </RadioGroup>
-              )}
-            </FormControl>
-          </FormItem>
-        )}
-      />
+                <span className="font-semibold text-gray-500">
+                  {letters[idx]}
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      ) : (
+        <RadioGroup
+          onValueChange={handleSingleChoiceChange}
+          value={(fieldValue as string) || ""}
+          className="space-y-3"
+        >
+          {question.answers.map((answer, idx) => {
+            const letters = ["A", "B", "C", "D", "E", "F"];
+            const isSelected = fieldValue === answer.id;
+            return (
+              <label
+                key={answer.id}
+                className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all ${
+                  isSelected
+                    ? "border-red-500"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+                style={{ backgroundColor: "#FDFDFD" }}
+              >
+                <RadioGroupItem value={answer.id} className="h-5 w-5" />
+                <div className="flex flex-1 flex-col gap-2">
+                  <span className="text-lg text-black">{answer.text}</span>
+                  {answer.imageKey && (
+                    <img
+                      src={useConstructUrl(answer.imageKey)}
+                      alt="Answer"
+                      className="max-h-32 rounded-lg object-contain"
+                    />
+                  )}
+                </div>
+                <span className="font-semibold text-gray-500">
+                  {letters[idx]}
+                </span>
+              </label>
+            );
+          })}
+        </RadioGroup>
+      )}
     </div>
   );
 }

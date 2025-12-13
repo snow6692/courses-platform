@@ -155,7 +155,9 @@
       "answer_all": "الرجاء الإجابة على جميع الأسئلة قبل المتابعة",
       "remaining": "متبقي",
       "add_to_favorites": "أضف للمفضلة",
-      "meme_message": "يلا شد حيلك!"
+      "meme_message": "يلا شد حيلك!",
+      "prev_section": "القسم السابق",
+      "next_section": "القسم التالي"
     },
     "result": {
       "passed_title": "تهانينا! لقد نجحت",

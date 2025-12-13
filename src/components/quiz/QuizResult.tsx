@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConstructUrl } from "@/hooks/use-construct-url";
+import { useConfetti } from "@/hooks/use-confetti";
 import {
   ChevronDown,
   ChevronUp,
@@ -49,6 +50,23 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
     new Set(),
   );
   const { t, dir } = useLanguage();
+  const { triggerConfetti } = useConfetti();
+  const confettiTriggered = useRef(false);
+
+  const isPassed = result.score >= 50;
+  const scorePercentage = Math.round(result.score);
+
+  // Trigger confetti only once when user passes
+  useEffect(() => {
+    if (isPassed && !confettiTriggered.current) {
+      confettiTriggered.current = true;
+      // Small delay to ensure the component is mounted
+      const timer = setTimeout(() => {
+        triggerConfetti();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isPassed, triggerConfetti]);
 
   const toggleQuestion = (questionId: string) => {
     setExpandedQuestions((prev) => {
@@ -61,9 +79,6 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
       return newSet;
     });
   };
-
-  const isPassed = result.score >= 50;
-  const scorePercentage = Math.round(result.score);
 
   // Format time from seconds to mm:ss
   const formatTime = (seconds: number) => {
@@ -150,10 +165,14 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
         <div className="space-y-3">
           {result.questions.map((q, index) => {
             const isExpanded = expandedQuestions.has(q.questionId);
-            const selectedAnswer = q.answers.find((a) =>
+
+            // Get all selected answers
+            const selectedAnswers = q.answers.filter((a) =>
               q.selectedAnswerIds.includes(a.id),
             );
-            const correctAnswer = q.answers.find((a) => a.isCorrect);
+
+            // Get all correct answers
+            const correctAnswers = q.answers.filter((a) => a.isCorrect);
 
             // Parse question text if it's JSON
             let questionText = q.text;
@@ -216,27 +235,76 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
                 {/* Expanded Content */}
                 {isExpanded && (
                   <div className="space-y-4 border-t px-4 py-4">
-                    {/* Your Answer */}
-                    <div className="flex items-start gap-2">
+                    {/* Question Image (if any) */}
+                    {q.imageKey && (
+                      <div className="mb-4">
+                        <img
+                          src={useConstructUrl(q.imageKey)}
+                          alt="Question"
+                          className="max-h-48 rounded-lg"
+                        />
+                      </div>
+                    )}
+
+                    {/* Your Answer(s) */}
+                    <div className="flex flex-col gap-2">
                       <span className="text-sm text-gray-500">
                         {t("quiz.result.your_answer")}:
                       </span>
-                      <span
-                        className={`text-sm font-medium ${q.isCorrect ? "text-green-600" : "text-red-600"}`}
-                      >
-                        {selectedAnswer?.text || t("quiz.result.no_answer")}
-                      </span>
+                      {selectedAnswers.length > 0 ? (
+                        <div className="flex flex-col gap-2">
+                          {selectedAnswers.map((ans) => (
+                            <div
+                              key={ans.id}
+                              className="flex items-center gap-2"
+                            >
+                              <span
+                                className={`text-sm font-medium ${q.isCorrect || ans.isCorrect ? "text-green-600" : "text-red-600"}`}
+                              >
+                                • {ans.text}
+                              </span>
+                              {ans.imageKey && (
+                                <img
+                                  src={useConstructUrl(ans.imageKey)}
+                                  alt="Answer"
+                                  className="max-h-20 rounded-lg"
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-sm font-medium text-red-600">
+                          {t("quiz.result.no_answer")}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Correct Answer (if wrong) */}
-                    {!q.isCorrect && correctAnswer && (
-                      <div className="flex items-start gap-2">
+                    {/* Correct Answer(s) (if wrong) */}
+                    {!q.isCorrect && correctAnswers.length > 0 && (
+                      <div className="flex flex-col gap-2">
                         <span className="text-sm text-gray-500">
                           {t("quiz.result.correct_answer")}:
                         </span>
-                        <span className="text-sm font-medium text-green-600">
-                          {correctAnswer.text}
-                        </span>
+                        <div className="flex flex-col gap-2">
+                          {correctAnswers.map((ans) => (
+                            <div
+                              key={ans.id}
+                              className="flex items-center gap-2"
+                            >
+                              <span className="text-sm font-medium text-green-600">
+                                • {ans.text}
+                              </span>
+                              {ans.imageKey && (
+                                <img
+                                  src={useConstructUrl(ans.imageKey)}
+                                  alt="Correct Answer"
+                                  className="max-h-20 rounded-lg"
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
 

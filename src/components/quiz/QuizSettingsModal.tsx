@@ -4,7 +4,8 @@ import { useState } from "react";
 import { QuizForStudent } from "@/app/data/quiz/get-quiz";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Settings, Timer, Smile, ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Settings, Timer, Smile, ArrowLeft, Clock } from "lucide-react";
 import { useLanguage } from "@/providers/LanguageContext";
 
 interface QuizSettingsModalProps {
@@ -15,6 +16,7 @@ interface QuizSettingsModalProps {
 export interface QuizSettings {
   enableTimer: boolean;
   enableMemes: boolean;
+  customTimerMinutes?: number; // Custom timer for favorites quiz
 }
 
 export default function QuizSettingsModal({
@@ -23,6 +25,7 @@ export default function QuizSettingsModal({
 }: QuizSettingsModalProps) {
   const [enableTimer, setEnableTimer] = useState(true);
   const [enableMemes, setEnableMemes] = useState(true);
+  const [customTimerMinutes, setCustomTimerMinutes] = useState<number>(10);
   const { language } = useLanguage();
   const isRTL = language === "ar";
 
@@ -32,11 +35,26 @@ export default function QuizSettingsModal({
     0,
   );
 
+  // Check if this is a favorites quiz (no default timer on sections)
+  const isFavoritesQuiz = quiz.id === "favorites-quiz";
+  const hasDefaultTimer = sections.some((s) => s.timeLimit && s.timeLimit > 0);
+
   const handleStart = () => {
     onStart({
       enableTimer,
       enableMemes,
+      customTimerMinutes:
+        isFavoritesQuiz && enableTimer ? customTimerMinutes : undefined,
     });
+  };
+
+  const handleTimerMinutesChange = (value: string) => {
+    const num = parseInt(value, 10);
+    if (!isNaN(num) && num >= 1 && num <= 180) {
+      setCustomTimerMinutes(num);
+    } else if (value === "") {
+      setCustomTimerMinutes(1);
+    }
   };
 
   const translations = {
@@ -45,22 +63,30 @@ export default function QuizSettingsModal({
       subtitle: "قم بتجهيز بيئة الاختبار المناسبة",
       enableTimer: "تفعيل المؤقت",
       timerDescription: "توقيت لكل سؤال",
+      customTimerLabel: "حدد الوقت (بالدقائق)",
+      customTimerPlaceholder: "10",
+      customTimerHint: "من 1 إلى 180 دقيقة",
       enableMemes: "تفعيل الميمز",
       memesDescription: "تفاعلات طريفة أثناء الحل",
       sectionsOverview: "نظرة عامة على الأقسام",
       questions: "أسئلة",
       startNow: "ابدأ الاختبار الان",
+      totalQuestions: "إجمالي الأسئلة",
     },
     en: {
       title: "Quiz Settings",
       subtitle: "Prepare your quiz environment",
       enableTimer: "Enable Timer",
       timerDescription: "Timing for each question",
+      customTimerLabel: "Set Time (in minutes)",
+      customTimerPlaceholder: "10",
+      customTimerHint: "From 1 to 180 minutes",
       enableMemes: "Enable Memes",
       memesDescription: "Fun interactions during solving",
       sectionsOverview: "Sections Overview",
       questions: "questions",
       startNow: "Start Quiz Now",
+      totalQuestions: "Total Questions",
     },
   };
 
@@ -85,25 +111,53 @@ export default function QuizSettingsModal({
         {/* Content */}
         <div className="space-y-5 p-6">
           {/* Timer Toggle */}
-          <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
-                <Timer className="h-5 w-5 text-red-600 dark:text-red-400" />
+          <div className="rounded-xl bg-gray-50 p-4 dark:bg-gray-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+                  <Timer className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t.enableTimer}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {t.timerDescription}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {t.enableTimer}
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {t.timerDescription}
-                </p>
-              </div>
+              <Switch
+                checked={enableTimer}
+                onCheckedChange={setEnableTimer}
+                className="data-[state=checked]:bg-red-600"
+              />
             </div>
-            <Switch
-              checked={enableTimer}
-              onCheckedChange={setEnableTimer}
-              className="data-[state=checked]:bg-red-600"
-            />
+
+            {/* Custom Timer Input for Favorites Quiz */}
+            {isFavoritesQuiz && enableTimer && (
+              <div className="mt-4 flex items-center gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
+                <Clock className="h-5 w-5 text-gray-500" />
+                <div className="flex-1">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t.customTimerLabel}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={180}
+                      value={customTimerMinutes}
+                      onChange={(e) => handleTimerMinutesChange(e.target.value)}
+                      className="w-24"
+                      placeholder={t.customTimerPlaceholder}
+                    />
+                    <span className="text-xs text-gray-500">
+                      {t.customTimerHint}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Memes Toggle */}
@@ -149,6 +203,13 @@ export default function QuizSettingsModal({
                   </span>
                 </div>
               ))}
+              {isFavoritesQuiz && (
+                <div className="mt-2 border-t border-yellow-200 pt-2 dark:border-yellow-700">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t.totalQuestions}: {totalQuestions}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>

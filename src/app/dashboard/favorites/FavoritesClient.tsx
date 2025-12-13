@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
@@ -9,72 +9,129 @@ import { ToggleFavoriteButton } from "@/components/quiz/ToggleFavoriteButton";
 import QuizPlayer from "@/components/quiz/QuizPlayer";
 import { QuizForStudent } from "@/app/data/quiz/get-quiz";
 import { ArrowLeft, Play } from "lucide-react";
+import { FavoritesQuizSkeleton } from "@/components/quiz/QuizSkeletons";
 
 interface FavoritesClientProps {
   initialFavorites: any[]; // Type should match getFavoriteQuestions return type
 }
 
+const FAVORITES_QUIZ_ID = "favorites-quiz";
+const getQuizStorageKey = (quizId: string) => `quiz_state_${quizId}`;
+const getQuizResultKey = (quizId: string) => `quiz_result_${quizId}`;
+
 export default function FavoritesClient({
   initialFavorites,
 }: FavoritesClientProps) {
   const [isQuizMode, setIsQuizMode] = useState(false);
-  const [favorites, setFavorites] = useState(initialFavorites);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [favorites] = useState(initialFavorites);
 
-  // Filter out questions that might have been unfavorited in the list view
-  // For simplicity, we'll just use the initial list or re-fetch if needed.
-  // But since ToggleFavoriteButton updates the server state, we might want to filter locally too if we want immediate feedback.
-  // For now, let's assume the user wants to quiz on what was loaded.
+  // Check localStorage on mount to resume quiz if there's a saved state
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      setIsInitialized(true);
+      return;
+    }
+
+    try {
+      const storageKey = getQuizStorageKey(FAVORITES_QUIZ_ID);
+      const resultKey = getQuizResultKey(FAVORITES_QUIZ_ID);
+
+      // Check if there's a saved quiz state or result
+      const savedState = localStorage.getItem(storageKey);
+      const savedResult = localStorage.getItem(resultKey);
+
+      if (savedState || savedResult) {
+        const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+
+        if (savedState) {
+          const state = JSON.parse(savedState);
+          if (Date.now() - state.timestamp < maxAge) {
+            // Resume quiz mode
+            setIsQuizMode(true);
+          }
+        } else if (savedResult) {
+          // Show result
+          setIsQuizMode(true);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to check quiz state:", error);
+    }
+
+    setIsInitialized(true);
+  }, []);
 
   const handleStartQuiz = () => {
     if (favorites.length === 0) return;
     setIsQuizMode(true);
   };
 
-  if (isQuizMode) {
-    // Construct a virtual quiz object
-    const virtualQuiz: QuizForStudent = {
-      id: "favorites-quiz",
+  const handleExitQuiz = () => {
+    // Clear localStorage when user explicitly exits
+    try {
+      localStorage.removeItem(getQuizStorageKey(FAVORITES_QUIZ_ID));
+      localStorage.removeItem(getQuizResultKey(FAVORITES_QUIZ_ID));
+    } catch (error) {
+      console.error("Failed to clear quiz state:", error);
+    }
+    setIsQuizMode(false);
+  };
+
+  // Memoize the virtual quiz so it doesn't get recreated on every render
+  // This fixes localStorage and state persistence issues
+  const virtualQuiz: QuizForStudent | null = useMemo(() => {
+    if (favorites.length === 0) return null;
+
+    // Create stable date objects
+    const now = new Date();
+
+    return {
+      id: FAVORITES_QUIZ_ID,
       title: "My Favorite Questions",
       description: "A customized quiz from your favorite questions.",
       timeLimit: null,
-      type: "COURSE", // specific type doesn't matter much here
+      type: "COURSE" as const,
       isActive: true,
       courseId: null,
       chapterId: null,
       lessonId: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
       sections: [
         {
           id: "fav-section",
           title: "Favorites",
-          timeLimit: null,
+          timeLimit: null, // Timer set via custom settings
           position: 0,
-          quizId: "favorites-quiz",
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          quizId: FAVORITES_QUIZ_ID,
+          createdAt: now,
+          updatedAt: now,
           questions: favorites.map((q, index) => ({
             ...q,
             position: index,
             sectionId: "fav-section",
-            favoriteQuestions: [{ userId: "current-user", questionId: q.id }], // Mock to show as favorited
+            favoriteQuestions: [{ userId: "current-user", questionId: q.id }],
           })),
         },
       ],
-      memes: [], // No memes for favorites quiz for now
+      memes: [], // No memes for favorites quiz
     };
+  }, [favorites]);
 
+  // Show loading state until initialized
+  if (!isInitialized) {
+    return <FavoritesQuizSkeleton />;
+  }
+
+  if (isQuizMode && virtualQuiz) {
     return (
       <div className="space-y-4">
-        <Button
-          variant="ghost"
-          onClick={() => setIsQuizMode(false)}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={handleExitQuiz} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Favorites
         </Button>
-        <QuizPlayer quiz={virtualQuiz} />
+        <QuizPlayer quiz={virtualQuiz} key="favorites-quiz-player" />
       </div>
     );
   }
@@ -101,7 +158,7 @@ export default function FavoritesClient({
                 <ToggleFavoriteButton questionId={q.id} isFavorited={true} />
               </div>
               <div className="flex items-start gap-4 pr-12">
-                <span className="bg-muted flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold">
+                <span className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold">
                   {index + 1}
                 </span>
                 <div className="space-y-2">

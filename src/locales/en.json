@@ -155,7 +155,9 @@
       "answer_all": "Please answer all questions before continuing",
       "remaining": "remaining",
       "add_to_favorites": "Add to Favorites",
-      "meme_message": "Come on, you got this!"
+      "meme_message": "Come on, you got this!",
+      "prev_section": "Previous Section",
+      "next_section": "Next Section"
     },
     "result": {
       "passed_title": "Congratulations! You Passed",
