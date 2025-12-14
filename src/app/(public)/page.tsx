@@ -10,6 +10,9 @@ import { Footer } from "@/components/shared/Footer";
 
 import { FadeIn } from "@/components/animations/FadeIn";
 
+
+export const revalidate = 300;
+
 export default async function Home() {
   const { usersCount, coursesCount } = await getHeroStats();
 

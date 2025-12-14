@@ -44,7 +44,7 @@ export default function LessonForm({
       description: "",
       thumbnailKey: "",
       videoKey: "",
-      pdfKey: "",
+   
       isFree: false,
     },
   });

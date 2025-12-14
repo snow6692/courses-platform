@@ -31,7 +31,6 @@ export async function getCoursePreview(slug: string) {
               title: true,
               position: true,
               videoKey: true,
-              pdfKey: true,
               thumbnailKey: true,
               description: true,
             },

@@ -15,7 +15,6 @@ export async function adminGetLesson(id: string) {
       thumbnailKey: true,
       description: true,
       id: true,
-      pdfKey: true,
       position: true,
       isFree: true,
     },

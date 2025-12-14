@@ -15,7 +15,6 @@ export async function getLessonContent(lessonId: string) {
       description: true,
       thumbnailKey: true,
       videoKey: true,
-      pdfKey: true,
       isFree: true,
       position: true,
       Chapter: {
