@@ -172,6 +172,17 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
     };
   }, [fileState.objectUrl]);
 
+  // Sync value prop with fileState when value changes (e.g., after data fetch)
+  useEffect(() => {
+    if (value && value !== fileState.key) {
+      setFileState((prev) => ({
+        ...prev,
+        key: value,
+        objectUrl: fileUrl,
+      }));
+    }
+  }, [value, fileUrl]);
+
   //delete the file from the s3 bucket
   const handleRemoveFile = async () => {
     if (fileState.isDeleting || !fileState.objectUrl) return;

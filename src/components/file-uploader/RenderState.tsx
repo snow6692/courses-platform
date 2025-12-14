@@ -5,7 +5,6 @@ import Image from "next/image";
 import { FileText } from "lucide-react";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
-  
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="bg-muted border-muted-foreground mb-4 flex size-12 items-center justify-center rounded-full border border-dashed">
@@ -70,13 +69,24 @@ export function RenderUploadedState({
           className="max-h-full w-full object-contain"
         />
       ) : fileType === "pdf" ? (
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <iframe
-            src={previewUrl}
-            className="h-full w-full rounded-lg border"
-            title="PDF Preview"
-          />
-          <p className="text-muted-foreground mt-2 text-sm">PDF Preview</p>
+        <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+          <div className="bg-primary/10 flex size-16 items-center justify-center rounded-full">
+            <FileText className="text-primary size-8" />
+          </div>
+          <p className="text-foreground text-sm font-medium">
+            PDF Uploaded Successfully
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(previewUrl, "_blank");
+            }}
+          >
+            Open PDF in New Tab
+          </Button>
         </div>
       ) : (
         <Image

@@ -12,6 +12,7 @@ export async function getCourseSidebarData(slug: string) {
       id: true,
       title: true,
       fileKey: true,
+      pdfKey: true,
       duration: true,
       level: true,
       category: true,

@@ -16,7 +16,7 @@ async function CourseLayout({ children, params }: IProps) {
     <div className="flex flex-1">
       {/* Desktop Sidebar - Hidden on mobile */}
       <div className="border-border hidden w-80 shrink-0 border-r lg:block">
-        <div className="sticky top-0 h-screen overflow-y-auto">
+        <div className="sticky top-0 h-screen overflow-y-auto pt-4 pl-4">
           <CourseSidebar course={course} />
         </div>
       </div>

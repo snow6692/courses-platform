@@ -29,6 +29,7 @@ model User {
   favoriteQuestions FavoriteQuestion[]
 
   stripeCustomerId String? @unique
+  phone            String? @unique
 
   role         String?
   banned       Boolean?
@@ -149,8 +150,7 @@ model Lesson {
   description  String?
   thumbnailKey String?
   videoKey     String?
-  pdfKey       String?
-  isFree      Boolean @default(false)
+  isFree       Boolean @default(false)
 
   chapterId      String
   Chapter        Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
@@ -219,9 +219,9 @@ model Quiz {
   lessonId  String?
   lesson    Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-sections    QuizSection[]
-  attempts  QuizAttempt[]
-  memes     QuizMeme[] 
+  sections QuizSection[]
+  attempts QuizAttempt[]
+  memes    QuizMeme[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -233,15 +233,14 @@ sections    QuizSection[]
   @@map("quiz")
 }
 
-
 model QuizSection {
-  id        String    @id @default(uuid())
+  id        String @id @default(uuid())
   title     String
-  timeLimit Int?      
-  position  Int       @default(0)
+  timeLimit Int?
+  position  Int    @default(0)
 
-  quizId    String
-  quiz      Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
   questions Question[]
 
@@ -253,15 +252,15 @@ model QuizSection {
 }
 
 model Question {
-  id       String  @id @default(uuid())
-  sectionId   String
-  section     QuizSection    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  position Int
-  text     String
-  imageKey String?
+  id        String      @id @default(uuid())
+  sectionId String
+  section   QuizSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  position  Int
+  text      String
+  imageKey  String?
 
-  answers             Answer[]
-  
+  answers Answer[]
+
   explanation         String?
   explanationImageKey String?
   explanationVideoKey String?
@@ -295,8 +294,7 @@ model Answer {
   id         String   @id @default(uuid())
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  imageKey String?
-
+  imageKey   String?
 
   text      String
   isCorrect Boolean @default(false)

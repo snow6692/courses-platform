@@ -2,7 +2,7 @@
 import { LessonContentType } from "@/app/data/course/get-lesson-content";
 import RenderDescription from "../rich-text-editor/RenderDescription";
 import VideoPlayer from "./VideoPlayer";
-import PdfViewer from "./PdfViewer";
+
 import CompleteLessonButton from "./CompleteLessonButton";
 import { FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -17,7 +17,6 @@ interface LessonProps {
   description: string | null;
   videoKey: string | null;
   thumbnailKey: string | null;
-  pdfKey: string | null;
   Chapter: {
     Course: {
       slug: string;
@@ -34,7 +33,6 @@ interface LessonContentProps {
 
 export default function LessonContent({ lesson }: LessonContentProps) {
   const hasVideo = !!lesson.videoKey;
-  const hasPdf = !!lesson.pdfKey;
 
   const progress =
     lesson.lessonProgress && Array.isArray(lesson.lessonProgress)
@@ -53,10 +51,9 @@ export default function LessonContent({ lesson }: LessonContentProps) {
       )}
 
       {/* PDF Viewer */}
-      {hasPdf && <PdfViewer pdfKey={lesson.pdfKey!} title={lesson.title} />}
 
       {/* No Media Fallback */}
-      {!hasVideo && !hasPdf && (
+      {!hasVideo && (
         <Card className="border-2 border-dashed">
           <CardHeader>
             <CardTitle className="text-muted-foreground flex items-center gap-3">

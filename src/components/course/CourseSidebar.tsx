@@ -1,5 +1,11 @@
 import React from "react";
-import { ChevronDown, Play, FileQuestion, GraduationCap } from "lucide-react";
+import {
+  ChevronDown,
+  Play,
+  FileQuestion,
+  GraduationCap,
+  FileText,
+} from "lucide-react";
 import { CourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 import {
   Collapsible,
@@ -35,6 +41,28 @@ function CourseSidebar({ course }: IProps) {
         </div>
 
         <CourseProgressClient course={course} />
+
+        {/* Course PDF Download Button */}
+        {course.pdfKey && (
+          <a
+            href={`${process.env.NEXT_PUBLIC_S3_DEV_URL}/${course.pdfKey}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 block"
+          >
+            <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-3 transition-all hover:from-blue-100 hover:to-cyan-100">
+              <div className="flex size-8 items-center justify-center rounded-full bg-blue-600">
+                <FileText className="size-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-blue-900">
+                  تحميل ملف الكورس
+                </p>
+                <p className="text-xs text-blue-600">PDF Document</p>
+              </div>
+            </div>
+          </a>
+        )}
 
         {/* Course Quiz Button - Full width below progress */}
         {course.quizzes && course.quizzes.length > 0 && (

@@ -13,23 +13,24 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import {
-  profileFormSchema,
-  ProfileFormValues,
-} from "@/components/profile/profile-schema";
+import { profileFormSchema, ProfileFormValues } from "@/validation/profile.zod";
 import { updateUser } from "@/app/actions/user.actions";
 import { useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
+import { useLanguage } from "@/providers/LanguageContext";
+import { PhoneInput } from "@/components/ui/phone-input";
 
-// Default values can be passed as props
 interface PersonalInformationFormProps {
   defaultValues?: Partial<ProfileFormValues>;
+  isGoogleUser?: boolean;
 }
 
 export function PersonalInformationForm({
   defaultValues,
+  isGoogleUser = false,
 }: PersonalInformationFormProps) {
   const [isPending, startTransition] = useTransition();
+  const { t } = useLanguage();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -45,10 +46,10 @@ export function PersonalInformationForm({
   function onSubmit(data: ProfileFormValues) {
     startTransition(async () => {
       try {
-        await updateUser(data);
-        toast.success("تم حفظ التغييرات بنجاح");
+        await updateUser(data, isGoogleUser);
+        toast.success(t("profile.personal.save_success"));
       } catch (error: any) {
-        toast.error(error.message || "حدث خطأ ما");
+        toast.error(error.message || t("profile.personal.save_error"));
       }
     });
   }
@@ -60,7 +61,9 @@ export function PersonalInformationForm({
         className="space-y-8 text-right"
         dir="rtl"
       >
-        <h2 className="mb-6 text-2xl font-bold">المعلومات الشخصية</h2>
+        <h2 className="mb-6 text-2xl font-bold">
+          {t("profile.personal.title")}
+        </h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormField
@@ -68,7 +71,7 @@ export function PersonalInformationForm({
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>الاسم الاول</FormLabel>
+                <FormLabel>{t("profile.personal.first_name")}</FormLabel>
                 <FormControl>
                   <Input placeholder="أحمد" {...field} className="text-right" />
                 </FormControl>
@@ -81,7 +84,7 @@ export function PersonalInformationForm({
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>الاسم الاخير</FormLabel>
+                <FormLabel>{t("profile.personal.last_name")}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="العتيبي"
@@ -100,14 +103,28 @@ export function PersonalInformationForm({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>البريد الألكتروني</FormLabel>
+              <FormLabel className="flex items-center gap-2">
+                {t("profile.personal.email")}
+                {isGoogleUser && (
+                  <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <Lock className="h-3 w-3" />
+                    {t("profile.personal.google_account")}
+                  </span>
+                )}
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="ahmad@example.com"
                   {...field}
                   className="text-right"
+                  disabled={isGoogleUser}
                 />
               </FormControl>
+              {isGoogleUser && (
+                <p className="text-xs text-gray-500">
+                  {t("profile.personal.google_email_locked")}
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -118,14 +135,14 @@ export function PersonalInformationForm({
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>رقم الجوال</FormLabel>
+              <FormLabel>
+                {t("profile.personal.phone")}{" "}
+                <span className="text-gray-500">
+                  {t("profile.personal.phone_optional")}
+                </span>
+              </FormLabel>
               <FormControl>
-                <Input
-                  placeholder="+966 50 123 4567"
-                  {...field}
-                  className="text-right"
-                  dir="ltr"
-                />
+                <PhoneInput value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -138,8 +155,8 @@ export function PersonalInformationForm({
             disabled={isPending}
             className="min-w-[150px] bg-red-600 text-white hover:bg-red-700"
           >
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            حفظ التغييرات
+            {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+            {t("profile.personal.save_changes")}
           </Button>
         </div>
       </form>

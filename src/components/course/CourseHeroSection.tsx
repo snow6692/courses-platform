@@ -1,6 +1,7 @@
 import { getServerLocale } from "@/lib/i18n";
 import { IconClock, IconUsers } from "@tabler/icons-react";
 import { Badge } from "../ui/badge";
+import PdfViewer from "../lesson/PdfViewer";
 
 interface CourseHeroSectionProps {
   course: {
@@ -10,6 +11,7 @@ interface CourseHeroSectionProps {
     category: string;
     duration: number;
     fileKey: string;
+    pdfKey: string | null;
     chapters: { lessons: unknown[] }[];
     user: { name: string | null } | null;
     _count: { enrollments: number };
@@ -64,6 +66,11 @@ export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
           </span>
         </div>
       </div>
+      {course.pdfKey && (
+        <div className="mt-6">
+          <PdfViewer pdfKey={course.pdfKey} title="Course Details PDF" />
+        </div>
+      )}
     </div>
   );
 }

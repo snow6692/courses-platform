@@ -68,6 +68,7 @@ function CourseForm({ course }: CourseFormProps) {
           title: course.title ?? "",
           description: course.description ?? "",
           fileKey: course.fileKey ?? "",
+          pdfKey: course.pdfKey ?? "",
           price: course.price ?? 0,
           duration: course.duration ?? 1,
           level: course.level ?? CourseLevelEnum.BEGINNER,
@@ -81,6 +82,7 @@ function CourseForm({ course }: CourseFormProps) {
           title: "",
           description: "",
           fileKey: "",
+          pdfKey: "",
           price: 0,
           duration: 1,
           level: CourseLevelEnum.BEGINNER,
@@ -211,6 +213,25 @@ function CourseForm({ course }: CourseFormProps) {
                     fileTypeAccepted="image"
                     onChange={field.onChange}
                     value={course ? course.fileKey : field.value}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Course PDF */}
+          <FormField
+            control={form.control}
+            name="pdfKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="pdfKey">Course PDF (Optional)</FormLabel>
+                <FormControl>
+                  <Uploader
+                    fileTypeAccepted="pdf"
+                    onChange={field.onChange}
+                    value={course ? (course.pdfKey ?? undefined) : field.value}
                   />
                 </FormControl>
                 <FormMessage />

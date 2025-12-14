@@ -14,6 +14,7 @@ export async function adminGetCourse(id: string) {
       title: true,
       description: true,
       fileKey: true,
+      pdfKey: true,
       price: true,
       duration: true,
       level: true,

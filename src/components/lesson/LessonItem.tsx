@@ -41,26 +41,24 @@ export function LessonItem({
     <Link
       href={`/dashboard/${slug}/${lesson.id}`}
       className={buttonVariants({
-        // Use "secondary" strictly for COMPLETED + INACTIVE.
-        // For Active (whether completed or not), use "outline" (or default) to allow full BG control.
         variant: completed && !isActive ? "secondary" : "outline",
         className: cn(
           "h-auto w-full justify-start p-3 transition-all",
 
-          // 1. Active + Completed - Vibrant green
+          // 1. Active + Completed - Solid primary with green check
           isActive &&
             completed &&
-            "border-emerald-600 bg-emerald-500 text-white shadow-lg ring-2 ring-emerald-300 hover:bg-emerald-600",
+            "border-primary bg-primary ring-primary/50 hover:bg-primary/90 text-white shadow-lg ring-2",
 
-          // 2. Completed only - Light green
+          // 2. Completed only (not active) - Light green
           completed &&
             !isActive &&
             "border-green-400 bg-green-100 text-green-800 hover:bg-green-200",
 
-          // 3. Active only (not completed) - Vibrant green outline
+          // 3. Active only (not completed) - Solid primary
           isActive &&
             !completed &&
-            "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-lg ring-2 ring-emerald-200 hover:bg-emerald-100",
+            "border-primary bg-primary ring-primary/50 hover:bg-primary/90 text-white shadow-lg ring-2",
 
           // 4. Locked
           showLocked &&

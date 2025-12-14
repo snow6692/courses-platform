@@ -10,6 +10,7 @@ export const getCourse = cache(async (slug: string) => {
     select: {
       id: true,
       fileKey: true,
+      pdfKey: true,
       slug: true,
       title: true,
       level: true,

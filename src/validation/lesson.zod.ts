@@ -8,7 +8,6 @@ export const lessonSchema = z.object({
   courseId: z.string().uuid({ message: "Invalid course id" }),
   description: z.string().optional(),
   thumbnailKey: z.string().optional(),
-  pdfKey: z.string().optional(),
   videoKey: z.string().optional(),
   isFree: z.boolean().optional(),
 });

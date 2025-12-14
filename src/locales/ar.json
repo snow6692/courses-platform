@@ -193,5 +193,81 @@
     "completed_courses": "كورس مكتمل",
     "review_course": "مراجعة الكورس",
     "completed": "مكتمل"
+  },
+  "profile": {
+    "tabs": {
+      "personal": "المعلومات الشخصية",
+      "security": "الامان",
+      "subscriptions": "الاشتراكات",
+      "invoices": "الفواتير"
+    },
+    "header": {
+      "active_student": "طالب نشط",
+      "courses": "دورات",
+      "learning_hours": "ساعة تعلم"
+    },
+    "personal": {
+      "title": "المعلومات الشخصية",
+      "first_name": "الاسم الاول",
+      "last_name": "الاسم الاخير",
+      "email": "البريد الألكتروني",
+      "phone": "رقم الجوال",
+      "phone_optional": "(اختياري)",
+      "google_account": "(حساب Google)",
+      "google_email_locked": "لا يمكن تغيير البريد الإلكتروني لحساب Google",
+      "save_changes": "حفظ التغييرات",
+      "save_success": "تم حفظ التغييرات بنجاح",
+      "save_error": "حدث خطأ ما"
+    },
+    "security": {
+      "add_password_title": "اضافة كلمة مرور",
+      "change_password_title": "تغيير كلمة المرور",
+      "current_password": "كلمة المرور الحالية",
+      "new_password": "كلمة المرور الجديدة",
+      "password": "كلمة المرور",
+      "confirm_password": "تأكيد كلمة المرور",
+      "save_changes": "حفظ التغييرات",
+      "password_hints": {
+        "min_length": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+        "mix_chars": "استخدم مزيجاً من الأحرف والأرقام والرموز",
+        "no_personal": "تجنب استخدام معلومات شخصية واضحة"
+      },
+      "add_success": "تم إضافة كلمة المرور بنجاح",
+      "change_success": "تم تغيير كلمة المرور بنجاح"
+    },
+    "subscriptions": {
+      "title": "اشتراكاتي",
+      "no_subscriptions": "لم تشترك في أي دورات بعد",
+      "browse_courses": "تصفح الدورات",
+      "active": "نشط",
+      "completed": "منتهي",
+      "start_date": "تاريخ البداية",
+      "view_course": "عرض الدورة",
+      "currency": "ريال"
+    },
+    "invoices": {
+      "title": "الفواتير",
+      "no_invoices": "لا توجد فواتير",
+      "invoice_number": "رقم الفاتورة",
+      "date": "التاريخ",
+      "course": "الدورة",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "action": "الاجراء",
+      "paid": "مدفوع",
+      "download": "تحميل",
+      "currency": "ريال"
+    },
+    "validation": {
+      "first_name_min": "الاسم الأول يجب أن يكون حرفين على الأقل",
+      "last_name_min": "الاسم الأخير يجب أن يكون حرفين على الأقل",
+      "email_invalid": "البريد الإلكتروني غير صالح",
+      "phone_min": "رقم الجوال يجب أن يكون 9 أرقام على الأقل",
+      "password_min": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+      "password_required": "كلمة المرور الحالية مطلوبة",
+      "password_mismatch": "كلمة المرور غير متطابقة",
+      "email_in_use": "هذا البريد الإلكتروني مستخدم من قبل",
+      "phone_in_use": "رقم الجوال مستخدم من قبل"
+    }
   }
 }

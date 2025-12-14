@@ -11,6 +11,7 @@ export const courseSchema = z.object({
     .string()
     .min(3, { message: "Description at least 3 characters" }),
   fileKey: z.string().min(1, { message: "File is required" }),
+  pdfKey: z.string().optional(),
   price: z.coerce.number().min(0, { message: "Price is required" }),
   duration: z.coerce
     .number()

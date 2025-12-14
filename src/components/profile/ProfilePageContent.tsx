@@ -1,113 +1,111 @@
 "use client";
 
-import { Settings, Shield, CreditCard, FileText, User } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Shield, CreditCard, FileText, User } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInformationForm } from "./PersonalInformationForm";
 import { ProfileHeader } from "./ProfileHeader";
 import { Card } from "@/components/ui/card";
-import { useSession } from "@/hooks/useAuthUser";
-import { useRouter } from "next/navigation";
+import { SecurityForm } from "./SecurityForm";
+import { SubscriptionsTab } from "./SubscriptionsTab";
+import { InvoicesTab } from "./InvoicesTab";
+import { ProfileData } from "@/app/data/user/get-profile-data";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/providers/LanguageContext";
 
-import { ProfileSkeleton } from "./ProfileSkeleton";
+interface ProfilePageContentProps {
+  profileData: ProfileData;
+}
 
-export function ProfilePageContent() {
-  const { session, isPending } = useSession();
-  const user = session?.user;
-  const router = useRouter();
+export function ProfilePageContent({ profileData }: ProfilePageContentProps) {
+  const [activeTab, setActiveTab] = useState("personal");
+  const { t } = useLanguage();
+  const { user, hasGoogleAccount, hasPassword, enrollments, metrics } =
+    profileData;
 
-  if (isPending || !user) {
-    return <ProfileSkeleton />;
-  }
-
-  // Mock data for initial values (would come from DB in real implementation)
   const defaultValues = {
-    firstName: user?.name.split(" ")[0] || "",
-    lastName: user.name.split(" ").slice(1).join(" ") || "",
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
-    phone: "",
+    phone: user.phone || "",
   };
 
-  const metrics = {
-    courses: 5,
-    hours: 127,
+  const tabContent: Record<string, React.ReactNode> = {
+    personal: (
+      <PersonalInformationForm
+        defaultValues={defaultValues}
+        isGoogleUser={hasGoogleAccount}
+      />
+    ),
+    security: <SecurityForm hasPassword={hasPassword} />,
+    subscriptions: <SubscriptionsTab enrollments={enrollments} />,
+    invoices: <InvoicesTab enrollments={enrollments} />,
   };
 
   return (
     <div className="container mx-auto max-w-5xl py-10">
       <ProfileHeader user={user} metrics={metrics} />
 
-      <Tabs defaultValue="personal" className="w-full" dir="rtl">
-        <TabsList className="mb-8 h-auto w-full justify-between rounded-none border-t-0 border-r-0 border-b border-l-0 bg-gray-50/50 p-2">
-          {/* In RTL, the order is naturally right-to-left. 
-               We put the items we want on the right first in source order? 
-               No, standard logical order. */}
-
-          <TabsTrigger
-            value="settings"
-            className="flex items-center gap-2 rounded-none px-4 py-3 data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-          >
-            <Settings className="h-4 w-4" />
-            <span className="hidden md:inline">الاعدادات</span>
-          </TabsTrigger>
-
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="w-full"
+        dir="rtl"
+      >
+        <TabsList className="mb-8 h-auto w-full justify-between gap-2 rounded-xl border bg-gray-50/50 p-2">
           <TabsTrigger
             value="invoices"
-            className="flex items-center gap-2 rounded-none px-4 py-3 data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="data-[state=active]:bg-primary flex items-center gap-2 rounded-lg px-4 py-3 transition-all data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <FileText className="h-4 w-4" />
-            <span className="hidden md:inline">الفواتير</span>
+            <span className="hidden md:inline">
+              {t("profile.tabs.invoices")}
+            </span>
           </TabsTrigger>
 
           <TabsTrigger
             value="subscriptions"
-            className="flex items-center gap-2 rounded-none px-4 py-3 data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="data-[state=active]:bg-primary flex items-center gap-2 rounded-lg px-4 py-3 transition-all data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <CreditCard className="h-4 w-4" />
-            <span className="hidden md:inline">الاشتراكات</span>
+            <span className="hidden md:inline">
+              {t("profile.tabs.subscriptions")}
+            </span>
           </TabsTrigger>
 
           <TabsTrigger
             value="security"
-            className="flex items-center gap-2 rounded-none px-4 py-3 data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="data-[state=active]:bg-primary flex items-center gap-2 rounded-lg px-4 py-3 transition-all data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <Shield className="h-4 w-4" />
-            <span className="hidden md:inline">الامان</span>
+            <span className="hidden md:inline">
+              {t("profile.tabs.security")}
+            </span>
           </TabsTrigger>
 
           <TabsTrigger
             value="personal"
-            className="flex items-center gap-2 rounded-none bg-red-500 px-4 py-3 text-white data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="data-[state=active]:bg-primary flex items-center gap-2 rounded-lg px-4 py-3 transition-all data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <User className="h-4 w-4" />
-            <span className="hidden md:inline">المعلومات الشخصية</span>
+            <span className="hidden md:inline">
+              {t("profile.tabs.personal")}
+            </span>
           </TabsTrigger>
         </TabsList>
 
-        <Card className="min-h-[500px] p-6 md:p-10">
-          <TabsContent value="personal" className="mt-0">
-            <PersonalInformationForm defaultValues={defaultValues} />
-          </TabsContent>
-
-          <TabsContent value="security" className="mt-0">
-            <div className="py-20 text-center text-gray-500">
-              محتوى الأمان قريباً
-            </div>
-          </TabsContent>
-          <TabsContent value="subscriptions" className="mt-0">
-            <div className="py-20 text-center text-gray-500">
-              محتوى الاشتراكات قريباً
-            </div>
-          </TabsContent>
-          <TabsContent value="invoices" className="mt-0">
-            <div className="py-20 text-center text-gray-500">
-              محتوى الفواتير قريباً
-            </div>
-          </TabsContent>
-          <TabsContent value="settings" className="mt-0">
-            <div className="py-20 text-center text-gray-500">
-              محتوى الاعدادات قريباً
-            </div>
-          </TabsContent>
+        <Card className="min-h-[500px] overflow-hidden p-6 md:p-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {tabContent[activeTab]}
+            </motion.div>
+          </AnimatePresence>
         </Card>
       </Tabs>
     </div>

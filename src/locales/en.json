@@ -193,5 +193,81 @@
     "completed_courses": "Completed",
     "review_course": "Review Course",
     "completed": "Completed"
+  },
+  "profile": {
+    "tabs": {
+      "personal": "Personal Information",
+      "security": "Security",
+      "subscriptions": "Subscriptions",
+      "invoices": "Invoices"
+    },
+    "header": {
+      "active_student": "Active Student",
+      "courses": "Courses",
+      "learning_hours": "Learning Hours"
+    },
+    "personal": {
+      "title": "Personal Information",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "phone_optional": "(Optional)",
+      "google_account": "(Google Account)",
+      "google_email_locked": "Cannot change email for Google account",
+      "save_changes": "Save Changes",
+      "save_success": "Changes saved successfully",
+      "save_error": "Something went wrong"
+    },
+    "security": {
+      "add_password_title": "Add Password",
+      "change_password_title": "Change Password",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "password": "Password",
+      "confirm_password": "Confirm Password",
+      "save_changes": "Save Changes",
+      "password_hints": {
+        "min_length": "Password must be at least 8 characters",
+        "mix_chars": "Use a mix of letters, numbers, and symbols",
+        "no_personal": "Avoid using obvious personal information"
+      },
+      "add_success": "Password added successfully",
+      "change_success": "Password changed successfully"
+    },
+    "subscriptions": {
+      "title": "My Subscriptions",
+      "no_subscriptions": "You haven't subscribed to any courses yet",
+      "browse_courses": "Browse Courses",
+      "active": "Active",
+      "completed": "Completed",
+      "start_date": "Start Date",
+      "view_course": "View Course",
+      "currency": "SAR"
+    },
+    "invoices": {
+      "title": "Invoices",
+      "no_invoices": "No invoices found",
+      "invoice_number": "Invoice Number",
+      "date": "Date",
+      "course": "Course",
+      "amount": "Amount",
+      "status": "Status",
+      "action": "Action",
+      "paid": "Paid",
+      "download": "Download",
+      "currency": "SAR"
+    },
+    "validation": {
+      "first_name_min": "First name must be at least 2 characters",
+      "last_name_min": "Last name must be at least 2 characters",
+      "email_invalid": "Invalid email address",
+      "phone_min": "Phone number must be at least 9 digits",
+      "password_min": "Password must be at least 8 characters",
+      "password_required": "Current password is required",
+      "password_mismatch": "Passwords do not match",
+      "email_in_use": "This email is already in use",
+      "phone_in_use": "This phone number is already in use"
+    }
   }
 }
