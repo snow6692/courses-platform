@@ -181,19 +181,6 @@
     "show_more": "Show more",
     "show_less": "Show less"
   },
-  "dashboard": {
-    "my_courses": "My Courses",
-    "my_courses_description": "Here you can find all the courses you are enrolled in",
-    "no_courses": "No Courses",
-    "no_courses_description": "You haven't enrolled in any course yet. Explore available courses and start learning!",
-    "browse_courses": "Browse Courses",
-    "courses_count": "Enrolled Courses",
-    "continue_learning": "Continue Learning",
-    "progress": "Progress",
-    "completed_courses": "Completed",
-    "review_course": "Review Course",
-    "completed": "Completed"
-  },
   "profile": {
     "tabs": {
       "personal": "Personal Information",
@@ -269,5 +256,29 @@
       "email_in_use": "This email is already in use",
       "phone_in_use": "This phone number is already in use"
     }
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "welcome_subtitle": "Continue your learning journey and achieve your goals",
+    "my_courses": "My Courses",
+    "my_courses_description": "Here you can find all your enrolled courses",
+    "no_courses": "No Courses",
+    "no_courses_description": "You haven't enrolled in any course yet, explore available courses and start your learning journey!",
+    "browse_courses": "Browse Courses",
+    "browse_more": "Browse More",
+    "enrolled_courses": "Enrolled Courses",
+    "watching_hours": "Watching Hours",
+    "completed_lessons": "Completed Lessons",
+    "average_progress": "Average Progress",
+    "completed_courses": "Completed Courses",
+    "courses_count": "Enrolled Courses",
+    "weekly_progress": "Your Weekly Progress",
+    "progress_message": "Great improvement in performance",
+    "notifications": "Notifications",
+    "no_notifications": "No new notifications",
+    "continue_learning": "Continue learning",
+    "just_now": "Just now",
+    "view_all": "View All",
+    "more": "more"
   }
 }

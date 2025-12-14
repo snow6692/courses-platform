@@ -181,19 +181,6 @@
     "show_more": "عرض المزيد",
     "show_less": "عرض أقل"
   },
-  "dashboard": {
-    "my_courses": "كورساتي",
-    "my_courses_description": "هنا تجد جميع الكورسات التي اشتركت فيها",
-    "no_courses": "لا توجد كورسات",
-    "no_courses_description": "لم تشترك في أي كورس بعد، استكشف الكورسات المتاحة وابدأ رحلة التعلم!",
-    "browse_courses": "تصفح الكورسات",
-    "courses_count": "كورس مسجل",
-    "continue_learning": "أكمل التعلم",
-    "progress": "التقدم",
-    "completed_courses": "كورس مكتمل",
-    "review_course": "مراجعة الكورس",
-    "completed": "مكتمل"
-  },
   "profile": {
     "tabs": {
       "personal": "المعلومات الشخصية",
@@ -269,5 +256,29 @@
       "email_in_use": "هذا البريد الإلكتروني مستخدم من قبل",
       "phone_in_use": "رقم الجوال مستخدم من قبل"
     }
+  },
+  "dashboard": {
+    "welcome": "مرحبا بك",
+    "welcome_subtitle": "استمر في رحلتك التعليمية وحقق أهدافك",
+    "my_courses": "كورساتي",
+    "my_courses_description": "هنا تجد جميع الكورسات التي اشتركت فيها",
+    "no_courses": "لا توجد كورسات",
+    "no_courses_description": "لم تشترك في أي كورس بعد، استكشف الكورسات المتاحة وابدأ رحلة التعلم!",
+    "browse_courses": "تصفح الكورسات",
+    "browse_more": "تصفح المزيد",
+    "enrolled_courses": "المواد المسجلة",
+    "watching_hours": "ساعات المشاهدة",
+    "completed_lessons": "الدروس المكتملة",
+    "average_progress": "متوسط التقدم",
+    "completed_courses": "كورس مكتمل",
+    "courses_count": "كورس مسجل",
+    "weekly_progress": "تقدمك الأسبوعي",
+    "progress_message": "تحسن ملحوظ في الأداء",
+    "notifications": "الاشعارات",
+    "no_notifications": "لا توجد اشعارات جديدة",
+    "continue_learning": "استمر في تعلم",
+    "just_now": "الآن",
+    "view_all": "عرض الكل",
+    "more": "المزيد"
   }
 }
