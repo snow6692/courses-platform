@@ -4,9 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Camera, Loader2 } from "lucide-react";
 import { useLanguage } from "@/providers/LanguageContext";
-import { useRef, useState, useTransition } from "react";
-import { updateProfileImage } from "@/app/actions/user.actions";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { env } from "@/lib/config";
 
 interface ProfileHeaderProps {
   user: {
@@ -21,11 +22,13 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ user, metrics }: ProfileHeaderProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [currentImage, setCurrentImage] = useState<string | null>(
+    user.image || null,
+  );
+  const router = useRouter();
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -37,60 +40,107 @@ export function ProfileHeader({ user, metrics }: ProfileHeaderProps) {
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
+      toast.error(
+        language === "ar"
+          ? "الرجاء اختيار ملف صورة"
+          : "Please select an image file",
+      );
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size must be less than 5MB");
+      toast.error(
+        language === "ar"
+          ? "حجم الصورة يجب أن يكون أقل من 5 ميجابايت"
+          : "Image size must be less than 5MB",
+      );
       return;
     }
 
-    // Show preview immediately
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreviewImage(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-
-    // Upload to S3
+    // Show preview immediately (better UX)
+    const previewUrl = URL.createObjectURL(file);
+    setCurrentImage(previewUrl);
     setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
 
-      const response = await fetch("/api/s3/upload", {
+    try {
+      // Step 1: Get presigned URL from our API
+      const presignedResponse = await fetch("/api/profile/upload", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type,
+          fileSize: file.size,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
+      if (!presignedResponse.ok) {
+        const errorData = await presignedResponse.json();
+        throw new Error(errorData.error || "Failed to get upload URL");
       }
 
-      const data = await response.json();
-      const imageKey = data.key;
+      const { presignedUrl, key } = await presignedResponse.json();
 
-      // Update user profile with new image
-      startTransition(async () => {
-        try {
-          await updateProfileImage(imageKey);
-          toast.success(t("profile.personal.save_success"));
-        } catch (error: any) {
-          toast.error(error.message || "Failed to update image");
-          setPreviewImage(null);
-        }
+      // Step 2: Upload file directly to S3
+      const uploadResponse = await fetch(presignedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
       });
-    } catch (error) {
-      toast.error("Failed to upload image");
-      setPreviewImage(null);
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to upload to S3");
+      }
+
+      // Step 3: Construct the full image URL using Tigris storage format
+      const imageUrl = `https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.fly.storage.tigris.dev/${key}`;
+
+      // Step 4: Update database via our API
+      const updateResponse = await fetch("/api/profile/update-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl }),
+      });
+
+      if (!updateResponse.ok) {
+        const errorData = await updateResponse.json();
+        throw new Error(errorData.error || "Failed to update profile");
+      }
+
+      // Update state with actual S3 URL
+      setCurrentImage(imageUrl);
+
+      toast.success(
+        language === "ar"
+          ? "تم تحديث الصورة بنجاح"
+          : "Image updated successfully",
+      );
+
+      // Soft refresh to update Navbar without full page reload
+      router.refresh();
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      // Revert to original image on error
+      setCurrentImage(user.image || null);
+      toast.error(
+        language === "ar" ? "فشل في رفع الصورة" : "Failed to upload image",
+      );
     } finally {
       setIsUploading(false);
+      // Clean up preview URL
+      URL.revokeObjectURL(previewUrl);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
-
-  const displayImage = previewImage || user.image || "";
 
   return (
     <div className="relative mb-6 w-full overflow-hidden rounded-lg border bg-white p-6">
@@ -132,7 +182,7 @@ export function ProfileHeader({ user, metrics }: ProfileHeaderProps) {
         <div className="relative">
           <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white shadow-sm md:h-32 md:w-32">
             <Avatar className="h-full w-full">
-              <AvatarImage src={displayImage} alt={user.name} />
+              <AvatarImage src={currentImage || ""} alt={user.name} />
               <AvatarFallback className="text-2xl">
                 {user.name.slice(0, 2)}
               </AvatarFallback>
@@ -142,10 +192,15 @@ export function ProfileHeader({ user, metrics }: ProfileHeaderProps) {
           {/* Upload Button */}
           <button
             onClick={handleImageClick}
-            disabled={isUploading || isPending}
+            disabled={isUploading}
             className="absolute right-1 bottom-1 rounded-full border bg-white p-2 text-gray-600 shadow-md transition-colors hover:bg-gray-50 disabled:opacity-50"
+            title={
+              language === "ar"
+                ? "تغيير الصورة الشخصية"
+                : "Change profile photo"
+            }
           >
-            {isUploading || isPending ? (
+            {isUploading ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
               <Camera size={16} />

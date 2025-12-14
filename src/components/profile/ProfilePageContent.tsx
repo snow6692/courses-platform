@@ -9,9 +9,15 @@ import { SecurityForm } from "./SecurityForm";
 import { SubscriptionsTab } from "./SubscriptionsTab";
 import { InvoicesTab } from "./InvoicesTab";
 import { ProfileData } from "@/app/data/user/get-profile-data";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/providers/LanguageContext";
+import {
+  PersonalInfoSkeleton,
+  SecuritySkeleton,
+  SubscriptionsSkeleton,
+  InvoicesSkeleton,
+} from "./ProfileTabSkeletons";
 
 interface ProfilePageContentProps {
   profileData: ProfileData;
@@ -30,16 +36,38 @@ export function ProfilePageContent({ profileData }: ProfilePageContentProps) {
     phone: user.phone || "",
   };
 
-  const tabContent: Record<string, React.ReactNode> = {
-    personal: (
-      <PersonalInformationForm
-        defaultValues={defaultValues}
-        isGoogleUser={hasGoogleAccount}
-      />
-    ),
-    security: <SecurityForm hasPassword={hasPassword} />,
-    subscriptions: <SubscriptionsTab enrollments={enrollments} />,
-    invoices: <InvoicesTab enrollments={enrollments} />,
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "personal":
+        return (
+          <Suspense fallback={<PersonalInfoSkeleton />}>
+            <PersonalInformationForm
+              defaultValues={defaultValues}
+              isGoogleUser={hasGoogleAccount}
+            />
+          </Suspense>
+        );
+      case "security":
+        return (
+          <Suspense fallback={<SecuritySkeleton />}>
+            <SecurityForm hasPassword={hasPassword} />
+          </Suspense>
+        );
+      case "subscriptions":
+        return (
+          <Suspense fallback={<SubscriptionsSkeleton />}>
+            <SubscriptionsTab enrollments={enrollments} />
+          </Suspense>
+        );
+      case "invoices":
+        return (
+          <Suspense fallback={<InvoicesSkeleton />}>
+            <InvoicesTab enrollments={enrollments} />
+          </Suspense>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -103,7 +131,7 @@ export function ProfilePageContent({ profileData }: ProfilePageContentProps) {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {tabContent[activeTab]}
+              {renderTabContent()}
             </motion.div>
           </AnimatePresence>
         </Card>
