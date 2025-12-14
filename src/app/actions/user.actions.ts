@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { requireUser } from "../data/user/require-user";
 import bcrypt from "bcryptjs";
+import { env } from "@/lib/config";
 
 export async function updateUser(
   data: ProfileFormValues,
@@ -172,8 +173,8 @@ export async function changePassword(
 export async function updateProfileImage(imageKey: string) {
   const user = await requireUser();
 
-  // Construct the full URL
-  const imageUrl = `${process.env.NEXT_PUBLIC_S3_DEV_URL}/${imageKey}`;
+  // Construct the full URL using Tigris storage format
+  const imageUrl = `https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.fly.storage.tigris.dev/${imageKey}`;
 
   await prisma.user.update({
     where: {

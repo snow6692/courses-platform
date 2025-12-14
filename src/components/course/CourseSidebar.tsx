@@ -6,6 +6,7 @@ import {
   GraduationCap,
   FileText,
 } from "lucide-react";
+import { env } from "@/lib/config";
 import { CourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 import {
   Collapsible,
@@ -45,7 +46,7 @@ function CourseSidebar({ course }: IProps) {
         {/* Course PDF Download Button */}
         {course.pdfKey && (
           <a
-            href={`${process.env.NEXT_PUBLIC_S3_DEV_URL}/${course.pdfKey}`}
+            href={`https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.fly.storage.tigris.dev/${course.pdfKey}`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 block"
