@@ -12,10 +12,13 @@ import {
   Target,
   Trophy,
   RefreshCw,
+  Eye,
 } from "lucide-react";
+import ExplanationPanel from "./ExplanationPanel";
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import { useLanguage } from "@/providers/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface QuizResultProps {
   result: {
@@ -49,6 +52,13 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
   const [expandedQuestions, setExpandedQuestions] = useState<Set<string>>(
     new Set(),
   );
+  const [explanationQuestion, setExplanationQuestion] = useState<{
+    questionId: string;
+    text: string;
+    explanation: string | null;
+    explanationImageKey: string | null;
+    explanationVideoKey: string | null;
+  } | null>(null);
   const { t, dir } = useLanguage();
   const { triggerConfetti } = useConfetti();
   const confettiTriggered = useRef(false);
@@ -187,177 +197,180 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
             }
 
             return (
-              <Card
+              <motion.div
                 key={q.questionId}
-                className="overflow-hidden bg-white"
-                style={{ backgroundColor: "#FDFDFD" }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                {/* Question Header - Clickable */}
-                <button
-                  onClick={() => toggleQuestion(q.questionId)}
-                  className={`flex w-full items-center justify-between p-4 ${dir === "rtl" ? "text-right" : "text-left"} transition-colors hover:bg-gray-50`}
+                <Card
+                  className="overflow-hidden bg-white"
+                  style={{ backgroundColor: "#FDFDFD" }}
                 >
-                  <div className="flex flex-1 items-center gap-3">
-                    {/* Question Number */}
-                    <span className="font-medium text-gray-400">
-                      {t("quiz.player.question")} {index + 1}
-                    </span>
-
-                    {/* Chevron */}
-                    {isExpanded ? (
-                      <ChevronUp className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-400" />
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    {/* Question Text */}
-                    <span className="line-clamp-1 font-medium text-gray-900">
-                      {questionText}
-                    </span>
-
-                    {/* Status Badge */}
-                    <span
-                      className={`rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap ${
-                        q.isCorrect
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {q.isCorrect
-                        ? t("quiz.result.correct_badge")
-                        : t("quiz.result.wrong_badge")}
-                    </span>
-                  </div>
-                </button>
-
-                {/* Expanded Content */}
-                {isExpanded && (
-                  <div className="space-y-4 border-t px-4 py-4">
-                    {/* Question Image (if any) */}
-                    {q.imageKey && (
-                      <div className="mb-4">
-                        <img
-                          src={useConstructUrl(q.imageKey)}
-                          alt="Question"
-                          className="max-h-48 rounded-lg"
-                        />
-                      </div>
-                    )}
-
-                    {/* Your Answer(s) */}
-                    <div className="flex flex-col gap-2">
-                      <span className="text-sm text-gray-500">
-                        {t("quiz.result.your_answer")}:
+                  {/* Question Header - Clickable */}
+                  <div
+                    onClick={() => toggleQuestion(q.questionId)}
+                    className={`flex w-full cursor-pointer items-center justify-between p-4 ${dir === "rtl" ? "text-right" : "text-left"} transition-colors hover:bg-gray-50`}
+                  >
+                    <div className="flex flex-1 items-center gap-3">
+                      {/* Question Number */}
+                      <span className="font-medium text-gray-400">
+                        {t("quiz.player.question")} {index + 1}
                       </span>
-                      {selectedAnswers.length > 0 ? (
-                        <div className="flex flex-col gap-2">
-                          {selectedAnswers.map((ans) => (
-                            <div
-                              key={ans.id}
-                              className="flex items-center gap-2"
-                            >
-                              <span
-                                className={`text-sm font-medium ${q.isCorrect || ans.isCorrect ? "text-green-600" : "text-red-600"}`}
-                              >
-                                • {ans.text}
-                              </span>
-                              {ans.imageKey && (
-                                <img
-                                  src={useConstructUrl(ans.imageKey)}
-                                  alt="Answer"
-                                  className="max-h-20 rounded-lg"
-                                />
-                              )}
-                            </div>
-                          ))}
-                        </div>
+
+                      {/* Chevron */}
+                      {isExpanded ? (
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
-                        <span className="text-sm font-medium text-red-600">
-                          {t("quiz.result.no_answer")}
-                        </span>
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
 
-                    {/* Correct Answer(s) (if wrong) */}
-                    {!q.isCorrect && correctAnswers.length > 0 && (
-                      <div className="flex flex-col gap-2">
-                        <span className="text-sm text-gray-500">
-                          {t("quiz.result.correct_answer")}:
-                        </span>
-                        <div className="flex flex-col gap-2">
-                          {correctAnswers.map((ans) => (
-                            <div
-                              key={ans.id}
-                              className="flex items-center gap-2"
-                            >
-                              <span className="text-sm font-medium text-green-600">
-                                • {ans.text}
-                              </span>
-                              {ans.imageKey && (
-                                <img
-                                  src={useConstructUrl(ans.imageKey)}
-                                  alt="Correct Answer"
-                                  className="max-h-20 rounded-lg"
-                                />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-4">
+                      {/* Question Text */}
+                      <span className="line-clamp-1 font-medium text-gray-900">
+                        {questionText}
+                      </span>
 
-                    {/* Explanation */}
-                    {(q.explanation ||
-                      q.explanationImageKey ||
-                      q.explanationVideoKey) && (
-                      <div className="mt-4 border-t pt-4">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="text-sm font-semibold text-gray-700">
-                            {t("quiz.result.explanation")}
-                          </span>
-                        </div>
+                      {/* Watch Explanation Button */}
+                      {(q.explanation ||
+                        q.explanationImageKey ||
+                        q.explanationVideoKey) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExplanationQuestion({
+                              questionId: q.questionId,
+                              text: questionText,
+                              explanation: q.explanation,
+                              explanationImageKey: q.explanationImageKey,
+                              explanationVideoKey: q.explanationVideoKey,
+                            });
+                          }}
+                          className="flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium whitespace-nowrap text-blue-700 transition-colors hover:bg-blue-200"
+                        >
+                          <Eye className="h-4 w-4" />
+                          {t("quiz.result.watch_explanation")}
+                        </button>
+                      )}
 
-                        {q.explanation && (
-                          <div className="text-sm text-gray-600">
-                            <RenderDescription json={q.explanation} />
-                          </div>
-                        )}
-
-                        {q.explanationImageKey && (
-                          <img
-                            src={useConstructUrl(q.explanationImageKey)}
-                            alt="Explanation"
-                            className="mt-3 max-h-48 rounded-lg"
-                          />
-                        )}
-
-                        {q.explanationVideoKey && (
-                          <video
-                            controls
-                            className="mt-3 max-h-48 w-full rounded-lg"
-                            src={useConstructUrl(q.explanationVideoKey)}
-                          />
-                        )}
-                      </div>
-                    )}
-
-                    {/* Favorite Button */}
-                    <div
-                      className={`flex ${dir === "rtl" ? "justify-start" : "justify-end"} pt-2`}
-                    >
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <span>{t("quiz.player.add_to_favorites")}</span>
-                        <ToggleFavoriteButton
-                          questionId={q.questionId}
-                          isFavorited={q.isFavorited}
-                        />
-                      </div>
+                      {/* Status Badge */}
+                      <span
+                        className={`rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap ${
+                          q.isCorrect
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {q.isCorrect
+                          ? t("quiz.result.correct_badge")
+                          : t("quiz.result.wrong_badge")}
+                      </span>
                     </div>
                   </div>
-                )}
-              </Card>
+
+                  {/* Expanded Content with Animation */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-4 border-t px-4 py-4">
+                          {/* Question Image (if any) */}
+                          {q.imageKey && (
+                            <div className="mb-4">
+                              <img
+                                src={useConstructUrl(q.imageKey)}
+                                alt="Question"
+                                className="max-h-48 rounded-lg"
+                              />
+                            </div>
+                          )}
+
+                          {/* Your Answer(s) */}
+                          <div className="flex flex-col gap-2">
+                            <span className="text-sm text-gray-500">
+                              {t("quiz.result.your_answer")}:
+                            </span>
+                            {selectedAnswers.length > 0 ? (
+                              <div className="flex flex-col gap-2">
+                                {selectedAnswers.map((ans) => (
+                                  <div
+                                    key={ans.id}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <span
+                                      className={`text-sm font-medium ${q.isCorrect || ans.isCorrect ? "text-green-600" : "text-red-600"}`}
+                                    >
+                                      • {ans.text}
+                                    </span>
+                                    {ans.imageKey && (
+                                      <img
+                                        src={useConstructUrl(ans.imageKey)}
+                                        alt="Answer"
+                                        className="max-h-20 rounded-lg"
+                                      />
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-sm font-medium text-red-600">
+                                {t("quiz.result.no_answer")}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Correct Answer(s) (if wrong) */}
+                          {!q.isCorrect && correctAnswers.length > 0 && (
+                            <div className="flex flex-col gap-2">
+                              <span className="text-sm text-gray-500">
+                                {t("quiz.result.correct_answer")}:
+                              </span>
+                              <div className="flex flex-col gap-2">
+                                {correctAnswers.map((ans) => (
+                                  <div
+                                    key={ans.id}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <span className="text-sm font-medium text-green-600">
+                                      • {ans.text}
+                                    </span>
+                                    {ans.imageKey && (
+                                      <img
+                                        src={useConstructUrl(ans.imageKey)}
+                                        alt="Correct Answer"
+                                        className="max-h-20 rounded-lg"
+                                      />
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Favorite Button */}
+                          <div
+                            className={`flex ${dir === "rtl" ? "justify-start" : "justify-end"} pt-2`}
+                          >
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <span>{t("quiz.player.add_to_favorites")}</span>
+                              <ToggleFavoriteButton
+                                questionId={q.questionId}
+                                isFavorited={q.isFavorited}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </Card>
+              </motion.div>
             );
           })}
         </div>
@@ -382,6 +395,16 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
           </Button>
         </div>
       </div>
+
+      {/* Explanation Panel */}
+      <ExplanationPanel
+        isOpen={!!explanationQuestion}
+        onClose={() => setExplanationQuestion(null)}
+        questionText={explanationQuestion?.text || ""}
+        explanation={explanationQuestion?.explanation || null}
+        explanationImageKey={explanationQuestion?.explanationImageKey || null}
+        explanationVideoKey={explanationQuestion?.explanationVideoKey || null}
+      />
     </div>
   );
 }

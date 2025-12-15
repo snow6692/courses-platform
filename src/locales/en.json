@@ -113,7 +113,13 @@
     "go_to_dashboard": "Go to Dashboard",
     "paid_lesson": "Paid Lesson",
     "badge_free": "Free",
-    "badge_paid": "Paid"
+    "badge_paid": "Paid",
+    "no_media": "No media file",
+    "text_only": "This lesson contains only a text description.",
+    "no_description": "No description for this lesson.",
+    "start_quiz": "Start Quiz",
+    "mark_complete": "Mark as Complete",
+    "completed": "Completed"
   },
   "login_page": {
     "welcome_back": "Welcome back!",
@@ -174,7 +180,14 @@
       "correct_badge": "Correct Answer",
       "wrong_badge": "Wrong Answer",
       "retry": "Try Again",
-      "finish": "Finish Quiz"
+      "finish": "Finish Quiz",
+      "watch_explanation": "Watch Explanation",
+      "explanation_video": "Video Explanation",
+      "explanation_text": "Text Explanation",
+      "explanation_image": "Image Explanation",
+      "video_not_available": "Video not available",
+      "back_to_lesson": "Back to Lesson",
+      "back_to_quiz": "Back to Quiz"
     }
   },
   "common": {

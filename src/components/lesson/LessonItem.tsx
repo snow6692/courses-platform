@@ -20,6 +20,7 @@ interface IProps {
   isLocked: boolean;
   isPurchased: boolean;
   hasQuiz?: boolean;
+  disabled?: boolean;
 }
 export function LessonItem({
   lesson,
@@ -28,6 +29,7 @@ export function LessonItem({
   isLocked,
   isPurchased,
   hasQuiz,
+  disabled,
 }: IProps) {
   const { t } = useLanguage();
   const pathname = usePathname();
@@ -36,6 +38,41 @@ export function LessonItem({
 
   const showLocked = isLocked && !isPurchased;
   const showBadges = !isPurchased;
+
+  // If disabled (quiz active), show a non-clickable version
+  if (disabled) {
+    return (
+      <div
+        className={cn(
+          buttonVariants({
+            variant: completed && !isActive ? "secondary" : "outline",
+          }),
+          "h-auto w-full cursor-not-allowed justify-start p-3 opacity-50",
+          completed &&
+            !isActive &&
+            "border-green-400 bg-green-100/50 text-green-800",
+        )}
+      >
+        <div className="flex w-full min-w-0 items-center gap-3">
+          <div className="shrink-0">
+            <div className="flex size-5 items-center justify-center rounded-full bg-gray-300">
+              <Lock className="size-3 text-gray-700" />
+            </div>
+          </div>
+          <div className="min-w-0 flex-1 space-y-1 text-left">
+            <p className="flex-1 truncate text-xs font-medium text-gray-600">
+              {lesson.position}. {lesson.title}
+            </p>
+            <p className="text-[10px] font-medium text-gray-500">
+              {t("quiz.player.submit_quiz")
+                ? "أكمل الاختبار أولاً"
+                : "Complete quiz first"}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Link

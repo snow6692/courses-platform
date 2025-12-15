@@ -113,7 +113,13 @@
     "free_lesson": "درس مجاني",
     "paid_lesson": "درس مدفوع",
     "badge_free": "مجاني",
-    "badge_paid": "مدفوع"
+    "badge_paid": "مدفوع",
+    "no_media": "لا يوجد ملف وسائط",
+    "text_only": "هذا الدرس يحتوي فقط على وصف نصي.",
+    "no_description": "لا يوجد وصف لهذا الدرس.",
+    "start_quiz": "ابدأ الاختبار",
+    "mark_complete": "تحديد كمكتمل",
+    "completed": "مكتمل"
   },
   "login_page": {
     "welcome_back": "مرحباً بعودتك!",
@@ -174,7 +180,14 @@
       "correct_badge": "إجابة صحيحة",
       "wrong_badge": "إجابة خاطئة",
       "retry": "أعد المحاولة",
-      "finish": "إنهاء الاختبار"
+      "finish": "إنهاء الاختبار",
+      "watch_explanation": "شاهد الشرح",
+      "explanation_video": "فيديو الشرح",
+      "explanation_text": "نص الشرح",
+      "explanation_image": "صورة الشرح",
+      "video_not_available": "الفيديو غير متاح",
+      "back_to_lesson": "العودة للدرس",
+      "back_to_quiz": "العودة للاختبار"
     }
   },
   "common": {

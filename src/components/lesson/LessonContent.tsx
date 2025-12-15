@@ -1,3 +1,5 @@
+"use client";
+
 // components/lesson/LessonContent.tsx
 import { LessonContentType } from "@/app/data/course/get-lesson-content";
 import RenderDescription from "../rich-text-editor/RenderDescription";
@@ -9,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { PublicLessonType } from "@/app/data/lesson/getFreelessons";
+import { useLanguage } from "@/providers/LanguageContext";
 
 // Unified interface compatible with both types
 interface LessonProps {
@@ -32,6 +35,7 @@ interface LessonContentProps {
 }
 
 export default function LessonContent({ lesson }: LessonContentProps) {
+  const { t } = useLanguage();
   const hasVideo = !!lesson.videoKey;
 
   const progress =
@@ -58,13 +62,11 @@ export default function LessonContent({ lesson }: LessonContentProps) {
           <CardHeader>
             <CardTitle className="text-muted-foreground flex items-center gap-3">
               <FileText className="size-8" />
-              لا يوجد ملف وسائط
+              {t("lesson.no_media")}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
-              هذا الدرس يحتوي فقط على وصف نصي.
-            </p>
+            <p className="text-muted-foreground">{t("lesson.text_only")}</p>
           </CardContent>
         </Card>
       )}
@@ -82,7 +84,7 @@ export default function LessonContent({ lesson }: LessonContentProps) {
               <Link
                 href={`/dashboard/${lesson.Chapter.Course.slug}/quiz/${lesson.quizzes[0].id}`}
               >
-                Start Quiz
+                {t("lesson.start_quiz")}
               </Link>
             </Button>
           )}
@@ -99,7 +101,7 @@ export default function LessonContent({ lesson }: LessonContentProps) {
           <RenderDescription json={JSON.parse(lesson.description)} />
         ) : (
           <p className="text-muted-foreground italic">
-            لا يوجد وصف لهذا الدرس.
+            {t("lesson.no_description")}
           </p>
         )}
       </div>

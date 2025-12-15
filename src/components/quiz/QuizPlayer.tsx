@@ -24,6 +24,7 @@ import { MemePanel } from "./MemePanel";
 import { QuestionNavigation, SectionNavigation } from "./QuizNavigation";
 import { QuestionCard } from "./QuestionCard";
 import { QuizNavigationButtons } from "./QuizNavigationButtons";
+import { useQuizSafe } from "@/providers/QuizContext";
 
 interface QuizPlayerProps {
   quiz: QuizForStudent;
@@ -64,6 +65,18 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const [startTime, setStartTime] = useState<number | null>(null);
 
   const { t, dir } = useLanguage();
+  const { setQuizActive } = useQuizSafe();
+
+  // Update quiz active state when quiz starts or ends
+  useEffect(() => {
+    const isActive = quizStarted && !quizResult;
+    setQuizActive(isActive);
+
+    // Cleanup when component unmounts
+    return () => {
+      setQuizActive(false);
+    };
+  }, [quizStarted, quizResult, setQuizActive]);
 
   const sections = quiz.sections ?? [];
   const currentSection = sections[currentSectionIndex];

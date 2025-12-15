@@ -10,8 +10,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, BookOpen } from "lucide-react";
+import { Menu, BookOpen, Lock } from "lucide-react";
 import { useState } from "react";
+import { useQuizSafe } from "@/providers/QuizContext";
 
 interface MobileSidebarProps {
   course: CourseSidebarData;
@@ -19,6 +20,7 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({ course }: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
+  const { isQuizActive } = useQuizSafe();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -26,9 +28,14 @@ export function MobileSidebar({ course }: MobileSidebarProps) {
         <Button
           variant="default"
           size="icon"
-          className="fixed right-4 bottom-4 z-50 size-14 rounded-full bg-red-600 shadow-lg hover:bg-red-700 lg:hidden"
+          disabled={isQuizActive}
+          className="fixed right-4 bottom-4 z-50 size-14 rounded-full bg-red-600 shadow-lg hover:bg-red-700 disabled:opacity-50 lg:hidden"
         >
-          <Menu className="size-6 text-white" />
+          {isQuizActive ? (
+            <Lock className="size-6 text-white" />
+          ) : (
+            <Menu className="size-6 text-white" />
+          )}
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[320px] p-0 sm:w-[400px]">
