@@ -25,10 +25,23 @@ import { toast } from "sonner";
 import Uploader from "../file-uploader/Uploader";
 import { MemeTrigger, MemeType } from "@/lib/enums";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLanguage } from "@/providers/LanguageContext";
+
+const typeTranslationKeys: Record<string, string> = {
+  IMAGE: "admin.memes.types.image",
+  GIF: "admin.memes.types.gif",
+  VIDEO: "admin.memes.types.video",
+};
+
+const triggerTranslationKeys: Record<string, string> = {
+  TOO_SLOW: "admin.memes.triggers.too_slow",
+  RANDOM: "admin.memes.triggers.random",
+};
 
 export default function MemeForm({ onSuccess }: { onSuccess?: () => void }) {
   const [isPending, startTransition] = useTransition();
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
 
   const form = useForm<CreateMemeSchema>({
     resolver: zodResolver(createMemeSchema),
@@ -61,7 +74,7 @@ export default function MemeForm({ onSuccess }: { onSuccess?: () => void }) {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Meme Type</FormLabel>
+              <FormLabel>{t("admin.memes.form.type_label")}</FormLabel>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -72,13 +85,15 @@ export default function MemeForm({ onSuccess }: { onSuccess?: () => void }) {
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue
+                      placeholder={t("admin.memes.form.type_placeholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {Object.values(MemeType).map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type}
+                      {t(typeTranslationKeys[type])}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -95,7 +110,9 @@ export default function MemeForm({ onSuccess }: { onSuccess?: () => void }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                {form.watch("type") === "VIDEO" ? "Video File" : "Image File"}
+                {form.watch("type") === "VIDEO"
+                  ? t("admin.memes.form.video_file")
+                  : t("admin.memes.form.image_file")}
               </FormLabel>
               <FormControl>
                 <Uploader
@@ -117,17 +134,19 @@ export default function MemeForm({ onSuccess }: { onSuccess?: () => void }) {
           name="trigger"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Trigger Condition</FormLabel>
+              <FormLabel>{t("admin.memes.form.trigger_label")}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select trigger" />
+                    <SelectValue
+                      placeholder={t("admin.memes.form.trigger_placeholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {Object.values(MemeTrigger).map((trigger) => (
                     <SelectItem key={trigger} value={trigger}>
-                      {trigger}
+                      {t(triggerTranslationKeys[trigger])}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -138,7 +157,9 @@ export default function MemeForm({ onSuccess }: { onSuccess?: () => void }) {
         />
 
         <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? "Saving..." : "Add Meme"}
+          {isPending
+            ? t("admin.memes.form.saving")
+            : t("admin.memes.form.add_meme")}
         </Button>
       </form>
     </Form>

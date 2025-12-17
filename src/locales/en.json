@@ -335,6 +335,37 @@
       "courses_count": "course(s)",
       "download_invoices": "Download Invoices",
       "no_students": "No students found"
+    },
+    "memes": {
+      "title": "Meme Library",
+      "description": "Manage memes to make quizzes more engaging",
+      "add_meme": "Add Meme",
+      "add_new_meme": "Add New Meme",
+      "total_memes": "Total Memes",
+      "no_memes": "No memes found",
+      "no_memes_description": "Start by adding some memes to make quizzes more fun!",
+      "triggers": {
+        "too_slow": "Too Slow",
+        "random": "Random"
+      },
+      "types": {
+        "image": "Image",
+        "gif": "GIF",
+        "video": "Video"
+      },
+      "form": {
+        "type_label": "Meme Type",
+        "type_placeholder": "Select type",
+        "trigger_label": "Trigger Condition",
+        "trigger_placeholder": "Select trigger",
+        "video_file": "Video File",
+        "image_file": "Image File",
+        "saving": "Saving...",
+        "add_meme": "Add Meme"
+      },
+      "active": "Active",
+      "delete": "Delete",
+      "delete_confirm": "Are you sure you want to delete this meme?"
     }
   }
 }

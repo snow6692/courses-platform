@@ -335,8 +335,6 @@ enum MemeType {
 }
 
 enum MemeTrigger {
-  CORRECT
-  WRONG
   TOO_SLOW
   RANDOM
 }

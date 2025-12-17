@@ -9,77 +9,64 @@ import {
   IconPlayerPlay,
   IconPhoto,
   IconGif,
-  IconCheck,
-  IconX,
   IconClock,
   IconDice,
 } from "@tabler/icons-react";
+import { useLanguage } from "@/providers/LanguageContext";
 
 const triggerConfig = {
-  CORRECT: {
-    label: "Correct",
-    icon: IconCheck,
-    color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-    gradient: "from-emerald-500/20 to-transparent",
-  },
-  WRONG: {
-    label: "Wrong",
-    icon: IconX,
-    color: "bg-red-500/10 text-red-600 border-red-500/20",
-    gradient: "from-red-500/20 to-transparent",
-  },
   TOO_SLOW: {
-    label: "Too Slow",
+    translationKey: "admin.memes.triggers.too_slow",
     icon: IconClock,
-    color: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    gradient: "from-amber-500/20 to-transparent",
+    className:
+      "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
   },
   RANDOM: {
-    label: "Random",
+    translationKey: "admin.memes.triggers.random",
     icon: IconDice,
-    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-    gradient: "from-purple-500/20 to-transparent",
+    className:
+      "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
   },
 };
 
 const typeConfig = {
   VIDEO: {
-    label: "Video",
+    translationKey: "admin.memes.types.video",
     icon: IconPlayerPlay,
-    color: "bg-blue-500/10 text-blue-600",
+    className: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
   },
   IMAGE: {
-    label: "Image",
+    translationKey: "admin.memes.types.image",
     icon: IconPhoto,
-    color: "bg-pink-500/10 text-pink-600",
+    className:
+      "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   },
   GIF: {
-    label: "GIF",
+    translationKey: "admin.memes.types.gif",
     icon: IconGif,
-    color: "bg-orange-500/10 text-orange-600",
+    className:
+      "bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300",
   },
 };
 
 export default function MemeCard({ meme }: { meme: Meme }) {
+  const { t } = useLanguage();
   const fileUrl = useConstructUrl(meme.fileKey);
-  const trigger = triggerConfig[meme.trigger] || triggerConfig.RANDOM;
+  const trigger =
+    triggerConfig[meme.trigger as keyof typeof triggerConfig] ||
+    triggerConfig.RANDOM;
   const type = typeConfig[meme.type] || typeConfig.IMAGE;
   const TriggerIcon = trigger.icon;
   const TypeIcon = type.icon;
 
   return (
-    <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-gray-50 to-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-gray-900 dark:to-gray-800">
-      {/* Gradient overlay based on trigger */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-b ${trigger.gradient} pointer-events-none opacity-50`}
-      />
-
+    <Card className="group relative overflow-hidden border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
       {/* Media Container */}
-      <div className="relative aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
         {meme.type === "VIDEO" ? (
           <video
             src={fileUrl}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             controls
             preload="metadata"
           />
@@ -87,63 +74,55 @@ export default function MemeCard({ meme }: { meme: Meme }) {
           <img
             src={fileUrl}
             alt="Meme"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             loading="lazy"
           />
         )}
 
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
         {/* Delete Button - appears on hover */}
-        <div className="absolute end-3 top-3 translate-y-[-8px] transform opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="absolute end-2 top-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           <DeleteMeme id={meme.id} />
         </div>
 
         {/* Type Badge */}
-        <div className="absolute start-3 top-3">
+        <div className="absolute start-2 top-2">
           <div
-            className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium backdrop-blur-md ${type.color} border border-white/20`}
+            className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium ${type.className}`}
           >
             <TypeIcon className="size-3.5" />
-            <span>{type.label}</span>
+            <span>{t(type.translationKey)}</span>
           </div>
         </div>
 
         {/* Active indicator */}
         {meme.isActive && (
-          <div className="absolute end-3 bottom-3">
-            <div className="flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg">
-              <span className="size-1.5 animate-pulse rounded-full bg-white" />
-              Active
+          <div className="absolute end-2 bottom-2">
+            <div className="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-[10px] font-medium text-white">
+              <span className="size-1.5 rounded-full bg-white" />
+              {t("admin.memes.active")}
             </div>
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="relative p-4">
+      <div className="border-t border-slate-100 p-3 dark:border-slate-800">
         <div className="flex items-center justify-between">
           {/* Trigger Badge */}
           <Badge
             variant="outline"
-            className={`flex items-center gap-1.5 font-medium ${trigger.color} border`}
+            className={`flex items-center gap-1.5 text-xs font-medium ${trigger.className}`}
           >
-            <TriggerIcon className="size-3.5" />
-            {trigger.label}
+            <TriggerIcon className="size-3" />
+            {t(trigger.translationKey)}
           </Badge>
 
-          {/* Created date or ID */}
+          {/* ID */}
           <span className="text-muted-foreground font-mono text-[10px]">
             #{meme.id.slice(-6).toUpperCase()}
           </span>
         </div>
       </div>
-
-      {/* Bottom accent line */}
-      <div
-        className={`absolute right-0 bottom-0 left-0 h-1 bg-gradient-to-r ${trigger.gradient.replace("to-transparent", "via-current to-transparent")}`}
-      />
     </Card>
   );
 }

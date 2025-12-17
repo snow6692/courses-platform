@@ -8,8 +8,6 @@ export const MemeType = {
 } as const;
 
 export const MemeTrigger = {
-  CORRECT: "CORRECT",
-  WRONG: "WRONG",
   TOO_SLOW: "TOO_SLOW",
   RANDOM: "RANDOM",
 } as const;

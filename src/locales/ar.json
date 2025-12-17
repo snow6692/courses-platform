@@ -336,6 +336,37 @@
       "courses_count": "دورة",
       "download_invoices": "تحميل الفواتير",
       "no_students": "لا يوجد طلاب"
+    },
+    "memes": {
+      "title": "مكتبة الميمز",
+      "description": "إدارة الميمز لجعل الاختبارات أكثر تفاعلية",
+      "add_meme": "إضافة ميم",
+      "add_new_meme": "إضافة ميم جديد",
+      "total_memes": "إجمالي الميمز",
+      "no_memes": "لا توجد ميمز",
+      "no_memes_description": "ابدأ بإضافة بعض الميمز لجعل الاختبارات أكثر متعة!",
+      "triggers": {
+        "too_slow": "بطيء جداً",
+        "random": "عشوائي"
+      },
+      "types": {
+        "image": "صورة",
+        "gif": "صورة متحركة",
+        "video": "فيديو"
+      },
+      "form": {
+        "type_label": "نوع الميم",
+        "type_placeholder": "اختر النوع",
+        "trigger_label": "شرط التشغيل",
+        "trigger_placeholder": "اختر الشرط",
+        "video_file": "ملف فيديو",
+        "image_file": "ملف صورة",
+        "saving": "جاري الحفظ...",
+        "add_meme": "إضافة ميم"
+      },
+      "active": "نشط",
+      "delete": "حذف",
+      "delete_confirm": "هل أنت متأكد من حذف هذا الميم؟"
     }
   }
 }
