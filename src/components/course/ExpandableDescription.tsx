@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/providers/LanguageContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface ExpandableDescriptionProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface ExpandableDescriptionProps {
 
 export function ExpandableDescription({
   children,
-  maxHeight = 200,
+  maxHeight = 250,
 }: ExpandableDescriptionProps) {
   const { t, dir } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -29,40 +29,39 @@ export function ExpandableDescription({
 
   return (
     <div className="relative" dir={dir}>
-      <motion.div
+      {/* Content container with custom scrollbar */}
+      <div
         ref={contentRef}
-        initial={false}
-        animate={{
-          height: isExpanded ? "auto" : showButton ? maxHeight : "auto",
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          showButton && !isExpanded && "custom-scrollbar overflow-y-auto",
+          showButton && isExpanded && "overflow-visible",
+        )}
+        style={{
+          maxHeight: showButton && !isExpanded ? maxHeight : "none",
         }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="overflow-hidden"
       >
         {children}
-      </motion.div>
+      </div>
 
-      {/* Gradient fade overlay when collapsed */}
-      <AnimatePresence>
-        {!isExpanded && showButton && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="pointer-events-none absolute right-0 bottom-0 left-0 h-24 bg-gradient-to-t from-white to-transparent"
-          />
-        )}
-      </AnimatePresence>
+      {/* Gradient fade overlay when collapsed and scrollable */}
+      {!isExpanded && showButton && (
+        <div className="pointer-events-none absolute right-0 bottom-0 left-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent" />
+      )}
 
       {/* Show more/less button */}
       {showButton && (
         <div
-          className={`mt-4 flex ${dir === "rtl" ? "justify-start" : "justify-start"}`}
+          className={cn(
+            "mt-4 flex",
+            dir === "rtl" ? "justify-start" : "justify-start",
+          )}
         >
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="gap-2 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
+            className="gap-2 rounded-full px-4 text-purple-600 transition-all duration-200 hover:bg-purple-50 hover:text-purple-700"
           >
             {isExpanded ? (
               <>

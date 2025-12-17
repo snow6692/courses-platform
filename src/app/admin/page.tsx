@@ -1,70 +1,75 @@
-import { ChartAreaInteractive } from "@/components/sidebar/chart-area-interactive";
 import { SectionCards } from "@/components/sidebar/section-cards";
-import { adminGetEnrollmentsStat } from "../data/admin/admin-get-enrollments-stats";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { adminGetRecentCourses } from "../data/admin/admin-get-recent-courses";
-import EmptyState from "@/components/shared/EmptyState";
-import AdminCourseCard, {
-  AdminCourseCardSkeleton,
-} from "@/components/course/AdminCourseCard";
+import { adminGetRecentEnrollments } from "../data/admin/admin-get-recent-enrollments";
+import { adminGetDashboardStats } from "../data/admin/admin-get-dashbaord-stats";
+import { AdminPageClient } from "@/components/admin/AdminPageClient";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-async function AdminPage() {
-  const enrollmentsData = await adminGetEnrollmentsStat();
+// Skeleton for stats cards
+function SectionCardsSkeleton() {
   return (
-    <>
-      <SectionCards />
-
-      <ChartAreaInteractive data={enrollmentsData} />
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Recent Courses</h2>
-          <Link
-            className={buttonVariants({ variant: "outline" })}
-            href={"/admin/courses"}
-          >
-            View all courses
-          </Link>
+    <div className="grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="dark:bg-card rounded-xl border bg-white p-6">
+          <Skeleton className="mb-2 h-4 w-24" />
+          <Skeleton className="mb-4 h-8 w-16" />
+          <Skeleton className="h-3 w-32" />
         </div>
-        <Suspense fallback={<RenderRecentCoursesSkeletonLayout />}>
-          <RenderRecentCourses />
-        </Suspense>
-      </div>
-    </>
-  );
-}
-
-export default AdminPage;
-
-async function RenderRecentCourses() {
-  const data = await adminGetRecentCourses();
-  if (data.length === 0) {
-    return (
-      <EmptyState
-        buttonText="create new Course"
-        description="You don't have any courses. create some to see them here."
-        title="You don't have any courses yet!"
-        href="/admin/courses/create"
-      />
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      {data.map((course) => (
-        <AdminCourseCard course={course} key={course.id} />
       ))}
     </div>
   );
 }
 
-function RenderRecentCoursesSkeletonLayout() {
+// Skeleton for recent enrollments
+function EnrollmentsSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      {Array.from({ length: 2 }).map((_, index) => (
-        <AdminCourseCardSkeleton key={index} />
-      ))}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-9 w-32" />
+      </div>
+      <div className="dark:bg-card rounded-xl border bg-white">
+        <div className="space-y-4 p-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex gap-4">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Server component for stats
+async function StatsSection() {
+  const stats = await adminGetDashboardStats();
+  return <SectionCards stats={stats} />;
+}
+
+// Server component for enrollments
+async function EnrollmentsSection() {
+  const [enrollments, cookieStore] = await Promise.all([
+    adminGetRecentEnrollments(),
+    cookies(),
+  ]);
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "ar";
+  return <AdminPageClient enrollments={enrollments} locale={locale} />;
+}
+
+export default function AdminPage() {
+  return (
+    <div className="space-y-6">
+      <Suspense fallback={<SectionCardsSkeleton />}>
+        <StatsSection />
+      </Suspense>
+
+      <Suspense fallback={<EnrollmentsSkeleton />}>
+        <EnrollmentsSection />
+      </Suspense>
     </div>
   );
 }

@@ -101,7 +101,8 @@
     "resources": "Downloadable Resources",
     "rating": "Ratings",
     "instructor_name": "Mr. Mohammed Al-Otaibi",
-    "instructor_title": "Math Professor with 15 years experience"
+    "instructor_title": "Math Professor with 15 years experience",
+    "secure_payment": "Secure Payment"
   },
   "lesson": {
     "free_lesson_from": "Free lesson from course:",
@@ -293,5 +294,50 @@
     "just_now": "Just now",
     "view_all": "View All",
     "more": "more"
+  },
+  "admin": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "courses": "Courses",
+      "students": "Students",
+      "memes": "Memes",
+      "quick_create": "Quick Create"
+    },
+    "dashboard": {
+      "total_courses": "Total Courses",
+      "total_customers": "Total Customers",
+      "total_users": "Total Users",
+      "total_lessons": "Total Lessons",
+      "courses_description": "Available courses on the platform",
+      "customers_description": "Users who have enrolled in courses",
+      "users_description": "Registered users on the platform",
+      "lessons_description": "Total learning content available"
+    },
+    "quick_actions": {
+      "students": "Students",
+      "students_desc": "View all enrolled students",
+      "courses": "Courses",
+      "courses_desc": "Manage your courses"
+    },
+    "recent_enrollments": {
+      "title": "Recent Enrollments",
+      "view_all": "View all students",
+      "no_enrollments": "No enrollments yet",
+      "student": "Student",
+      "course": "Course",
+      "enrolled": "Enrolled"
+    },
+    "students": {
+      "title": "Students",
+      "description": "View and manage all enrolled students",
+      "search_placeholder": "Search by name or email...",
+      "all_courses": "All Courses",
+      "contact": "Contact",
+      "enrolled_courses": "Enrolled Courses",
+      "total_paid": "Total Paid",
+      "courses_count": "course(s)",
+      "download_invoices": "Download Invoices",
+      "no_students": "No students found"
+    }
   }
 }

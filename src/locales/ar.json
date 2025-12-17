@@ -100,7 +100,8 @@
     "quizzes": "اختبارات تقييمية تفاعلية",
     "resources": "مواد تعليمية قابلة للتحميل",
     "rating": "تقييم",
-    "instructor_title": "أستاذ الرياضيات بخبرة 15 عاماً في تدريس التحصيلي"
+    "instructor_title": "أستاذ الرياضيات بخبرة 15 عاماً في تدريس التحصيلي",
+    "secure_payment": "دفع آمن"
   },
   "lesson": {
     "free_lesson_from": "درس مجاني من كورس:",
@@ -293,5 +294,50 @@
     "just_now": "الآن",
     "view_all": "عرض الكل",
     "more": "المزيد"
+  },
+  "admin": {
+    "sidebar": {
+      "dashboard": "لوحة التحكم",
+      "courses": "الدورات",
+      "students": "الطلاب",
+      "memes": "الميمز",
+      "quick_create": "إنشاء سريع"
+    },
+    "dashboard": {
+      "total_courses": "إجمالي الدورات",
+      "total_customers": "إجمالي العملاء",
+      "total_users": "إجمالي المستخدمين",
+      "total_lessons": "إجمالي الدروس",
+      "courses_description": "الدورات المتاحة على المنصة",
+      "customers_description": "المستخدمون المسجلون في الدورات",
+      "users_description": "المستخدمون المسجلون على المنصة",
+      "lessons_description": "إجمالي المحتوى التعليمي المتاح"
+    },
+    "quick_actions": {
+      "students": "الطلاب",
+      "students_desc": "عرض جميع الطلاب المسجلين",
+      "courses": "الدورات",
+      "courses_desc": "إدارة الدورات الخاصة بك"
+    },
+    "recent_enrollments": {
+      "title": "التسجيلات الأخيرة",
+      "view_all": "عرض جميع الطلاب",
+      "no_enrollments": "لا توجد تسجيلات بعد",
+      "student": "الطالب",
+      "course": "الدورة",
+      "enrolled": "تاريخ التسجيل"
+    },
+    "students": {
+      "title": "الطلاب",
+      "description": "عرض وإدارة جميع الطلاب المسجلين",
+      "search_placeholder": "البحث بالاسم أو البريد الإلكتروني...",
+      "all_courses": "جميع الدورات",
+      "contact": "التواصل",
+      "enrolled_courses": "الدورات المسجلة",
+      "total_paid": "إجمالي المدفوعات",
+      "courses_count": "دورة",
+      "download_invoices": "تحميل الفواتير",
+      "no_students": "لا يوجد طلاب"
+    }
   }
 }

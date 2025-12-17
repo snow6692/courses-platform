@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/sidebar/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "../../components/sidebar/app-sidebar";
+import Navbar from "@/components/shared/Navbar";
 
 function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
+        <Navbar />
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">

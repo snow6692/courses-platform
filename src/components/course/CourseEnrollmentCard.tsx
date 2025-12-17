@@ -5,15 +5,8 @@ import { getServerLocale } from "@/lib/i18n";
 import Link from "next/link";
 import Image from "next/image";
 import { useConstructUrl } from "@/hooks/use-construct-url";
-import RenderDescription from "@/components/rich-text-editor/RenderDescription";
-import {
-  IconClock,
-  IconBook,
-  IconClipboardCheck,
-  IconDownload,
-  IconInfinity,
-  IconCertificate,
-} from "@tabler/icons-react";
+import { Badge } from "@/components/ui/badge";
+import { IconSparkles } from "@tabler/icons-react";
 
 interface CourseEnrollmentCardProps {
   course: {
@@ -37,109 +30,101 @@ export async function CourseEnrollmentCard({
   const { t } = await getServerLocale();
   const thumbnailImage = useConstructUrl(course.fileKey);
 
-  // Calculate total chapters
-  const totalChapters = course.chapters.length;
-
-  const courseIncludes = [
-    {
-      icon: IconClock,
-      text: `${course.duration} ${t("course_detail.hours")} ${t("course_detail.video_content")}`,
-    },
-    {
-      icon: IconBook,
-      text: `${totalChapters} ${t("course_detail.chapters_count")}`,
-    },
-    {
-      icon: IconClipboardCheck,
-      text: t("course_detail.quizzes"),
-    },
-    {
-      icon: IconDownload,
-      text: t("course_detail.resources"),
-    },
-    {
-      icon: IconInfinity,
-      text: t("course_detail.full_lifetime_access"),
-    },
-    {
-      icon: IconCertificate,
-      text: t("course_detail.certificate"),
-    },
-  ];
+  // Calculate total lessons
+  const totalLessons = course.chapters.reduce(
+    (acc, chapter) => acc + chapter.lessons.length,
+    0,
+  );
 
   return (
     <div className="sticky top-20">
-      <Card
-        className="overflow-hidden rounded-2xl border-none p-4 shadow-lg"
-        style={{ backgroundColor: "#FDFDFD" }}
-      >
-        {/* Course Image */}
-        <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-xl">
-          <Image
-            src={thumbnailImage}
-            alt="Course thumbnail"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+      {/* Gradient border wrapper */}
+      <div className="rounded-3xl bg-gradient-to-br from-purple-500/20 via-pink-500/10 to-orange-500/20 p-[2px] shadow-2xl shadow-purple-500/10">
+        <Card className="overflow-hidden rounded-3xl border-none bg-white/95 backdrop-blur-sm">
+          {/* Course Image with overlay gradient */}
+          <div className="relative aspect-video w-full overflow-hidden">
+            <Image
+              src={thumbnailImage}
+              alt="Course thumbnail"
+              fill
+              className="object-cover transition-transform duration-500 hover:scale-105"
+              priority
+            />
+            {/* Subtle overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
-        <CardContent className="p-0">
-          {/* Price Section */}
-          <div className="mb-6 flex items-center gap-3 text-center">
-            <span className="text-foreground text-3xl font-bold">
-              {course.price}
-              <span className="text-xl">{t("courses.card.currency")}</span>
-            </span>
-
-            <span className="text-muted-foreground text-sm font-medium">
-              {t("course_detail.one_payment_label")}
-            </span>
-          </div>
-
-          {/* CTA Button */}
-          <div className="mb-8">
-            {isEnrolled ? (
-              <Link
-                href={`/dashboard/${course.slug}`}
-                className={buttonVariants({
-                  className:
-                    "bg-primary hover:bg-primary/90 w-full rounded-lg py-6 text-lg font-bold",
-                })}
-              >
-                {t("course_detail.watch_now")}
-              </Link>
-            ) : (
-              <EnrollmentButton courseId={course.id} />
-            )}
-          </div>
-
-          {/* Divider */}
-          <div className="mb-6 h-px w-full bg-gray-200" />
-
-          {/* This Course Includes Section */}
-          <div className="mb-8">
-            <h3 className="mb-4 text-right text-lg font-bold text-gray-800">
-              {t("course_detail.this_course_includes")}
-            </h3>
-            <div className="space-y-3">
-              {courseIncludes.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-end gap-3 text-right"
-                >
-                  <span className="text-muted-foreground text-sm">
-                    {item.text}
-                  </span>
-                  <div className="bg-primary/10 flex size-6 items-center justify-center rounded-full">
-                    <item.icon className="text-primary size-3.5" />
-                  </div>
-                </div>
-              ))}
+            {/* Course stats badge */}
+            <div className="absolute right-3 bottom-3 left-3 flex justify-between">
+              <Badge className="bg-white/90 text-gray-700 backdrop-blur-sm hover:bg-white/90">
+                {course.chapters.length} {t("course_detail.chapters")}
+              </Badge>
+              <Badge className="bg-white/90 text-gray-700 backdrop-blur-sm hover:bg-white/90">
+                {totalLessons} {t("course_detail.lessons")}
+              </Badge>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <CardContent className="p-6">
+            {/* Price Section */}
+            <div className="mb-6 flex flex-col items-center gap-2">
+              <div className="flex items-baseline gap-1">
+                <span className="text-5xl font-extrabold ">
+                  {course.price}
+                </span>
+                <span className="text-xl font-semibold text-gray-600">
+                  {t("courses.card.currency")}
+                </span>
+              </div>
+
+              <Badge
+                variant="secondary"
+                className="border-green-200 bg-green-50 text-green-700"
+              >
+                <IconSparkles className="mr-1 size-3" />
+                {t("course_detail.one_payment_label")}
+              </Badge>
+            </div>
+
+            {/* Divider */}
+            <div className="mb-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+            {/* CTA Button */}
+            <div>
+              {isEnrolled ? (
+                <Link
+                  href={`/dashboard/${course.slug}`}
+                  className={buttonVariants({
+                    className:
+                      "w-full rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-6 text-lg font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:brightness-110",
+                  })}
+                >
+                  {t("course_detail.watch_now")}
+                </Link>
+              ) : (
+                <EnrollmentButton courseId={course.id} />
+              )}
+            </div>
+
+            {/* Trust indicators */}
+            <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <svg
+                className="size-4 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>
+                {t("course_detail.secure_payment") || "Secure Payment"}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

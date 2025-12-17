@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import {
-  IconCamera,
   IconDashboard,
-  IconFileAi,
-  IconFileDescription,
   IconListDetails,
+  IconMoodSmile,
+  IconUsers,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -22,73 +21,39 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
+import { useLanguage } from "@/providers/LanguageContext";
 
-const data = {
-  navMain: [
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { t, language } = useLanguage();
+
+  const navMain = [
     {
-      title: "Dashboard",
+      title: t("admin.sidebar.dashboard"),
       url: "/admin",
       icon: IconDashboard,
     },
     {
-      title: "Courses",
+      title: t("admin.sidebar.courses"),
       url: "/admin/courses",
       icon: IconListDetails,
     },
-  ],
-  navClouds: [
     {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      title: t("admin.sidebar.students"),
+      url: "/admin/students",
+      icon: IconUsers,
     },
     {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      title: t("admin.sidebar.memes"),
+      url: "/admin/memes",
+      icon: IconMoodSmile,
     },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-};
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  // Set sidebar side based on language direction
+  const sidebarSide = language === "ar" ? "right" : "left";
+
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="offcanvas" side={sidebarSide} {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -104,14 +69,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   height={100}
                   className="size-5 rounded-full"
                 />
-                <span className="text-base font-semibold">Courses</span>
+                <span className="text-base font-semibold">
+                  {t("navbar.courses")}
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
