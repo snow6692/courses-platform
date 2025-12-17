@@ -13,11 +13,11 @@ export const getCourse = cache(async (slug: string) => {
       pdfKey: true,
       slug: true,
       title: true,
-      level: true,
+
       price: true,
       duration: true,
       description: true,
-      category: true,
+
       smallDescription: true,
       user: {
         select: {

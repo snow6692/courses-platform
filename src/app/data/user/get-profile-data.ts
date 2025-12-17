@@ -65,7 +65,6 @@ export async function getProfileData() {
           title: true,
           slug: true,
           fileKey: true,
-          level: true,
         },
       },
     },

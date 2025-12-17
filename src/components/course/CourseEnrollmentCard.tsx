@@ -14,8 +14,6 @@ interface CourseEnrollmentCardProps {
     slug: string;
     price: number;
     duration: number;
-    level: string;
-    category: string;
     fileKey: string;
     description: string | null;
     chapters: { lessons: { id: string; title: string; isFree: boolean }[] }[];
@@ -68,9 +66,7 @@ export async function CourseEnrollmentCard({
             {/* Price Section */}
             <div className="mb-6 flex flex-col items-center gap-2">
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-extrabold ">
-                  {course.price}
-                </span>
+                <span className="text-5xl font-extrabold">{course.price}</span>
                 <span className="text-xl font-semibold text-gray-600">
                   {t("courses.card.currency")}
                 </span>

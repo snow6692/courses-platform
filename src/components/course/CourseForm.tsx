@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
 import { courseSchema, CourseSchemaType } from "@/validation/course.zod";
 import slugify from "slugify";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,21 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
-import { Check, ChevronsUpDown, SparklesIcon } from "lucide-react";
-import { CATEGORIES } from "@/lib/constants";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { SparklesIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RichTextEditor from "@/components/rich-text-editor/Editor";
 import Uploader from "@/components/file-uploader/Uploader";
@@ -48,7 +34,7 @@ import { createCourse, updateCourse } from "../../actions/course.action";
 import { tryCatch } from "@/hooks/try-catch";
 import { useConfetti } from "@/hooks/use-confetti";
 import { Course } from "@/lib/db";
-import { CourseLevelEnum, CourseStatusEnum } from "@/lib/course-enums";
+import { CourseStatusEnum } from "@/lib/course-enums";
 
 interface CourseFormProps {
   course?: Partial<Course>;
@@ -59,8 +45,6 @@ function CourseForm({ course }: CourseFormProps) {
   const { triggerConfetti } = useConfetti();
 
   const [isSubmitting, startTransition] = useTransition();
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const form = useForm<CourseSchemaType>({
     resolver: zodResolver(courseSchema),
     defaultValues: course
@@ -71,10 +55,7 @@ function CourseForm({ course }: CourseFormProps) {
           pdfKey: course.pdfKey ?? "",
           price: course.price ?? 0,
           duration: course.duration ?? 1,
-          level: course.level ?? CourseLevelEnum.BEGINNER,
           status: course.status ?? CourseStatusEnum.DRAFT,
-          category: (course.category ??
-            CATEGORIES[0]) as CourseSchemaType["category"],
           smallDescription: course.smallDescription ?? "",
           slug: course.slug ?? "",
         }
@@ -85,8 +66,6 @@ function CourseForm({ course }: CourseFormProps) {
           pdfKey: "",
           price: 0,
           duration: 1,
-          level: CourseLevelEnum.BEGINNER,
-          category: "Development",
           smallDescription: "",
           slug: "",
           status: CourseStatusEnum.DRAFT,
@@ -273,105 +252,7 @@ function CourseForm({ course }: CourseFormProps) {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row">
-            {/* Category */}
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel htmlFor="category">Category</FormLabel>
-                  <FormControl>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={open}
-                          className="w-full justify-between"
-                        >
-                          {field.value || "Select category..."}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Search category..."
-                            value={search}
-                            onValueChange={setSearch}
-                          />
-                          <CommandList>
-                            <CommandEmpty>No category found.</CommandEmpty>
-                            <CommandGroup heading="Categories">
-                              {CATEGORIES.filter((category) =>
-                                category
-                                  .toLowerCase()
-                                  .includes(search.toLowerCase()),
-                              ).map((category) => (
-                                <CommandItem
-                                  key={category}
-                                  value={category}
-                                  onSelect={() => {
-                                    field.onChange(category);
-                                    setOpen(false);
-                                    setSearch("");
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      field.value === category
-                                        ? "opacity-100"
-                                        : "opacity-0",
-                                    )}
-                                  />
-                                  {category}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Level */}
-            <FormField
-              control={form.control}
-              name="level"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel htmlFor="level">Level</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger id="level" className="w-full">
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={CourseLevelEnum.BEGINNER}>
-                          Beginner
-                        </SelectItem>
-                        <SelectItem value={CourseLevelEnum.INTERMEDIATE}>
-                          Intermediate
-                        </SelectItem>
-                        <SelectItem value={CourseLevelEnum.ADVANCED}>
-                          Advanced
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* price, duration,, status */}
-
+          {/* price, duration, status */}
           <div className="flex flex-col gap-4 md:flex-row">
             {/* Price */}
             <FormField
@@ -420,7 +301,6 @@ function CourseForm({ course }: CourseFormProps) {
                 </FormItem>
               )}
             />
-            {/* Category */}
           </div>
           {/* Status */}
           <FormField

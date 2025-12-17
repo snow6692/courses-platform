@@ -83,10 +83,6 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
             <TimerIcon className="text-primary bg-primary/10 size-6 rounded-md p-1" />
             <p className="text-muted-foreground text-sm">{course.duration}h</p>
           </div>
-          <div className="flex items-center gap-x-2">
-            <School className="text-primary bg-primary/10 size-6 rounded-md p-1" />
-            <p className="text-muted-foreground text-sm">{course.level}</p>
-          </div>
         </div>
         <p>{course.price}</p>
         <p>{course.status}</p>

@@ -10,7 +10,6 @@ import {
   Quiz,
   QuizAnswer,
   QuizAttempt,
-  CourseLevel,
   CourseStatus,
   Enrollment,
   MemeTrigger,
@@ -36,7 +35,7 @@ const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export { MemeTrigger, MemeType, CourseLevel, CourseStatus };
+export { MemeTrigger, MemeType, CourseStatus };
 
 export type {
   Question,

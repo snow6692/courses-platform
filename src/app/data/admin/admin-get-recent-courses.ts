@@ -1,4 +1,4 @@
-import "server-only"
+import "server-only";
 
 import prisma from "@/lib/db";
 import { requireAdmin } from "./require-admin";
@@ -16,7 +16,6 @@ export async function adminGetRecentCourses() {
       title: true,
       smallDescription: true,
       duration: true,
-      level: true,
       status: true,
       price: true,
       fileKey: true,

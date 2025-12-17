@@ -50,11 +50,6 @@ function CourseProgressCard({
         isCompleted && "ring-2 ring-green-500",
       )}
     >
-      {/* Level Badge */}
-      <Badge className="absolute top-3 right-3 z-10 bg-white/90 text-gray-700 shadow-sm backdrop-blur-sm">
-        {enrollment.Course.level}
-      </Badge>
-
       {/* Completed Badge */}
       {isCompleted && (
         <Badge className="absolute top-3 left-3 z-10 gap-1 bg-green-500 text-white shadow-sm">

@@ -15,7 +15,6 @@ export async function getEnrolledCourses() {
           smallDescription: true,
           title: true,
           fileKey: true,
-          level: true,
           slug: true,
           duration: true,
           chapters: {

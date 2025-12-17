@@ -71,7 +71,6 @@
   },
   "course_detail": {
     "level": "المستوى",
-    "category": "التصنيف",
     "duration": "المدة",
     "hours": "ساعة",
     "students": "طالب",
@@ -79,7 +78,6 @@
     "what_you_get": "ما ستحصل عليه:",
     "course_duration": "مدة الدورة",
     "course_level": "مستوى الدورة",
-    "course_category": "تصنيف الدورة",
     "total_lessons": "إجمالي الدروس",
     "lessons": "دروس",
     "this_course_includes": "تتضمن هذه الدورة:",

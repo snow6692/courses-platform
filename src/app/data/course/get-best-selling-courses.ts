@@ -19,8 +19,6 @@ export const getBestSellingCourses = unstable_cache(
         smallDescription: true,
         price: true,
         duration: true,
-        level: true,
-        category: true,
         slug: true,
         fileKey: true,
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { CATEGORIES } from "../lib/constants";
-import { CourseLevelEnum, CourseStatusEnum } from "../lib/course-enums";
+import { CourseStatusEnum } from "../lib/course-enums";
+
 export const courseSchema = z.object({
   title: z
     .string()
@@ -17,10 +17,6 @@ export const courseSchema = z.object({
     .number()
     .min(1, { message: "Duration is required" })
     .max(500, { message: "Duration must be less than 500 hours" }),
-  level: z.nativeEnum(CourseLevelEnum),
-  category: z.enum(CATEGORIES, {
-    message: "Category is required",
-  }),
   smallDescription: z
     .string()
     .min(3, { message: "Small description at least 3 characters" })

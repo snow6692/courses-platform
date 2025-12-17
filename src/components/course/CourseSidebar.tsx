@@ -42,9 +42,6 @@ function CourseSidebar({ course }: IProps) {
             <h1 className="truncate text-base leading-tight font-semibold">
               {course.title}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs">
-              {course.category}
-            </p>
           </div>
         </div>
 

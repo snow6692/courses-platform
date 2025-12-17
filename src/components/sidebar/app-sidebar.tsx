@@ -63,11 +63,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link href="/">
                 <Image
-                  src={"./images/logo.svg"}
-                  alt="Logo"
-                  width={100}
-                  height={100}
-                  className="size-5 rounded-full"
+                  src={"/images/logo.svg"}
+                  alt="logo"
+                  width={50}
+                  height={50}
+                  className="size-9 rounded-full transition-all duration-[3000] hover:animate-spin"
                 />
                 <span className="text-base font-semibold">
                   {t("navbar.courses")}

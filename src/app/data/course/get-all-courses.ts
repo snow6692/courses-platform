@@ -28,9 +28,7 @@ export async function getAllCourses(search?: string) {
       slug: true,
       fileKey: true,
       id: true,
-      level: true,
       duration: true,
-      category: true,
       user: {
         select: {
           name: true,

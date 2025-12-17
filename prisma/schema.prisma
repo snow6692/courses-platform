@@ -88,12 +88,6 @@ model Verification {
   @@map("verification")
 }
 
-enum CourseLevel {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
-}
-
 enum CourseStatus {
   DRAFT
   PUBLISHED
@@ -101,16 +95,14 @@ enum CourseStatus {
 }
 
 model Course {
-  id               String      @id @default(uuid())
-  slug             String      @unique
+  id               String @id @default(uuid())
+  slug             String @unique
   title            String
   description      String
   fileKey          String
   price            Int
   duration         Int
-  level            CourseLevel @default(BEGINNER)
-  stripePriceId    String      @unique
-  category         String
+  stripePriceId    String @unique
   smallDescription String
 
   status CourseStatus @default(DRAFT)

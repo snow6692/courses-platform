@@ -14,8 +14,6 @@ export async function getCourseSidebarData(slug: string) {
       fileKey: true,
       pdfKey: true,
       duration: true,
-      level: true,
-      category: true,
       slug: true,
       // Course-level quizzes
       quizzes: {

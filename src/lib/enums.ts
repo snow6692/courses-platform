@@ -14,12 +14,6 @@ export const MemeTrigger = {
   RANDOM: "RANDOM",
 } as const;
 
-export const CourseLevel = {
-  BEGINNER: "BEGINNER",
-  INTERMEDIATE: "INTERMEDIATE",
-  ADVANCED: "ADVANCED",
-} as const;
-
 export const CourseStatus = {
   DRAFT: "DRAFT",
   PUBLISHED: "PUBLISHED",
@@ -28,5 +22,4 @@ export const CourseStatus = {
 
 export type MemeType = (typeof MemeType)[keyof typeof MemeType];
 export type MemeTrigger = (typeof MemeTrigger)[keyof typeof MemeTrigger];
-export type CourseLevel = (typeof CourseLevel)[keyof typeof CourseLevel];
 export type CourseStatus = (typeof CourseStatus)[keyof typeof CourseStatus];

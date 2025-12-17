@@ -1,13 +1,10 @@
 import { getServerLocale } from "@/lib/i18n";
 import { IconClock, IconUsers } from "@tabler/icons-react";
-import { Badge } from "../ui/badge";
 
 interface CourseHeroSectionProps {
   course: {
     title: string;
     smallDescription: string;
-    level: string;
-    category: string;
     duration: number;
     fileKey: string;
     pdfKey: string | null;
@@ -26,12 +23,6 @@ export async function CourseHeroSection({ course }: CourseHeroSectionProps) {
       className={`mb-4 flex flex-col space-y-6 ${isRTL ? "text-right" : "text-left"}`}
       dir={dir}
     >
-      {/* Category Badge */}
-      <Badge className="mb-2 flex w-fit items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 shadow-sm">
-        <span className="bg-primary mx-2 size-3 animate-pulse rounded-full"></span>
-        <p className="text-foreground text-sm font-medium">{course.category}</p>
-      </Badge>
-
       {/* Course Title */}
       <div className="space-y-4">
         <h1 className="text-foreground text-4xl font-extrabold tracking-tight lg:text-5xl">
