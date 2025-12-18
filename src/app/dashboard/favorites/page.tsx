@@ -1,8 +1,8 @@
-import { getFavoriteQuestions } from "@/actions/quiz/student.actions";
-import FavoritesClient from "./FavoritesClient";
+import { getFolders } from "@/actions/favorites/folder.actions";
+import FavoritesPageClient from "./FavoritesPageClient";
 
 export default async function FavoritesPage() {
-  const favorites = await getFavoriteQuestions();
+  const folders = await getFolders();
 
-  return <FavoritesClient initialFavorites={favorites} />;
+  return <FavoritesPageClient initialFolders={folders} />;
 }

@@ -291,7 +291,9 @@
     "continue_learning": "استمر في تعلم",
     "just_now": "الآن",
     "view_all": "عرض الكل",
-    "more": "المزيد"
+    "more": "المزيد",
+    "completed":"مكتمل",
+    "review_course": "مراجعة الكورس"
   },
   "course_sidebar": {
     "download_course_file": "تحميل ملف الكورس",
@@ -304,6 +306,41 @@
     "quiz": "اختبار",
     "chapter_quiz": "اختبار الفصل",
     "complete_quiz_first": "أكمل الاختبار الحالي"
+  },
+  "favorites": {
+    "title": "الأسئلة المفضلة",
+    "folders": "المجلدات",
+    "create_folder": "إنشاء مجلد جديد",
+    "folder_name": "اسم المجلد",
+    "folder_name_placeholder": "أدخل اسم المجلد",
+    "folder_description": "وصف المجلد",
+    "folder_description_placeholder": "وصف اختياري للمجلد",
+    "folder_color": "لون المجلد",
+    "add_to_folder": "إضافة لمجلد",
+    "select_folder": "اختر مجلد",
+    "create_new_folder": "إنشاء مجلد جديد",
+    "move_to_folder": "نقل لمجلد آخر",
+    "remove_from_favorites": "إزالة من المفضلة",
+    "questions_count": "سؤال",
+    "questions": "أسئلة",
+    "start_folder_quiz": "ابدأ اختبار المجلد",
+    "edit_folder": "تعديل المجلد",
+    "delete_folder": "حذف المجلد",
+    "delete_folder_confirm": "هل أنت متأكد من حذف هذا المجلد؟ سيتم حذف جميع الأسئلة المفضلة داخله.",
+    "folder_created": "تم إنشاء المجلد بنجاح",
+    "folder_updated": "تم تحديث المجلد بنجاح",
+    "folder_deleted": "تم حذف المجلد بنجاح",
+    "question_added": "تمت إضافة السؤال للمفضلة",
+    "question_removed": "تمت إزالة السؤال من المفضلة",
+    "no_folders": "لا توجد مجلدات",
+    "no_folders_description": "أنشئ مجلداً لتنظيم أسئلتك المفضلة",
+    "no_questions": "لا توجد أسئلة في هذا المجلد",
+    "back_to_folders": "العودة للمجلدات",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "create": "إنشاء",
+    "folder_name_required": "اسم المجلد مطلوب",
+    "folder_exists": "يوجد مجلد بهذا الاسم"
   },
   "admin": {
     "sidebar": {

@@ -6,7 +6,8 @@ import { revalidatePath } from "next/cache";
 
 export async function toggleFavoriteQuestion(
   questionId: string,
-): Promise<{ success: boolean; isFavorited: boolean }> {
+  folderId?: string,
+): Promise<{ success: boolean; isFavorited: boolean; error?: string }> {
   const user = await requireUser();
 
   const existing = await prisma.favoriteQuestion.findUnique({
@@ -16,14 +17,35 @@ export async function toggleFavoriteQuestion(
   });
 
   if (existing) {
+    // Remove from favorites
     await prisma.favoriteQuestion.delete({
       where: { id: existing.id },
     });
+    revalidatePath("/dashboard/favorites");
     return { success: true, isFavorited: false };
   } else {
-    await prisma.favoriteQuestion.create({
-      data: { userId: user.id, questionId },
+    // Add to favorites - folderId is required
+    if (!folderId) {
+      return {
+        success: false,
+        isFavorited: false,
+        error: "Folder is required",
+      };
+    }
+
+    // Verify folder belongs to user
+    const folder = await prisma.favoriteFolder.findFirst({
+      where: { id: folderId, userId: user.id },
     });
+
+    if (!folder) {
+      return { success: false, isFavorited: false, error: "Folder not found" };
+    }
+
+    await prisma.favoriteQuestion.create({
+      data: { userId: user.id, questionId, folderId },
+    });
+    revalidatePath("/dashboard/favorites");
     return { success: true, isFavorited: true };
   }
 }

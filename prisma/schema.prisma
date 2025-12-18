@@ -27,6 +27,7 @@ model User {
   enrollments       Enrollment[]
   lessonProgress    LessonProgress[]
   favoriteQuestions FavoriteQuestion[]
+  favoriteFolders   FavoriteFolder[]
 
   stripeCustomerId String? @unique
   phone            String? @unique
@@ -266,6 +267,25 @@ model Question {
   @@map("question")
 }
 
+model FavoriteFolder {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  color       String  @default("#6366f1")
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  favoriteQuestions FavoriteQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("favorite_folder")
+}
+
 model FavoriteQuestion {
   id String @id @default(uuid())
 
@@ -275,10 +295,14 @@ model FavoriteQuestion {
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
+  folderId String
+  folder   FavoriteFolder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
 
   @@unique([userId, questionId])
   @@index([userId])
+  @@index([folderId])
   @@map("favorite_question")
 }
 

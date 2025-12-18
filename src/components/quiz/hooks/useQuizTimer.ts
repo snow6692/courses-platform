@@ -72,7 +72,8 @@ export function useQuizTimer({
     ? (sectionTimers[currentSectionId] ?? null)
     : null;
 
-  const isFavoritesQuiz = quizId === "favorites-quiz";
+  const isFavoritesQuiz =
+    quizId === "favorites-quiz" || quizId.startsWith("folder-quiz-");
 
   // Timer countdown
   useEffect(() => {

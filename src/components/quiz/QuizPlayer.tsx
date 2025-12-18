@@ -302,7 +302,8 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
       setIsSubmitting(true);
       try {
         let result;
-        const isFavoritesQuizLocal = quiz.id === "favorites-quiz";
+        const isFavoritesQuizLocal =
+          quiz.id === "favorites-quiz" || quiz.id.startsWith("folder-quiz-");
         if (isFavoritesQuizLocal) {
           // For favorites quiz, collect all question IDs from the virtual quiz
           const questionIds = sections.flatMap((s) =>
@@ -550,7 +551,8 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     }
   };
 
-  const isFavoritesQuiz = quiz.id === "favorites-quiz";
+  const isFavoritesQuiz =
+    quiz.id === "favorites-quiz" || quiz.id.startsWith("folder-quiz-");
 
   const handleSubmit = async () => {
     const values = form.getValues();

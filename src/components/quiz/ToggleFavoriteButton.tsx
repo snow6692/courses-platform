@@ -4,6 +4,8 @@ import { toggleFavoriteQuestion } from "@/actions/quiz/student.actions";
 import { Heart } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { AddToFolderDialog } from "@/components/favorites/AddToFolderDialog";
+import { useLanguage } from "@/providers/LanguageContext";
 
 export function ToggleFavoriteButton({
   questionId,
@@ -12,40 +14,57 @@ export function ToggleFavoriteButton({
   questionId: string;
   isFavorited: boolean;
 }) {
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
+  const [showFolderDialog, setShowFolderDialog] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Optimistic update
-    setIsFavorited((prev) => !prev);
+    if (isFavorited) {
+      // Remove from favorites
+      setIsFavorited(false); // Optimistic update
 
-    startTransition(async () => {
-      const result = await toggleFavoriteQuestion(questionId);
-      if (result.success) {
-        // Sync with server response
-        setIsFavorited(result.isFavorited);
-        toast.success(
-          result.isFavorited ? "Added to favorites" : "Removed from favorites",
-        );
-      } else {
-        // Revert on error
-        setIsFavorited((prev) => !prev);
-        toast.error("Failed to update favorite");
-      }
-    });
+      startTransition(async () => {
+        const result = await toggleFavoriteQuestion(questionId);
+        if (result.success) {
+          setIsFavorited(result.isFavorited);
+          toast.success(t("favorites.question_removed"));
+        } else {
+          // Revert on error
+          setIsFavorited(true);
+          toast.error("Failed to update favorite");
+        }
+      });
+    } else {
+      // Show folder selection dialog
+      setShowFolderDialog(true);
+    }
+  };
+
+  const handleFolderSuccess = () => {
+    setIsFavorited(true);
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={isPending}
-      className="text-red-500 transition hover:text-red-600"
-    >
-      <Heart className={`size-5 ${isFavorited ? "fill-current" : ""}`} />
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={isPending}
+        className="text-red-500 transition hover:text-red-600"
+      >
+        <Heart className={`size-5 ${isFavorited ? "fill-current" : ""}`} />
+      </button>
+
+      <AddToFolderDialog
+        open={showFolderDialog}
+        onOpenChange={setShowFolderDialog}
+        questionId={questionId}
+        onSuccess={handleFolderSuccess}
+      />
+    </>
   );
 }
