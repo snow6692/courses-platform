@@ -54,9 +54,14 @@
   "navbar": {
     "home": "الرئيسية",
     "courses": "المواد الدراسية",
-    "dashboard": "لوحة التحكم",
+    "dashboard": "تابع تقدمك",
     "login": "تسجيل الدخول",
     "get_started": "ابدأ الآن"
+  },
+  "user_menu": {
+    "profile": "الملف الشخصي",
+    "favorites": "المفضلة",
+    "admin": "لوحة الادمن"
   },
   "courses": {
     "title": "استكشف المواد الدراسية",
@@ -292,7 +297,7 @@
     "just_now": "الآن",
     "view_all": "عرض الكل",
     "more": "المزيد",
-    "completed":"مكتمل",
+    "completed": "مكتمل",
     "review_course": "مراجعة الكورس"
   },
   "course_sidebar": {

@@ -5,6 +5,8 @@ import {
   ChevronDownIcon,
   HomeIcon,
   LayoutDashboardIcon,
+  User,
+  Heart,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { useLanguage } from "@/providers/LanguageContext";
 
 import Logout from "./Logout";
 
@@ -34,6 +37,8 @@ export default function UserDropDown({
   email,
   role,
 }: UserDropDownProps) {
+  const { t } = useLanguage();
+
   if (!image || !name || !email) {
     return null; // Hide dropdown if no user
   }
@@ -73,7 +78,19 @@ export default function UserDropDown({
           <DropdownMenuItem asChild>
             <Link href="/">
               <HomeIcon size={16} className="opacity-60" aria-hidden="true" />
-              <span>Home</span>
+              <span>{t("navbar.home")}</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/profile">
+              <User size={16} className="opacity-60" aria-hidden="true" />
+              <span>{t("user_menu.profile")}</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/favorites">
+              <Heart size={16} className="opacity-60" aria-hidden="true" />
+              <span>{t("user_menu.favorites")}</span>
             </Link>
           </DropdownMenuItem>
           {role === "admin" && (
@@ -84,14 +101,14 @@ export default function UserDropDown({
                   className="opacity-60"
                   aria-hidden="true"
                 />
-                <span>Admin</span>
+                <span>{t("user_menu.admin")}</span>
               </Link>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem asChild>
             <Link href="/courses">
               <BookOpen size={16} className="opacity-60" aria-hidden="true" />
-              <span>Courses</span>
+              <span>{t("navbar.courses")}</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -101,7 +118,7 @@ export default function UserDropDown({
                 className="opacity-60"
                 aria-hidden="true"
               />
-              <span>Dashboard</span>
+              <span>{t("navbar.dashboard")}</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

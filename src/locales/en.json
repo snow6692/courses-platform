@@ -54,9 +54,14 @@
   "navbar": {
     "home": "Home",
     "courses": "Courses",
-    "dashboard": "Dashboard",
+    "dashboard": "Track Progress",
     "login": "Login",
     "get_started": "Get Started"
+  },
+  "user_menu": {
+    "profile": "My Profile",
+    "favorites": "Favorites",
+    "admin": "Admin Panel"
   },
   "courses": {
     "title": "Explore Courses",
