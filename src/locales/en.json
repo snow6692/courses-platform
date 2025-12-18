@@ -365,7 +365,41 @@
       },
       "active": "Active",
       "delete": "Delete",
-      "delete_confirm": "Are you sure you want to delete this meme?"
+      "delete_confirm": "Are you sure you want to delete this meme?",
+      "select_from_library": "Select from Library",
+      "select_meme_title": "Select Meme from Library",
+      "loading_memes": "Loading memes...",
+      "adding_meme": "Adding meme...",
+      "remove_from_quiz": "Remove Meme from Quiz",
+      "remove_from_quiz_confirm": "Are you sure you want to remove this meme from the quiz? The meme will still exist in the library.",
+      "remove": "Remove",
+      "cancel": "Cancel"
+    },
+    "quiz": {
+      "delete_quiz": "Delete Quiz",
+      "delete_quiz_confirm": "Are you sure you want to delete this quiz?",
+      "quiz_deleted": "Quiz deleted successfully",
+      "add_section": "Add Section",
+      "no_sections": "No sections found. Add a section to start building the quiz!",
+      "minutes": "minutes",
+      "no_time_limit": "No time limit",
+      "new_question": "New Question",
+      "add": "Add",
+      "edit_section": "Edit Section",
+      "delete_section": "Delete Section",
+      "delete_section_confirm": "Are you sure you want to delete this section?",
+      "explanation": "Explanation",
+      "delete_question": "Delete Question",
+      "delete_question_confirm": "Are you sure you want to delete this question?",
+      "edit_question": "Edit Question",
+      "edit": "Edit",
+      "delete": "Delete",
+      "no_answers": "No answers yet. Add one below.",
+      "new_answer": "New Answer",
+      "create_answer": "Create New Answer",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "error_occurred": "An unexpected error occurred, please try again."
     }
   }
 }

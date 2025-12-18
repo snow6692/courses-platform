@@ -366,7 +366,41 @@
       },
       "active": "نشط",
       "delete": "حذف",
-      "delete_confirm": "هل أنت متأكد من حذف هذا الميم؟"
+      "delete_confirm": "هل أنت متأكد من حذف هذا الميم؟",
+      "select_from_library": "اختر من المكتبة",
+      "select_meme_title": "اختر ميم من المكتبة",
+      "loading_memes": "جاري تحميل الميمز...",
+      "adding_meme": "جاري إضافة الميم...",
+      "remove_from_quiz": "إزالة الميم من الاختبار",
+      "remove_from_quiz_confirm": "هل أنت متأكد من إزالة هذا الميم من الاختبار؟ سيبقى الميم في المكتبة.",
+      "remove": "إزالة",
+      "cancel": "إلغاء"
+    },
+    "quiz": {
+      "delete_quiz": "حذف الاختبار",
+      "delete_quiz_confirm": "هل أنت متأكد من حذف هذا الاختبار؟",
+      "quiz_deleted": "تم حذف الاختبار بنجاح",
+      "add_section": "إضافة قسم",
+      "no_sections": "لا توجد أقسام. أضف قسم لبدء بناء الاختبار!",
+      "minutes": "دقيقة",
+      "no_time_limit": "بدون وقت محدد",
+      "new_question": "سؤال جديد",
+      "add": "إضافة",
+      "edit_section": "تعديل القسم",
+      "delete_section": "حذف القسم",
+      "delete_section_confirm": "هل أنت متأكد من حذف هذا القسم؟",
+      "explanation": "الشرح",
+      "delete_question": "حذف السؤال",
+      "delete_question_confirm": "هل أنت متأكد من حذف هذا السؤال؟",
+      "edit_question": "تعديل السؤال",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "no_answers": "لا توجد إجابات. أضف إجابة أدناه.",
+      "new_answer": "إجابة جديدة",
+      "create_answer": "إنشاء إجابة جديدة",
+      "confirm": "تأكيد",
+      "cancel": "إلغاء",
+      "error_occurred": "حدث خطأ غير متوقع، حاول مرة أخرى."
     }
   }
 }

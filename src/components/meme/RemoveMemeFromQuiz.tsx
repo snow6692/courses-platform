@@ -1,11 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 import { removeMemeFromQuiz } from "@/actions/meme/meme.action";
+import { useLanguage } from "@/providers/LanguageContext";
 
 export default function RemoveMemeFromQuiz({
   memeId,
@@ -14,6 +15,7 @@ export default function RemoveMemeFromQuiz({
   memeId: string;
   quizId: string;
 }) {
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
 
   const handleRemove = () => {
@@ -33,16 +35,21 @@ export default function RemoveMemeFromQuiz({
         <Button
           variant="destructive"
           size="icon"
-          className="h-8 w-8"
+          className="absolute end-2 top-2 h-7 w-7 rounded-full bg-red-600 hover:bg-red-700"
           disabled={isPending}
         >
-          <X className="h-4 w-4" />
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <X className="h-4 w-4" />
+          )}
         </Button>
       }
-      title="Remove Meme from Quiz"
-      description="Are you sure you want to remove this meme from the quiz? The meme will still exist in the library."
-      confirmLabel="Remove"
-      cancelLabel="Cancel"
+      title={t("admin.memes.remove_from_quiz")}
+      description={t("admin.memes.remove_from_quiz_confirm")}
+      confirmLabel={t("admin.memes.remove")}
+      cancelLabel={t("admin.memes.cancel")}
+      confirmVariant="destructive"
       onConfirm={handleRemove}
     />
   );
