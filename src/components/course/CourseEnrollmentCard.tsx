@@ -82,7 +82,7 @@ export async function CourseEnrollmentCard({
             </div>
 
             {/* Divider */}
-            <div className="mb-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+            <div className="mb-6 h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
             {/* CTA Button */}
             <div>
@@ -91,7 +91,7 @@ export async function CourseEnrollmentCard({
                   href={`/dashboard/${course.slug}`}
                   className={buttonVariants({
                     className:
-                      "w-full rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-6 text-lg font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:brightness-110",
+                      "w-full rounded-xl py-6 text-lg font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:brightness-110",
                   })}
                 >
                   {t("course_detail.watch_now")}

@@ -292,6 +292,18 @@
     "view_all": "View All",
     "more": "more"
   },
+  "course_sidebar": {
+    "download_course_file": "Download Course File",
+    "pdf_file": "PDF File",
+    "final_quiz": "Final Course Quiz",
+    "complete_current_quiz": "Complete current quiz first",
+    "chapter": "Chapter",
+    "lesson": "lesson",
+    "lessons": "lessons",
+    "quiz": "Quiz",
+    "chapter_quiz": "Chapter Quiz",
+    "complete_quiz_first": "Complete current quiz"
+  },
   "admin": {
     "sidebar": {
       "dashboard": "Dashboard",

@@ -22,6 +22,7 @@ import { CourseProgressClient } from "./CourseProgressClient";
 import Link from "next/link";
 import { useQuizSafe } from "@/providers/QuizContext";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface IProps {
   course: CourseSidebarData;
@@ -29,6 +30,7 @@ interface IProps {
 
 function CourseSidebar({ course }: IProps) {
   const { isQuizActive } = useQuizSafe();
+  const { t } = useLanguage();
 
   return (
     <div className={cn("flex h-full flex-col", isQuizActive && "opacity-60")}>
@@ -61,9 +63,11 @@ function CourseSidebar({ course }: IProps) {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-blue-900">
-                  تحميل ملف الكورس
+                  {t("course_sidebar.download_course_file")}
                 </p>
-                <p className="text-xs text-blue-600">PDF Document</p>
+                <p className="text-xs text-blue-600">
+                  {t("course_sidebar.pdf_file")}
+                </p>
               </div>
             </div>
           </a>
@@ -81,10 +85,10 @@ function CourseSidebar({ course }: IProps) {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-gray-600">
-                    اختبار الكورس النهائي
+                    {t("course_sidebar.final_quiz")}
                   </p>
                   <p className="text-xs text-gray-500">
-                    أكمل الاختبار الحالي أولاً
+                    {t("course_sidebar.complete_current_quiz")}
                   </p>
                 </div>
               </div>
@@ -98,7 +102,7 @@ function CourseSidebar({ course }: IProps) {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-purple-900">
-                      اختبار الكورس النهائي
+                      {t("course_sidebar.final_quiz")}
                     </p>
                     <p className="text-xs text-purple-600">
                       {course.quizzes[0].title}
@@ -125,15 +129,19 @@ function CourseSidebar({ course }: IProps) {
                 </div>
                 <div className="min-w-0 flex-1 text-left">
                   <p className="text-foreground truncate text-sm font-semibold">
-                    Chapter {chapter.position}: {chapter.title}
+                    {t("course_sidebar.chapter")} {chapter.position}:{" "}
+                    {chapter.title}
                   </p>
                   <div className="flex items-center gap-2 pt-1">
                     <span className="text-muted-foreground text-xs">
-                      {chapter.lessons.length} lessons
+                      {chapter.lessons.length}{" "}
+                      {chapter.lessons.length === 1
+                        ? t("course_sidebar.lesson")
+                        : t("course_sidebar.lessons")}
                     </span>
                     {chapter.quizzes && chapter.quizzes.length > 0 && (
                       <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-600">
-                        Quiz
+                        {t("course_sidebar.quiz")}
                       </span>
                     )}
                   </div>
@@ -174,10 +182,10 @@ function CourseSidebar({ course }: IProps) {
                       </div>
                       <div className="flex-1">
                         <p className="text-xs font-semibold text-gray-600">
-                          اختبار الفصل
+                          {t("course_sidebar.chapter_quiz")}
                         </p>
                         <p className="text-[10px] text-gray-500">
-                          أكمل الاختبار الحالي
+                          {t("course_sidebar.complete_quiz_first")}
                         </p>
                       </div>
                     </div>
@@ -191,7 +199,7 @@ function CourseSidebar({ course }: IProps) {
                         </div>
                         <div className="flex-1">
                           <p className="text-xs font-semibold text-red-900">
-                            اختبار الفصل
+                            {t("course_sidebar.chapter_quiz")}
                           </p>
                           <p className="text-[10px] text-red-600">
                             {chapter.quizzes[0].title}

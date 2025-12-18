@@ -12,24 +12,18 @@ import EnrollmentButton from "@/components/course/EnrollmentButton";
 export default async function LessonContentPage({
   params,
 }: {
-  params: Promise<{ slug: string; lessonId: string }>;
+  params: Promise<{ lessonId: string }>;
 }) {
-  const { slug, lessonId } = await params;
+  const { lessonId } = await params;
 
   return (
     <Suspense fallback={<LessonSkeleton />}>
-      <LessonContentLoader slug={slug} lessonId={lessonId} />
+      <LessonContentLoader lessonId={lessonId} />
     </Suspense>
   );
 }
 
-async function LessonContentLoader({
-  slug,
-  lessonId,
-}: {
-  slug: string;
-  lessonId: string;
-}) {
+async function LessonContentLoader({ lessonId }: { lessonId: string }) {
   const lesson = await getLessonContent(lessonId);
   const { t } = await getServerLocale();
 

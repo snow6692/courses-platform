@@ -82,20 +82,21 @@ export function LessonItem({
         className: cn(
           "h-auto w-full justify-start p-3 transition-all",
 
-          // 1. Active + Completed - Solid primary with green check
+          // 1. Active + Completed - Like completed but with primary border
           isActive &&
             completed &&
-            "border-primary bg-primary ring-primary/50 hover:bg-primary/90 text-white shadow-lg ring-2",
+            "border-primary border-2 bg-green-100 text-green-800 hover:bg-green-200",
 
           // 2. Completed only (not active) - Light green
           completed &&
             !isActive &&
             "border-green-400 bg-green-100 text-green-800 hover:bg-green-200",
 
-          // 3. Active only (not completed) - Solid primary
+          // 3. Active only (not completed) - Like default but with primary border
           isActive &&
             !completed &&
-            "border-primary bg-primary ring-primary/50 hover:bg-primary/90 text-white shadow-lg ring-2",
+            !showLocked &&
+            "border-primary hover:bg-accent/50 border-2 bg-white",
 
           // 4. Locked
           showLocked &&
@@ -145,7 +146,6 @@ export function LessonItem({
                 "flex-1 truncate text-xs font-medium",
                 completed && "text-green-800",
                 showLocked && "text-gray-600",
-                isActive && !completed && "text-primary",
               )}
             >
               {lesson.position}. {lesson.title}
@@ -172,26 +172,20 @@ export function LessonItem({
           </div>
 
           {/* Subtext */}
-          {completed && (
-            <p className="text-[10px] font-medium text-green-700">Completed</p>
+          {completed && !isActive && (
+            <p className="text-[10px] font-medium text-green-700">مكتمل</p>
           )}
 
           {isActive && !completed && !showLocked && (
-            <p className="text-primary text-[10px] font-medium">
-              Currently Watching
-            </p>
+            <p className="text-primary text-[10px] font-medium">تشاهد الآن</p>
           )}
 
           {showLocked && (
-            <p className="text-[10px] font-medium text-gray-600">
-              Locked Lesson
-            </p>
+            <p className="text-[10px] font-medium text-gray-600">درس مغلق</p>
           )}
 
           {isActive && completed && (
-            <p className="inline text-[10px] font-medium text-green-800">
-              Active
-            </p>
+            <p className="text-primary inline text-[10px] font-medium">نشط</p>
           )}
         </div>
       </div>

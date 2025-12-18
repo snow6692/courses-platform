@@ -293,6 +293,18 @@
     "view_all": "عرض الكل",
     "more": "المزيد"
   },
+  "course_sidebar": {
+    "download_course_file": "تحميل ملف الكورس",
+    "pdf_file": "ملف PDF",
+    "final_quiz": "اختبار الكورس النهائي",
+    "complete_current_quiz": "أكمل الاختبار الحالي أولاً",
+    "chapter": "فصل",
+    "lesson": "درس",
+    "lessons": "دروس",
+    "quiz": "اختبار",
+    "chapter_quiz": "اختبار الفصل",
+    "complete_quiz_first": "أكمل الاختبار الحالي"
+  },
   "admin": {
     "sidebar": {
       "dashboard": "لوحة التحكم",
