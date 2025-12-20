@@ -19,6 +19,7 @@ import { createAnswerSchema, createAnswerType } from "@/validation/answer.zod";
 import { createAnswer, updateAnswer } from "@/actions/quiz/answer.action";
 import { useRouter } from "next/navigation";
 import Uploader from "../file-uploader/Uploader";
+import { useLanguage } from "@/providers/LanguageContext";
 
 export default function AnswerForm({
   questionId,
@@ -36,6 +37,7 @@ export default function AnswerForm({
   };
   onSuccess?: () => void;
 }) {
+  const { t } = useLanguage();
   const form = useForm<createAnswerType>({
     resolver: zodResolver(createAnswerSchema),
     defaultValues: answer
@@ -65,7 +67,7 @@ export default function AnswerForm({
         );
 
         if (error) {
-          toast.error("An unexpected error occurred, Please try again.");
+          toast.error(t("admin.quiz.failed_update_answer"));
           return;
         }
         if (result.status === "success") {
@@ -83,7 +85,7 @@ export default function AnswerForm({
         );
 
         if (error) {
-          toast.error("An unexpected error occurred, Please try again.");
+          toast.error(t("admin.quiz.failed_create_answer"));
           return;
         }
         if (result.status === "success") {
@@ -106,9 +108,9 @@ export default function AnswerForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Answer Text</FormLabel>
+              <FormLabel>{t("admin.quiz.answer_text")}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Enter answer text" />
+                <Input {...field} placeholder={t("admin.quiz.answer_text")} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -119,7 +121,7 @@ export default function AnswerForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image (Optional)</FormLabel>
+              <FormLabel>{t("admin.quiz.answer_image")}</FormLabel>
               <FormControl>
                 <Uploader
                   fileTypeAccepted="image"
@@ -138,11 +140,11 @@ export default function AnswerForm({
         >
           {isPending
             ? answer
-              ? "Updating Answer..."
-              : "Creating Answer..."
+              ? t("admin.quiz.updating")
+              : t("admin.quiz.creating")
             : answer
-              ? "Update Answer"
-              : "Create New Answer"}
+              ? t("admin.quiz.update")
+              : t("admin.quiz.create_answer")}
         </Button>
       </form>
     </Form>

@@ -196,7 +196,25 @@
   },
   "common": {
     "show_more": "عرض المزيد",
-    "show_less": "عرض أقل"
+    "show_less": "عرض أقل",
+    "progress": "التقدم",
+    "no_lessons_yet": "لا توجد دروس بعد",
+    "lessons": "دروس",
+    "completed": "مكتمل",
+    "no_lessons_available": "لا توجد دروس متاحة",
+    "no_lessons_message": "لا يحتوي هذا الكورس على أي دروس بعد!",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "deleting": "جاري الحذف...",
+    "are_you_sure": "هل أنت متأكد؟",
+    "delete_lesson_confirm": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف هذا الدرس.",
+    "delete_chapter_confirm": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف هذا الفصل مع جميع دروسه.",
+    "enter_name_to_delete": "الرجاء إدخال \"{name}\" للحذف",
+    "enter_chapter_name": "أدخل اسم الفصل",
+    "unexpected_error": "حدث خطأ غير متوقع، حاول مرة أخرى.",
+    "edit_course": "تعديل الكورس",
+    "preview_course": "معاينة الكورس",
+    "delete_course": "حذف الكورس"
   },
   "profile": {
     "tabs": {
@@ -355,6 +373,40 @@
       "memes": "الميمز",
       "quick_create": "إنشاء سريع"
     },
+    "forms": {
+      "new_chapter": "فصل جديد",
+      "create_chapter": "إنشاء فصل",
+      "create_chapter_title": "إنشاء فصل جديد",
+      "create_chapter_desc": "أنشئ فصلك الجديد من هنا",
+      "chapter_name": "اسم الفصل",
+      "enter_chapter_name": "أدخل اسم الفصل",
+      "creating_chapter": "جاري إنشاء الفصل...",
+      "updating_chapter": "جاري تحديث الفصل...",
+      "update_chapter": "تحديث الفصل",
+      "new_lesson": "درس جديد",
+      "create_lesson": "إنشاء درس",
+      "create_lesson_title": "إنشاء درس جديد",
+      "create_lesson_desc": "أنشئ درسك الجديد من هنا",
+      "lesson_name": "اسم الدرس",
+      "enter_lesson_name": "أدخل اسم الدرس",
+      "creating_lesson": "جاري إنشاء الدرس...",
+      "free_preview": "معاينة مجانية",
+      "free_preview_desc": "السماح للمستخدمين بالوصول لهذا الدرس بدون التسجيل في الكورس",
+      "create_new_lesson": "إنشاء درس جديد",
+      "new_section": "قسم جديد",
+      "create_section": "إنشاء قسم",
+      "create_section_title": "إنشاء قسم جديد",
+      "create_section_desc": "أنشئ قسماً جديداً للاختبار",
+      "section_name": "اسم القسم",
+      "enter_section_name": "أدخل اسم القسم",
+      "section_time": "الوقت (بالدقائق)",
+      "creating_section": "جاري إنشاء القسم...",
+      "create_courses": "إنشاء الدورات"
+    },
+    "course_form": {
+      "basic_info": "المعلومات الأساسية",
+      "basic_info_desc": "أدخل المعلومات الأساسية للكورس"
+    },
     "dashboard": {
       "total_courses": "إجمالي الدورات",
       "total_customers": "إجمالي العملاء",
@@ -454,7 +506,24 @@
       "create_answer": "إنشاء إجابة جديدة",
       "confirm": "تأكيد",
       "cancel": "إلغاء",
-      "error_occurred": "حدث خطأ غير متوقع، حاول مرة أخرى."
+      "error_occurred": "حدث خطأ غير متوقع، حاول مرة أخرى.",
+      "question_text": "نص السؤال",
+      "question_image": "صورة السؤال (اختياري)",
+      "explanation_label": "الشرح (يظهر بعد الإجابة)",
+      "explanation_image": "صورة الشرح (تظهر بعد الإجابة)",
+      "explanation_video": "فيديو الشرح (يظهر بعد الإجابة)",
+      "creating": "جاري الإنشاء...",
+      "updating": "جاري التحديث...",
+      "create": "إنشاء",
+      "update": "تحديث",
+      "failed_create_question": "فشل إنشاء السؤال، حاول مرة أخرى",
+      "failed_update_question": "فشل تحديث السؤال، حاول مرة أخرى",
+      "answer_text": "نص الإجابة",
+      "answer_image": "صورة الإجابة (اختياري)",
+      "is_correct": "إجابة صحيحة",
+      "edit_answer": "تعديل الإجابة",
+      "failed_create_answer": "فشل إنشاء الإجابة، حاول مرة أخرى",
+      "failed_update_answer": "فشل تحديث الإجابة، حاول مرة أخرى"
     }
   }
 }

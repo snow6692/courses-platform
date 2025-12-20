@@ -102,7 +102,7 @@ export default function FolderDetailClient({
   };
 
   // Create virtual quiz for this folder
-  const virtualQuiz: QuizForStudent | null = useMemo(() => {
+  const virtualQuiz = useMemo(() => {
     if (questions.length === 0) return null;
 
     const now = new Date();
@@ -137,12 +137,20 @@ export default function FolderDetailClient({
             explanationVideoKey: null,
             createdAt: now,
             updatedAt: now,
-            favoriteQuestions: [{ userId: "current-user", questionId: q.id }],
+            favoriteQuestions: [
+              {
+                id: `fav-${q.id}`,
+                userId: "current-user",
+                questionId: q.id,
+                folderId: folder.id,
+                createdAt: now,
+              },
+            ],
           })),
         },
       ],
       memes: [],
-    };
+    } as QuizForStudent;
   }, [questions, folder, FOLDER_QUIZ_ID]);
 
   // Show loading state until initialized

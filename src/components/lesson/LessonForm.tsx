@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +29,8 @@ import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
 import { createLesson } from "@/actions/lesson.action";
 import { Switch } from "../ui/switch";
+import { useLanguage } from "@/providers/LanguageContext";
+
 export default function LessonForm({
   courseId,
   chapterId,
@@ -35,6 +38,7 @@ export default function LessonForm({
   courseId: string;
   chapterId: string;
 }) {
+  const { t } = useLanguage();
   const form = useForm<LessonSchemaType>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
@@ -44,7 +48,6 @@ export default function LessonForm({
       description: "",
       thumbnailKey: "",
       videoKey: "",
-   
       isFree: false,
     },
   });
@@ -63,7 +66,7 @@ export default function LessonForm({
       const { data: result, error } = await tryCatch(createLesson(values));
 
       if (error) {
-        toast.error("An unexpected error occurred, Please try again.");
+        toast.error(t("common.unexpected_error"));
         return;
       }
       if (result.status === "success") {
@@ -75,18 +78,19 @@ export default function LessonForm({
       }
     });
   };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant={"outline"} className="w-full justify-center gap-1">
-          <PlusIcon className="size-4" /> New Lesson
+          <PlusIcon className="size-4" /> {t("admin.forms.new_lesson")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create new Lesson</DialogTitle>
+          <DialogTitle>{t("admin.forms.create_lesson_title")}</DialogTitle>
           <DialogDescription>
-            Create your new Lesson right here
+            {t("admin.forms.create_lesson_desc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -97,9 +101,12 @@ export default function LessonForm({
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Lesson Name</FormLabel>
+                  <FormLabel>{t("admin.forms.lesson_name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter lesson name" />
+                    <Input
+                      {...field}
+                      placeholder={t("admin.forms.enter_lesson_name")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -113,10 +120,11 @@ export default function LessonForm({
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Free Preview</FormLabel>
+                    <FormLabel className="text-base">
+                      {t("admin.forms.free_preview")}
+                    </FormLabel>
                     <FormDescription>
-                      Allow users to access this lesson without enrolling in the
-                      course
+                      {t("admin.forms.free_preview_desc")}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -135,7 +143,9 @@ export default function LessonForm({
                 type="submit"
                 disabled={isPending || !form.formState.isValid}
               >
-                {isPending ? "Creating Lesson..." : `Create new  Lesson`}
+                {isPending
+                  ? t("admin.forms.creating_lesson")
+                  : t("admin.forms.create_new_lesson")}
               </Button>
             </DialogFooter>
           </form>

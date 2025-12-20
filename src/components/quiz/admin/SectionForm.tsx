@@ -18,6 +18,7 @@ import { useTransition } from "react";
 import { sectionSchema, SectionSchemaType } from "@/validation/section.zod";
 import { createSection, updateSection } from "@/actions/quiz/section.action";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface SectionFormProps {
   quizId: string;
@@ -32,6 +33,7 @@ export default function SectionForm({
   section,
   onSuccess,
 }: SectionFormProps) {
+  const { t } = useLanguage();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -70,9 +72,12 @@ export default function SectionForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>{t("admin.forms.section_name")}</FormLabel>
               <FormControl>
-                <Input placeholder="Section Title" {...field} />
+                <Input
+                  placeholder={t("admin.forms.enter_section_name")}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,11 +89,11 @@ export default function SectionForm({
           name="timeLimit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Time Limit (minutes)</FormLabel>
+              <FormLabel>{t("admin.forms.section_time")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
-                  placeholder="Time Limit"
+                  placeholder={t("admin.forms.section_time")}
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
@@ -100,9 +105,13 @@ export default function SectionForm({
 
         <Button type="submit" disabled={isPending}>
           {section ? (
-            <>Update Section {isPending ? "..." : ""}</>
+            <>
+              {t("admin.quiz.edit_section")} {isPending ? "..." : ""}
+            </>
           ) : (
-            <>Create Section {isPending ? "..." : ""}</>
+            <>
+              {t("admin.forms.create_section")} {isPending ? "..." : ""}
+            </>
           )}
         </Button>
       </form>

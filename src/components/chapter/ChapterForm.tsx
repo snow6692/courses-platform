@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,6 +29,8 @@ import { tryCatch } from "@/hooks/try-catch";
 import { createChapter } from "@/actions/chapter.action";
 import { toast } from "sonner";
 import { Chapter } from "@/lib/db";
+import { useLanguage } from "@/providers/LanguageContext";
+
 function ChapterForm({
   courseId,
   chapter,
@@ -34,6 +38,7 @@ function ChapterForm({
   courseId: string;
   chapter?: Chapter;
 }) {
+  const { t } = useLanguage();
   const form = useForm<ChapterSchemaType>({
     resolver: zodResolver(chapterSchema),
     defaultValues: chapter
@@ -65,7 +70,7 @@ function ChapterForm({
       const { data: result, error } = await tryCatch(createChapter(values));
 
       if (error) {
-        toast.error("An unexpected error occurred, Please try again.");
+        toast.error(t("common.unexpected_error"));
         return;
       }
       if (result.status === "success") {
@@ -81,14 +86,14 @@ function ChapterForm({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant={"outline"} size={"sm"} className="gap-2">
-          <PlusIcon className="size-4" /> New Chapter
+          <PlusIcon className="size-4" /> {t("admin.forms.new_chapter")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create new Chapter</DialogTitle>
+          <DialogTitle>{t("admin.forms.create_chapter_title")}</DialogTitle>
           <DialogDescription>
-            Create your new chapter right here
+            {t("admin.forms.create_chapter_desc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -99,9 +104,12 @@ function ChapterForm({
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Chapter Name</FormLabel>
+                  <FormLabel>{t("admin.forms.chapter_name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter chapter name" />
+                    <Input
+                      {...field}
+                      placeholder={t("admin.forms.enter_chapter_name")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,11 +123,11 @@ function ChapterForm({
               >
                 {chapter
                   ? isPending
-                    ? "Updating Chapter..."
-                    : `Update Chapter`
+                    ? t("admin.forms.updating_chapter")
+                    : t("admin.forms.update_chapter")
                   : isPending
-                    ? "Creating Chapter..."
-                    : `Create Chapter`}
+                    ? t("admin.forms.creating_chapter")
+                    : t("admin.forms.create_chapter")}
               </Button>
             </DialogFooter>
           </form>

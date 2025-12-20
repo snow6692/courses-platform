@@ -1,3 +1,5 @@
+"use client";
+
 import { AdminCourseType } from "@/app/data/admin/admin-get-courses";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,12 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useConstructUrl } from "@/hooks/use-construct-url";
+import { useLanguage } from "@/providers/LanguageContext";
 import {
   ArrowRight,
   Eye,
   MoreVertical,
   Pencil,
-  School,
   TimerIcon,
   Trash,
 } from "lucide-react";
@@ -23,6 +25,8 @@ import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 
 function AdminCourseCard({ course }: { course: AdminCourseType }) {
+  const { t } = useLanguage();
+
   return (
     <Card className="group relative gap-0 py-0">
       {/* absolute  drop down */}
@@ -37,13 +41,13 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link href={`/admin/courses/${course.id}/edit`}>
                 <Pencil className="text-primary mr-2 size-4" />
-                <span className="text-primary">Edit Course</span>
+                <span className="text-primary">{t("common.edit_course")}</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link href={`/courses/${course.slug}`}>
                 <Eye className="mr-2 size-4" />
-                Preview Course
+                {t("common.preview_course")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -51,7 +55,9 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
               <Link href={`/admin/courses/${course.id}/delete`}>
                 <div className="flex cursor-pointer items-center gap-x-2">
                   <Trash className="text-destructive mr-2 size-4" />
-                  <span className="text-destructive">Delete Course</span>
+                  <span className="text-destructive">
+                    {t("common.delete_course")}
+                  </span>
                 </div>
               </Link>
             </DropdownMenuItem>
@@ -90,7 +96,7 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
           className={buttonVariants({ className: "mt-4 w-full" })}
           href={`/admin/courses/${course.id}/edit`}
         >
-          Edit course <ArrowRight className="size-4" />
+          {t("common.edit_course")} <ArrowRight className="size-4" />
         </Link>
       </CardContent>
     </Card>

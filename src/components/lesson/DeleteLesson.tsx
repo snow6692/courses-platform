@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useTransition } from "react";
 import {
   AlertDialog,
@@ -14,6 +16,7 @@ import { Trash2 } from "lucide-react";
 import { tryCatch } from "@/hooks/try-catch";
 import { deleteLesson } from "@/actions/lesson.action";
 import { toast } from "sonner";
+import { useLanguage } from "@/providers/LanguageContext";
 
 function DeleteLesson({
   courseId,
@@ -24,27 +27,28 @@ function DeleteLesson({
   courseId: string;
   chapterId: string;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-
   const [pending, startTransition] = useTransition();
+
   async function onSubmit() {
     startTransition(async () => {
       const { data: result, error } = await tryCatch(
         deleteLesson({ chapterId, courseId, lessonId }),
       );
       if (error) {
-        toast.error("An unexpected error occurred, Please try again.");
+        toast.error(t("common.unexpected_error"));
         return;
       }
       if (result.status === "success") {
         toast.success(result.message);
-
         setOpen(false);
       } else if (result.status === "error") {
         toast.error(result.message);
       }
     });
   }
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
@@ -54,19 +58,21 @@ function DeleteLesson({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle>{t("common.are_you_sure")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will delete this lesson.
+            {t("common.delete_lesson_confirm")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>
+            {t("common.cancel")}
+          </AlertDialogCancel>
           <Button
             onClick={onSubmit}
             disabled={pending}
             className="cursor-pointer bg-red-500 text-white hover:bg-red-600"
           >
-            {pending ? "Deleting..." : "Delete"}
+            {pending ? t("common.deleting") : t("common.delete")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

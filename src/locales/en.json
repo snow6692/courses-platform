@@ -195,7 +195,25 @@
   },
   "common": {
     "show_more": "Show more",
-    "show_less": "Show less"
+    "show_less": "Show less",
+    "progress": "Progress",
+    "no_lessons_yet": "No lessons yet",
+    "lessons": "lessons",
+    "completed": "completed",
+    "no_lessons_available": "No lessons available",
+    "no_lessons_message": "This course doesn't have any lessons yet!",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "are_you_sure": "Are you sure?",
+    "delete_lesson_confirm": "This action cannot be undone. This will delete this lesson.",
+    "delete_chapter_confirm": "This action cannot be undone. This will delete this chapter with all its lessons.",
+    "enter_name_to_delete": "Please enter \"{name}\" to delete",
+    "enter_chapter_name": "Enter chapter name",
+    "unexpected_error": "An unexpected error occurred. Please try again.",
+    "edit_course": "Edit Course",
+    "preview_course": "Preview Course",
+    "delete_course": "Delete Course"
   },
   "profile": {
     "tabs": {
@@ -354,6 +372,40 @@
       "memes": "Memes",
       "quick_create": "Quick Create"
     },
+    "forms": {
+      "new_chapter": "New Chapter",
+      "create_chapter": "Create Chapter",
+      "create_chapter_title": "Create new Chapter",
+      "create_chapter_desc": "Create your new chapter right here",
+      "chapter_name": "Chapter Name",
+      "enter_chapter_name": "Enter chapter name",
+      "creating_chapter": "Creating Chapter...",
+      "updating_chapter": "Updating Chapter...",
+      "update_chapter": "Update Chapter",
+      "new_lesson": "New Lesson",
+      "create_lesson": "Create Lesson",
+      "create_lesson_title": "Create new Lesson",
+      "create_lesson_desc": "Create your new lesson right here",
+      "lesson_name": "Lesson Name",
+      "enter_lesson_name": "Enter lesson name",
+      "creating_lesson": "Creating Lesson...",
+      "free_preview": "Free Preview",
+      "free_preview_desc": "Allow users to access this lesson without enrolling in the course",
+      "create_new_lesson": "Create new Lesson",
+      "new_section": "New Section",
+      "create_section": "Create Section",
+      "create_section_title": "Create new Section",
+      "create_section_desc": "Create a new section for the quiz",
+      "section_name": "Section Name",
+      "enter_section_name": "Enter section name",
+      "section_time": "Time (minutes)",
+      "creating_section": "Creating Section...",
+      "create_courses": "Create Courses"
+    },
+    "course_form": {
+      "basic_info": "Basic information",
+      "basic_info_desc": "Fill in the basic information for your course"
+    },
     "dashboard": {
       "total_courses": "Total Courses",
       "total_customers": "Total Customers",
@@ -453,7 +505,24 @@
       "create_answer": "Create New Answer",
       "confirm": "Confirm",
       "cancel": "Cancel",
-      "error_occurred": "An unexpected error occurred, please try again."
+      "error_occurred": "An unexpected error occurred, please try again.",
+      "question_text": "Question Text",
+      "question_image": "Question Image (optional)",
+      "explanation_label": "Explanation (shown after answer)",
+      "explanation_image": "Explanation Image (shown after answer)",
+      "explanation_video": "Explanation Video (shown after answer)",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "create": "Create",
+      "update": "Update",
+      "failed_create_question": "Failed to create question, please try again",
+      "failed_update_question": "Failed to update question, please try again",
+      "answer_text": "Answer Text",
+      "answer_image": "Answer Image (optional)",
+      "is_correct": "Correct Answer",
+      "edit_answer": "Edit Answer",
+      "failed_create_answer": "Failed to create answer, please try again",
+      "failed_update_answer": "Failed to update answer, please try again"
     }
   }
 }

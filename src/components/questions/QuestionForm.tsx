@@ -22,6 +22,7 @@ import Uploader from "../file-uploader/Uploader";
 import { tryCatch } from "@/hooks/try-catch";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/providers/LanguageContext";
 
 type FormData = z.infer<typeof createQuestionSchema>;
 
@@ -38,6 +39,7 @@ export default function QuestionForm({
   chapterId?: string;
   sectionId?: string;
 }) {
+  const { t } = useLanguage();
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -71,7 +73,7 @@ export default function QuestionForm({
           createQuestion({ ...data }, courseId),
         );
         if (error) {
-          toast.error("Failed to Create Questions, Try again later");
+          toast.error(t("admin.quiz.failed_create_question"));
           return;
         }
         if (result.status === "success") {
@@ -90,7 +92,7 @@ export default function QuestionForm({
           updateQuestion({ ...data }, question.id, courseId),
         );
         if (error) {
-          toast.error("Failed to Update Questions, Try again later");
+          toast.error(t("admin.quiz.failed_update_question"));
           return;
         }
         if (result.status === "success") {
@@ -115,7 +117,7 @@ export default function QuestionForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Question Text</FormLabel>
+              <FormLabel>{t("admin.quiz.question_text")}</FormLabel>
               <FormControl>
                 <RichTextEditor field={field} />
               </FormControl>
@@ -129,7 +131,7 @@ export default function QuestionForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Question Image (optional)</FormLabel>
+              <FormLabel>{t("admin.quiz.question_image")}</FormLabel>
               <FormControl>
                 <Uploader
                   fileTypeAccepted="image"
@@ -149,7 +151,7 @@ export default function QuestionForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Explanation (shown after answer)</FormLabel>
+              <FormLabel>{t("admin.quiz.explanation_label")}</FormLabel>
               <FormControl>
                 <RichTextEditor field={field} />
               </FormControl>
@@ -162,7 +164,7 @@ export default function QuestionForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Explanation Image (shown after answer)</FormLabel>
+              <FormLabel>{t("admin.quiz.explanation_image")}</FormLabel>
               <FormControl>
                 <Uploader
                   fileTypeAccepted="image"
@@ -182,7 +184,7 @@ export default function QuestionForm({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Explanation Video (shown after answer)</FormLabel>
+              <FormLabel>{t("admin.quiz.explanation_video")}</FormLabel>
               <FormControl>
                 <Uploader
                   fileTypeAccepted="video"
@@ -201,11 +203,11 @@ export default function QuestionForm({
         <Button type="submit" disabled={pending}>
           {pending
             ? question
-              ? "Updating..."
-              : "Creating..."
+              ? t("admin.quiz.updating")
+              : t("admin.quiz.creating")
             : question
-              ? "Update"
-              : "Create"}
+              ? t("admin.quiz.update")
+              : t("admin.quiz.create")}
         </Button>
       </form>
     </Form>

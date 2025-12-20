@@ -1,19 +1,18 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
-import { CheckCircle2, Circle, Pencil, Check, X, Trash2 } from "lucide-react";
+import { CheckCircle2, Circle, Pencil, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import {
   toggleAnswerCorrect,
-  updateAnswer,
   deleteAnswer,
 } from "@/actions/quiz/answer.action";
 import { tryCatch } from "@/hooks/try-catch";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
+import { useLanguage } from "@/providers/LanguageContext";
 
 import Image from "next/image";
 import { useConstructUrl } from "@/hooks/use-construct-url";
@@ -41,6 +40,7 @@ export default function AnswerItem({
   courseId: string;
   chapterId?: string;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function AnswerItem({
         ),
       );
       if (error || result?.status === "error") {
-        toast.error(result?.message || "Failed to update");
+        toast.error(result?.message || t("common.unexpected_error"));
         return;
       }
       toast.success(result.message);
@@ -74,11 +74,11 @@ export default function AnswerItem({
       );
 
       if (error || result?.status === "error") {
-        toast.error(result?.message || "Failed to delete answer");
+        toast.error(result?.message || t("common.unexpected_error"));
         return;
       }
 
-      toast.success("Answer deleted successfully");
+      toast.success(result.message);
       router.refresh();
     });
   };
@@ -125,7 +125,7 @@ export default function AnswerItem({
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogTitle>Edit Answer</DialogTitle>
+            <DialogTitle>{t("admin.quiz.edit_answer")}</DialogTitle>
             <AnswerForm
               questionId={questionId}
               courseId={courseId}
@@ -147,10 +147,10 @@ export default function AnswerItem({
               <Trash2 className="h-4 w-4 text-red-600" />
             </Button>
           }
-          title="Delete this answer?"
-          description="This action cannot be undone. The answer will be permanently removed."
-          confirmLabel="Delete"
-          cancelLabel="Cancel"
+          title={t("admin.quiz.delete_question")}
+          description={t("common.delete_lesson_confirm")}
+          confirmLabel={t("common.delete")}
+          cancelLabel={t("common.cancel")}
           confirmVariant="destructive"
           onConfirm={handleDelete}
         />
