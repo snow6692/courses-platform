@@ -61,7 +61,8 @@
   "user_menu": {
     "profile": "My Profile",
     "favorites": "Favorites",
-    "admin": "Admin Panel"
+    "admin": "Admin Panel",
+    "quiz_history": "Quiz History"
   },
   "courses": {
     "title": "Explore Courses",
@@ -319,6 +320,27 @@
     "more": "more",
     "review_course": "Review Course",
     "completed": "Completed"
+  },
+  "attempts": {
+    "title": "Quiz History",
+    "subtitle": "Review your previous quiz attempts and track your progress",
+    "empty_title": "No Quiz Attempts",
+    "empty_description": "You haven't taken any quizzes yet. Start learning and test your knowledge!",
+    "browse_courses": "Browse Courses",
+    "course_quiz": "Course Quiz",
+    "chapter_quiz": "Chapter Quiz",
+    "lesson_quiz": "Lesson Quiz",
+    "quiz": "Quiz",
+    "correct": "Correct",
+    "date": "Date",
+    "retake_quiz": "Retake Quiz",
+    "previous": "Previous",
+    "next": "Next",
+    "show_previous": "Show Previous Attempts",
+    "loading": "Loading...",
+    "previous_attempts": "Previous Attempts",
+    "no_previous": "No previous attempts for this quiz",
+    "load_more": "Load More"
   },
   "course_sidebar": {
     "download_course_file": "Download Course File",

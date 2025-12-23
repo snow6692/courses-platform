@@ -18,9 +18,11 @@ import ExplanationPanel from "./ExplanationPanel";
 import RenderDescription from "@/components/rich-text-editor/RenderDescription";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import { useLanguage } from "@/providers/LanguageContext";
+import PreviousAttempts from "./PreviousAttempts";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QuizResultProps {
+  quizId?: string;
   result: {
     score: number;
     totalQuestions: number;
@@ -48,7 +50,11 @@ interface QuizResultProps {
   onRetry?: () => void;
 }
 
-export default function QuizResult({ result, onRetry }: QuizResultProps) {
+export default function QuizResult({
+  quizId,
+  result,
+  onRetry,
+}: QuizResultProps) {
   const [expandedQuestions, setExpandedQuestions] = useState<Set<string>>(
     new Set(),
   );
@@ -374,6 +380,9 @@ export default function QuizResult({ result, onRetry }: QuizResultProps) {
             );
           })}
         </div>
+
+        {/* Previous Attempts */}
+        {quizId && <PreviousAttempts quizId={quizId} />}
 
         {/* Bottom Buttons */}
         <div className="mt-8 flex items-center justify-center gap-4 border-t pt-6">

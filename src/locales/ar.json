@@ -61,7 +61,8 @@
   "user_menu": {
     "profile": "الملف الشخصي",
     "favorites": "المفضلة",
-    "admin": "لوحة الادمن"
+    "admin": "لوحة الادمن",
+    "quiz_history": "سجل الاختبارات"
   },
   "courses": {
     "title": "استكشف المواد الدراسية",
@@ -320,6 +321,27 @@
     "more": "المزيد",
     "completed": "مكتمل",
     "review_course": "مراجعة الكورس"
+  },
+  "attempts": {
+    "title": "سجل الاختبارات",
+    "subtitle": "راجع محاولاتك السابقة وتابع تقدمك",
+    "empty_title": "لا توجد محاولات",
+    "empty_description": "لم تجتاز أي اختبار بعد. ابدأ التعلم واختبر معلوماتك!",
+    "browse_courses": "تصفح الكورسات",
+    "course_quiz": "اختبار الكورس",
+    "chapter_quiz": "اختبار الفصل",
+    "lesson_quiz": "اختبار الدرس",
+    "quiz": "اختبار",
+    "correct": "صحيح",
+    "date": "التاريخ",
+    "retake_quiz": "إعادة الاختبار",
+    "previous": "السابق",
+    "next": "التالي",
+    "show_previous": "عرض المحاولات السابقة",
+    "loading": "جاري التحميل...",
+    "previous_attempts": "المحاولات السابقة",
+    "no_previous": "لا توجد محاولات سابقة لهذا الاختبار",
+    "load_more": "عرض المزيد"
   },
   "course_sidebar": {
     "download_course_file": "تحميل ملف الكورس",

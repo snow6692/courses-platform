@@ -648,7 +648,15 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   }
 
   if (quizResult) {
-    return <QuizResult result={quizResult} onRetry={handleRetry} />;
+    // Only pass quizId for real quizzes, not favorites quiz
+    const realQuizId = isFavoritesQuiz ? undefined : quiz.id;
+    return (
+      <QuizResult
+        quizId={realQuizId}
+        result={quizResult}
+        onRetry={handleRetry}
+      />
+    );
   }
 
   if (!currentSection || !currentQuestion) {
