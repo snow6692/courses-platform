@@ -29,7 +29,7 @@ async function AdminCourseEditPage({ params }: AdminCourseEditPageProps) {
         Edit Course:{" "}
         <span className="text-primary underline">{data.title}</span>{" "}
       </h1>
-      <Tabs defaultValue="basic-info" className="w-full">
+      <Tabs defaultValue="course-structure" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
           <TabsTrigger value="course-structure">Course Structure</TabsTrigger>
