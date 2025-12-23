@@ -33,19 +33,24 @@ async function QuizLoader({ slug, quizId }: { slug: string; quizId: string }) {
     return notFound();
   }
 
-  // Check if user is enrolled
-  const enrollment = await prisma.enrollment.findUnique({
-    where: {
-      userId_courseId: {
-        courseId: course.id,
-        userId: user.id,
-      },
-    },
-    select: { status: true },
-  });
+  // Admin users have access to all quizzes
+  const isAdmin = user.role === "admin";
 
-  if (!enrollment || enrollment.status !== "SUCCESSFUL") {
-    return notFound();
+  if (!isAdmin) {
+    // Check if user is enrolled (only for non-admin users)
+    const enrollment = await prisma.enrollment.findUnique({
+      where: {
+        userId_courseId: {
+          courseId: course.id,
+          userId: user.id,
+        },
+      },
+      select: { status: true },
+    });
+
+    if (!enrollment || enrollment.status !== "SUCCESSFUL") {
+      return notFound();
+    }
   }
 
   // Get the quiz

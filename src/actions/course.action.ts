@@ -62,7 +62,7 @@ export async function updateCourse(
   id: string,
   data: CourseSchemaType,
 ): Promise<APIResponse> {
-  const session = await requireAdmin();
+  await requireAdmin();
   try {
     const parsedData = courseSchema.safeParse(data);
     if (!parsedData.success) {
@@ -85,17 +85,10 @@ export async function updateCourse(
       };
     }
 
-    const authorized = course.userId === session.user.id;
-    if (!authorized) {
-      return {
-        status: "error",
-        message: "You are not authorized to update this course",
-      };
-    }
+    // Any admin can update any course (requireAdmin already checks for admin role)
     const updatedCourse = await prisma.course.update({
       where: {
         id,
-        userId: session.user.id,
       },
       data: { ...parsedData.data },
     });
@@ -113,10 +106,9 @@ export async function updateCourse(
 }
 
 export async function deleteCourse(courseId: string): Promise<APIResponse> {
-  const session = await requireAdmin();
+   await requireAdmin();
 
   try {
-   
     await prisma.course.delete({ where: { id: courseId } });
     revalidatePath("/admin/courses");
     return {

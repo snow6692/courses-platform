@@ -32,6 +32,16 @@ function CourseSidebar({ course }: IProps) {
   const { isQuizActive } = useQuizSafe();
   const { t } = useLanguage();
 
+  // Helper function to count total questions in a quiz from its sections
+  const getQuestionCount = (quiz: {
+    sections: { _count: { questions: number } }[];
+  }) => {
+    return quiz.sections.reduce(
+      (total, section) => total + section._count.questions,
+      0,
+    );
+  };
+
   return (
     <div className={cn("flex h-full flex-col", isQuizActive && "opacity-60")}>
       <div className="border-border border-b pr-4 pb-4">
@@ -74,45 +84,54 @@ function CourseSidebar({ course }: IProps) {
         )}
 
         {/* Course Quiz Button - Full width below progress */}
-        {course.quizzes && course.quizzes.length > 0 && (
-          <div
-            className={cn("mt-3 block", isQuizActive && "pointer-events-none")}
-          >
-            {isQuizActive ? (
-              <div className="flex items-center gap-3 rounded-lg border border-gray-300 bg-gray-100 p-3">
-                <div className="flex size-8 items-center justify-center rounded-full bg-gray-400">
-                  <Lock className="size-4 text-white" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-600">
-                    {t("course_sidebar.final_quiz")}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t("course_sidebar.complete_current_quiz")}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <Link
-                href={`/dashboard/${course.slug}/quiz/${course.quizzes[0].id}`}
+        {course.quizzes &&
+          course.quizzes.length > 0 &&
+          (() => {
+            const quiz = course.quizzes[0];
+            const hasQuestions = getQuestionCount(quiz) > 0;
+            const isDisabled = isQuizActive || !hasQuestions;
+
+            return (
+              <div
+                className={cn(
+                  "mt-3 block",
+                  isDisabled && "pointer-events-none",
+                )}
               >
-                <div className="flex items-center gap-3 rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 transition-all hover:from-purple-100 hover:to-indigo-100">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-purple-600">
-                    <GraduationCap className="size-4 text-white" />
+                {isDisabled ? (
+                  <div className="flex items-center gap-3 rounded-lg border border-gray-300 bg-gray-100 p-3">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-gray-400">
+                      <Lock className="size-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-600">
+                        {t("course_sidebar.final_quiz")}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {!hasQuestions
+                          ? t("course_sidebar.no_questions")
+                          : t("course_sidebar.complete_current_quiz")}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-purple-900">
-                      {t("course_sidebar.final_quiz")}
-                    </p>
-                    <p className="text-xs text-purple-600">
-                      {course.quizzes[0].title}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            )}
-          </div>
-        )}
+                ) : (
+                  <Link href={`/dashboard/${course.slug}/quiz/${quiz.id}`}>
+                    <div className="flex items-center gap-3 rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 transition-all hover:from-purple-100 hover:to-indigo-100">
+                      <div className="flex size-8 items-center justify-center rounded-full bg-purple-600">
+                        <GraduationCap className="size-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-purple-900">
+                          {t("course_sidebar.final_quiz")}
+                        </p>
+                        <p className="text-xs text-purple-600">{quiz.title}</p>
+                      </div>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            );
+          })()}
       </div>
 
       <div className="space-y-3 py-4 pr-4">
@@ -168,48 +187,59 @@ function CourseSidebar({ course }: IProps) {
               ))}
 
               {/* Chapter Quiz Button - Below lessons */}
-              {chapter.quizzes && chapter.quizzes.length > 0 && (
-                <div
-                  className={cn(
-                    "block pt-2",
-                    isQuizActive && "pointer-events-none",
-                  )}
-                >
-                  {isQuizActive ? (
-                    <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 p-2.5">
-                      <div className="flex size-7 items-center justify-center rounded-full bg-gray-400">
-                        <Lock className="size-3.5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold text-gray-600">
-                          {t("course_sidebar.chapter_quiz")}
-                        </p>
-                        <p className="text-[10px] text-gray-500">
-                          {t("course_sidebar.complete_quiz_first")}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <Link
-                      href={`/dashboard/${course.slug}/quiz/${chapter.quizzes[0].id}`}
+              {chapter.quizzes &&
+                chapter.quizzes.length > 0 &&
+                (() => {
+                  const chapterQuiz = chapter.quizzes[0];
+                  const hasChapterQuestions = getQuestionCount(chapterQuiz) > 0;
+                  const isChapterQuizDisabled =
+                    isQuizActive || !hasChapterQuestions;
+
+                  return (
+                    <div
+                      className={cn(
+                        "block pt-2",
+                        isChapterQuizDisabled && "pointer-events-none",
+                      )}
                     >
-                      <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 p-2.5 transition-all hover:from-red-100 hover:to-orange-100">
-                        <div className="flex size-7 items-center justify-center rounded-full bg-red-600">
-                          <FileQuestion className="size-3.5 text-white" />
+                      {isChapterQuizDisabled ? (
+                        <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 p-2.5">
+                          <div className="flex size-7 items-center justify-center rounded-full bg-gray-400">
+                            <Lock className="size-3.5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs font-semibold text-gray-600">
+                              {t("course_sidebar.chapter_quiz")}
+                            </p>
+                            <p className="text-[10px] text-gray-500">
+                              {!hasChapterQuestions
+                                ? t("course_sidebar.no_questions")
+                                : t("course_sidebar.complete_quiz_first")}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-red-900">
-                            {t("course_sidebar.chapter_quiz")}
-                          </p>
-                          <p className="text-[10px] text-red-600">
-                            {chapter.quizzes[0].title}
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  )}
-                </div>
-              )}
+                      ) : (
+                        <Link
+                          href={`/dashboard/${course.slug}/quiz/${chapterQuiz.id}`}
+                        >
+                          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 p-2.5 transition-all hover:from-red-100 hover:to-orange-100">
+                            <div className="flex size-7 items-center justify-center rounded-full bg-red-600">
+                              <FileQuestion className="size-3.5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs font-semibold text-red-900">
+                                {t("course_sidebar.chapter_quiz")}
+                              </p>
+                              <p className="text-[10px] text-red-600">
+                                {chapterQuiz.title}
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })()}
             </CollapsibleContent>
           </Collapsible>
         ))}

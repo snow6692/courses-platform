@@ -331,7 +331,8 @@
     "lessons": "دروس",
     "quiz": "اختبار",
     "chapter_quiz": "اختبار الفصل",
-    "complete_quiz_first": "أكمل الاختبار الحالي"
+    "complete_quiz_first": "أكمل الاختبار الحالي",
+    "no_questions": "لا توجد أسئلة متاحة"
   },
   "favorites": {
     "title": "الأسئلة المفضلة",

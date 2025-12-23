@@ -4,9 +4,15 @@ import { notFound } from "next/navigation";
 
 export async function getQuizForStudent(quizId: string) {
   const user = await requireUser();
+  const isAdmin = user.role === "admin";
 
+  // Admin can view all quizzes (including inactive ones)
+  // Regular users can only view active quizzes
   const quiz = await prisma.quiz.findUnique({
-    where: { id: quizId, isActive: true },
+    where: {
+      id: quizId,
+      ...(isAdmin ? {} : { isActive: true }),
+    },
     include: {
       sections: {
         orderBy: { position: "asc" },
@@ -40,8 +46,8 @@ export async function getQuizForStudent(quizId: string) {
 
   if (!quiz) notFound();
 
-  // Check enrollment if quiz is COURSE type
-  if (quiz.type === "COURSE" && quiz.courseId) {
+  // Check enrollment if quiz is COURSE type (skip for admin users)
+  if (!isAdmin && quiz.type === "COURSE" && quiz.courseId) {
     const enrollment = await prisma.enrollment.findUnique({
       where: {
         userId_courseId: { userId: user.id, courseId: quiz.courseId },

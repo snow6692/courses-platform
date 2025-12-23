@@ -330,7 +330,8 @@
     "lessons": "lessons",
     "quiz": "Quiz",
     "chapter_quiz": "Chapter Quiz",
-    "complete_quiz_first": "Complete current quiz"
+    "complete_quiz_first": "Complete current quiz",
+    "no_questions": "No questions available"
   },
   "favorites": {
     "title": "Favorite Questions",

@@ -24,6 +24,15 @@ export async function getCourseSidebarData(slug: string) {
         select: {
           id: true,
           title: true,
+          sections: {
+            select: {
+              _count: {
+                select: {
+                  questions: true,
+                },
+              },
+            },
+          },
         },
       },
       chapters: {
@@ -43,6 +52,15 @@ export async function getCourseSidebarData(slug: string) {
             select: {
               id: true,
               title: true,
+              sections: {
+                select: {
+                  _count: {
+                    select: {
+                      questions: true,
+                    },
+                  },
+                },
+              },
             },
           },
           lessons: {
@@ -64,6 +82,15 @@ export async function getCourseSidebarData(slug: string) {
                 select: {
                   id: true,
                   title: true,
+                  sections: {
+                    select: {
+                      _count: {
+                        select: {
+                          questions: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
               lessonProgress: {
