@@ -5,6 +5,7 @@ import { Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import CreateQuizDialog from "./CreateQuizDialog";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { useLanguage } from "@/providers/LanguageContext";
 
 type Props = {
   quizType: "COURSE" | "CHAPTER" | "LESSON";
@@ -24,6 +25,7 @@ export function QuizButton({
   existingQuiz,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <>
@@ -41,7 +43,10 @@ export function QuizButton({
         ) : (
           <Plus className="mr-1 size-4" />
         )}
-        {label || existingQuiz ? "Update Quiz" : "Create Quiz"}
+        {label ||
+          (existingQuiz
+            ? t("admin.course_form.update_quiz")
+            : t("admin.course_form.create_quiz"))}
       </Button>
 
       <CreateQuizDialog

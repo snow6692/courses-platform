@@ -44,6 +44,7 @@ import LessonForm from "@/components/lesson/LessonForm";
 import DeleteLesson from "@/components/lesson/DeleteLesson";
 import DeleteChapter from "@/components/chapter/DeleteChapter";
 import { QuizButton } from "../quiz/admin/QuizButton";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface IProps {
   data: AdminCourseSingularType;
@@ -58,6 +59,7 @@ interface SortableItemProps {
   };
 }
 function CourseStructure({ data }: IProps) {
+  const { t } = useLanguage();
   const initialItems =
     data.chapters.map((chapter) => ({
       id: chapter.id,
@@ -372,7 +374,7 @@ function CourseStructure({ data }: IProps) {
                             className={buttonVariants()}
                             href={`/admin/courses/${data.id}/${item.id}`}
                           >
-                            Update the Quiz
+                            {t("admin.course_edit.update_quiz")}
                           </Link>
                         )}
                       </div>
@@ -431,7 +433,7 @@ function CourseStructure({ data }: IProps) {
                                       className={buttonVariants()}
                                       href={`/admin/courses/${data.id}/${item.id}/${lesson.id}/quiz`}
                                     >
-                                      Update the Quiz
+                                      {t("admin.course_edit.update_quiz")}
                                     </Link>
                                   )}
                                 </div>

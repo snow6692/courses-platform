@@ -35,6 +35,7 @@ import { tryCatch } from "@/hooks/try-catch";
 import { useConfetti } from "@/hooks/use-confetti";
 import { Course } from "@/lib/db";
 import { CourseStatusEnum } from "@/lib/course-enums";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface CourseFormProps {
   course?: Partial<Course>;
@@ -43,6 +44,7 @@ interface CourseFormProps {
 function CourseForm({ course }: CourseFormProps) {
   const router = useRouter();
   const { triggerConfetti } = useConfetti();
+  const { t } = useLanguage();
 
   const [isSubmitting, startTransition] = useTransition();
   const form = useForm<CourseSchemaType>({
@@ -81,7 +83,7 @@ function CourseForm({ course }: CourseFormProps) {
         );
         //Failed on client side
         if (error) {
-          toast.error("Failed to update course, Try again later");
+          toast.error(t("admin.course_form.update_failed"));
           return;
         }
         if (result.status === "success") {
@@ -111,7 +113,7 @@ function CourseForm({ course }: CourseFormProps) {
       const { data: result, error } = await tryCatch(createCourse(values));
       //Failed on client side
       if (error) {
-        toast.error("Failed to create course, Try again later");
+        toast.error(t("admin.course_form.create_failed"));
         return;
       }
 
@@ -154,12 +156,14 @@ function CourseForm({ course }: CourseFormProps) {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="title">Title</FormLabel>
+                <FormLabel htmlFor="title">
+                  {t("admin.course_form.title")}
+                </FormLabel>
                 <FormControl>
                   <Input
                     id="title"
                     {...field}
-                    placeholder="Enter course title"
+                    placeholder={t("admin.course_form.title_placeholder")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -172,7 +176,9 @@ function CourseForm({ course }: CourseFormProps) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="description">Description</FormLabel>
+                <FormLabel htmlFor="description">
+                  {t("admin.course_form.description")}
+                </FormLabel>
                 <FormControl>
                   <RichTextEditor field={field} />
                 </FormControl>
@@ -186,7 +192,9 @@ function CourseForm({ course }: CourseFormProps) {
             name="fileKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="fileKey">Thumbnail Image</FormLabel>
+                <FormLabel htmlFor="fileKey">
+                  {t("admin.course_form.thumbnail_image")}
+                </FormLabel>
                 <FormControl>
                   <Uploader
                     fileTypeAccepted="image"
@@ -205,7 +213,9 @@ function CourseForm({ course }: CourseFormProps) {
             name="pdfKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="pdfKey">Course PDF (Optional)</FormLabel>
+                <FormLabel htmlFor="pdfKey">
+                  {t("admin.course_form.course_pdf")}
+                </FormLabel>
                 <FormControl>
                   <Uploader
                     fileTypeAccepted="pdf"
@@ -229,9 +239,15 @@ function CourseForm({ course }: CourseFormProps) {
               name="slug"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor="slug">Slug</FormLabel>
+                  <FormLabel htmlFor="slug">
+                    {t("admin.course_form.slug")}
+                  </FormLabel>
                   <FormControl>
-                    <Input id="slug" {...field} placeholder="Enter slug" />
+                    <Input
+                      id="slug"
+                      {...field}
+                      placeholder={t("admin.course_form.slug_placeholder")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -248,7 +264,8 @@ function CourseForm({ course }: CourseFormProps) {
                 form.setValue("slug", slugValue, { shouldValidate: true });
               }}
             >
-              Generate Slug <SparklesIcon className="h-4 w-4" />
+              {t("admin.course_form.generate_slug")}{" "}
+              <SparklesIcon className="h-4 w-4" />
             </Button>
           </div>
 
@@ -260,7 +277,9 @@ function CourseForm({ course }: CourseFormProps) {
               name="price"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor="price">Price</FormLabel>
+                  <FormLabel htmlFor="price">
+                    {t("admin.course_form.price")}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       id="price"
@@ -271,7 +290,7 @@ function CourseForm({ course }: CourseFormProps) {
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value) || 0)
                       }
-                      placeholder="Enter price"
+                      placeholder={t("admin.course_form.price_placeholder")}
                     />
                   </FormControl>
                   <FormMessage />
@@ -284,7 +303,9 @@ function CourseForm({ course }: CourseFormProps) {
               name="duration"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor="duration">Duration (hours)</FormLabel>
+                  <FormLabel htmlFor="duration">
+                    {t("admin.course_form.duration")}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       id="duration"
@@ -294,7 +315,7 @@ function CourseForm({ course }: CourseFormProps) {
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value) || 0)
                       }
-                      placeholder="Enter duration"
+                      placeholder={t("admin.course_form.duration_placeholder")}
                     />
                   </FormControl>
                   <FormMessage />
@@ -308,21 +329,25 @@ function CourseForm({ course }: CourseFormProps) {
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="status">Status</FormLabel>
+                <FormLabel htmlFor="status">
+                  {t("admin.course_form.status")}
+                </FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger id="status">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue
+                        placeholder={t("admin.course_form.status_placeholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={CourseStatusEnum.DRAFT}>
-                        Draft
+                        {t("admin.course_form.status_draft")}
                       </SelectItem>
                       <SelectItem value={CourseStatusEnum.PUBLISHED}>
-                        Published
+                        {t("admin.course_form.status_published")}
                       </SelectItem>
                       <SelectItem value={CourseStatusEnum.ARCHIVED}>
-                        Archived
+                        {t("admin.course_form.status_archived")}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -338,13 +363,15 @@ function CourseForm({ course }: CourseFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel htmlFor="smallDescription">
-                  Small Description
+                  {t("admin.course_form.small_description")}
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     id="smallDescription"
                     {...field}
-                    placeholder="Enter short description"
+                    placeholder={t(
+                      "admin.course_form.small_description_placeholder",
+                    )}
                     rows={4}
                   />
                 </FormControl>
@@ -362,12 +389,12 @@ function CourseForm({ course }: CourseFormProps) {
                 disabled={isSubmitting}
                 className="disabled:opacity-50"
               >
-                Reset
+                {t("admin.course_form.reset")}
               </Button>
             }
-            title="Reset Form"
-            description="Are you sure you want to reset all fields? This action cannot be undone."
-            confirmLabel="Reset"
+            title={t("admin.course_form.reset_form")}
+            description={t("admin.course_form.reset_confirm")}
+            confirmLabel={t("admin.course_form.reset")}
             onConfirm={handleReset}
             confirmVariant="destructive"
           />
@@ -377,10 +404,10 @@ function CourseForm({ course }: CourseFormProps) {
             className="disabled:opacity-50"
           >
             {isSubmitting
-              ? "Submitting..."
+              ? t("admin.course_form.submitting")
               : course
-                ? "Update Course"
-                : "Create Course"}
+                ? t("admin.course_form.update_course")
+                : t("admin.course_form.create_course")}
           </Button>
         </div>
       </form>
