@@ -27,7 +27,8 @@ export async function createMeme(
       },
     });
 
-    // No revalidatePath - React Query will handle cache invalidation
+    // Revalidate the memes page to show the new meme
+    revalidatePath("/admin/memes");
     return { status: "success", message: "Meme created successfully" };
   } catch (error) {
     console.error(error);
