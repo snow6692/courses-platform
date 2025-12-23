@@ -1,10 +1,20 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import { CloudUploadIcon, ImageIcon, Loader2, TrashIcon } from "lucide-react";
+import {
+  CloudUploadIcon,
+  ImageIcon,
+  Loader2,
+  TrashIcon,
+  XIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { FileText } from "lucide-react";
+import { useLanguage } from "@/providers/LanguageContext";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="bg-muted border-muted-foreground mb-4 flex size-12 items-center justify-center rounded-full border border-dashed">
@@ -16,34 +26,37 @@ export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
         />
       </div>
       <p className="text-muted-foreground text-base font-semibold">
-        Drop you files here or{" "}
+        {t("admin.uploader.drop_files")}{" "}
         <span className="text-primary cursor-pointer underline text-shadow-black">
-          click to upload
+          {t("admin.uploader.click_to_upload")}
         </span>
       </p>
       <Button className="mt-4" type="button">
-        Select File
+        {t("admin.uploader.select_file")}
       </Button>
     </div>
   );
 }
 
 export function RenderErrorState() {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="bg-destructive/30 mb-4 flex size-12 items-center justify-center rounded-full">
         <ImageIcon className={cn("text-destructive size-6")} />
       </div>
-      <p className="text-base font-semibold">Upload Failed</p>
+      <p className="text-base font-semibold">
+        {t("admin.uploader.upload_failed")}
+      </p>
       <p className="text-muted-foreground text-xs">
-        Please try again with a different file
+        {t("admin.uploader.try_again_hint")}
       </p>
       <Button
         type="button"
         variant={"outline"}
         className="text-muted-foreground mt-3 text-xl font-semibold"
       >
-        Click or drag and drop to try again
+        {t("admin.uploader.drag_try_again")}
       </Button>
     </div>
   );
@@ -60,6 +73,7 @@ export function RenderUploadedState({
   isDeleting: boolean;
   fileType: "video" | "image" | "pdf";
 }) {
+  const { t } = useLanguage();
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       {fileType === "video" ? (
@@ -74,7 +88,7 @@ export function RenderUploadedState({
             <FileText className="text-primary size-8" />
           </div>
           <p className="text-foreground text-sm font-medium">
-            PDF Uploaded Successfully
+            {t("admin.uploader.pdf_uploaded")}
           </p>
           <Button
             type="button"
@@ -85,7 +99,7 @@ export function RenderUploadedState({
               window.open(previewUrl, "_blank");
             }}
           >
-            Open PDF in New Tab
+            {t("admin.uploader.open_pdf")}
           </Button>
         </div>
       ) : (
@@ -118,17 +132,37 @@ export function RenderUploadedState({
 export function RenderUploadingState({
   progress,
   file,
+  onCancel,
 }: {
   progress: number;
   file: File;
+  onCancel?: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center text-center">
       <p className="text-foreground text-sm font-medium">{progress}%</p>
-      <p className="text-foreground mt-2 text-sm font-medium">Uploading...</p>
+      <p className="text-foreground mt-2 text-sm font-medium">
+        {t("admin.uploader.uploading")}
+      </p>
       <p className="text-muted-foreground mt-1 max-w-xs truncate text-xs">
         {file.name}
       </p>
+      {onCancel && (
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          className="mt-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCancel();
+          }}
+        >
+          <XIcon className="mr-2 size-4" />
+          {t("admin.uploader.cancel_upload")}
+        </Button>
+      )}
     </div>
   );
 }

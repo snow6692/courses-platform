@@ -401,7 +401,27 @@
       "enter_section_name": "أدخل اسم القسم",
       "section_time": "الوقت (بالدقائق)",
       "creating_section": "جاري إنشاء القسم...",
-      "create_courses": "إنشاء الدورات"
+      "create_courses": "إنشاء الدورات",
+      "go_back": "رجوع",
+      "lesson_config": "إعدادات الدرس",
+      "lesson_config_desc": "قم بتكوين الفيديو والوصف لهذا الدرس",
+      "lesson_description": "وصف الدرس",
+      "thumbnail_image": "صورة مصغرة",
+      "video_file": "ملف الفيديو",
+      "updating_lesson": "جاري تحديث الدرس...",
+      "update_lesson": "تحديث الدرس"
+    },
+    "uploader": {
+      "drop_files": "أفلت ملفاتك هنا أو",
+      "click_to_upload": "اضغط للرفع",
+      "select_file": "اختر ملف",
+      "upload_failed": "فشل الرفع",
+      "try_again_hint": "يرجى المحاولة مرة أخرى بملف مختلف",
+      "drag_try_again": "اضغط أو اسحب ملف للمحاولة مرة أخرى",
+      "uploading": "جاري الرفع...",
+      "cancel_upload": "إلغاء الرفع",
+      "pdf_uploaded": "تم رفع ملف PDF بنجاح",
+      "open_pdf": "فتح PDF في نافذة جديدة"
     },
     "course_form": {
       "basic_info": "المعلومات الأساسية",

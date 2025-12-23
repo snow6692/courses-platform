@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Card, CardContent } from "../ui/card";
@@ -32,6 +32,7 @@ interface IProps {
 }
 function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
   const fileUrl = useConstructUrl(value as string);
+  const xhrRef = useRef<XMLHttpRequest | null>(null);
   const [fileState, setFileState] = useState<UploaderState>({
     id: null,
     file: null,
@@ -114,6 +115,8 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         // instead of using fetch, to detect upload progress
         await new Promise<void>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
+          xhrRef.current = xhr; // Store reference for cancel
+
           xhr.upload.onprogress = (event) => {
             // total bytes of the file
             if (event.lengthComputable) {
@@ -128,6 +131,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
           };
 
           xhr.onload = () => {
+            xhrRef.current = null;
             if (xhr.status === 200 || xhr.status === 204) {
               setFileState((prev) => ({
                 ...prev,
@@ -143,7 +147,12 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
             }
           };
           xhr.onerror = () => {
+            xhrRef.current = null;
             reject(new Error("Upload failed"));
+          };
+          xhr.onabort = () => {
+            xhrRef.current = null;
+            resolve(); // Resolve without error on cancel
           };
           xhr.open("PUT", presignedUrl);
           xhr.setRequestHeader("Content-Type", file.type);
@@ -161,6 +170,34 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
     },
     [fileTypeAccepted, onChange],
   );
+
+  // Cancel upload function
+  const cancelUpload = useCallback(() => {
+    if (xhrRef.current) {
+      xhrRef.current.abort();
+      xhrRef.current = null;
+    }
+
+    // Cleanup object URL
+    if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+      URL.revokeObjectURL(fileState.objectUrl);
+    }
+
+    // Reset state
+    setFileState({
+      id: null,
+      file: null,
+      uploading: false,
+      progress: 0,
+      isDeleting: false,
+      error: false,
+      fileType: fileTypeAccepted,
+      key: undefined,
+      objectUrl: undefined,
+    });
+
+    toast.info("Upload cancelled");
+  }, [fileState.objectUrl, fileTypeAccepted]);
 
   //cleanup the old object url when the file is uploaded
   useEffect(() => {
@@ -284,6 +321,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         <RenderUploadingState
           progress={fileState.progress}
           file={fileState.file!}
+          onCancel={cancelUpload}
         />
       );
     }

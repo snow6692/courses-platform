@@ -400,7 +400,27 @@
       "enter_section_name": "Enter section name",
       "section_time": "Time (minutes)",
       "creating_section": "Creating Section...",
-      "create_courses": "Create Courses"
+      "create_courses": "Create Courses",
+      "go_back": "Go Back",
+      "lesson_config": "Lesson Configuration",
+      "lesson_config_desc": "Configure the video and description for this lesson",
+      "lesson_description": "Lesson Description",
+      "thumbnail_image": "Thumbnail Image",
+      "video_file": "Video File",
+      "updating_lesson": "Updating Lesson...",
+      "update_lesson": "Update Lesson"
+    },
+    "uploader": {
+      "drop_files": "Drop your files here or",
+      "click_to_upload": "click to upload",
+      "select_file": "Select File",
+      "upload_failed": "Upload Failed",
+      "try_again_hint": "Please try again with a different file",
+      "drag_try_again": "Click or drag and drop to try again",
+      "uploading": "Uploading...",
+      "cancel_upload": "Cancel Upload",
+      "pdf_uploaded": "PDF Uploaded Successfully",
+      "open_pdf": "Open PDF in New Tab"
     },
     "course_form": {
       "basic_info": "Basic information",

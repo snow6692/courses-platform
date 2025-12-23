@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Switch } from "../ui/switch";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface IProps {
   lesson: AdminLessonType;
@@ -39,6 +40,7 @@ interface IProps {
   courseId: string;
 }
 function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
+  const { t } = useLanguage();
   const form = useForm<LessonSchemaType>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
@@ -61,7 +63,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
       );
 
       if (error) {
-        toast.error("An unexpected error occurred, Please try again.");
+        toast.error(t("common.unexpected_error"));
         return;
       }
       if (result.status === "success") {
@@ -79,13 +81,13 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
         className={buttonVariants({ variant: "outline", className: "mb-6" })}
       >
         <ArrowLeft className="size-4" />
-        <span>Go Back</span>
+        <span>{t("admin.forms.go_back")}</span>
       </Link>
       <Card>
         <CardHeader>
-          <CardTitle>Lesson Configuration</CardTitle>
+          <CardTitle>{t("admin.forms.lesson_config")}</CardTitle>
           <CardDescription>
-            Configure the video and description for this lesson{" "}
+            {t("admin.forms.lesson_config_desc")}
           </CardDescription>
         </CardHeader>
 
@@ -97,9 +99,12 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Lesson Name</FormLabel>
+                    <FormLabel>{t("admin.forms.lesson_name")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Lesson name" {...field} />
+                      <Input
+                        placeholder={t("admin.forms.enter_lesson_name")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -110,7 +115,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Lesson Description</FormLabel>
+                    <FormLabel>{t("admin.forms.lesson_description")}</FormLabel>
                     <FormControl>
                       <RichTextEditor field={field} />
                     </FormControl>
@@ -126,10 +131,11 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Free Preview</FormLabel>
+                      <FormLabel className="text-base">
+                        {t("admin.forms.free_preview")}
+                      </FormLabel>
                       <FormDescription>
-                        Allow users to access this lesson without enrolling in
-                        the course
+                        {t("admin.forms.free_preview_desc")}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -147,7 +153,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Thumbnail Image</FormLabel>
+                    <FormLabel>{t("admin.forms.thumbnail_image")}</FormLabel>
                     <FormControl>
                       <Uploader
                         onChange={field.onChange}
@@ -164,7 +170,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Video File</FormLabel>
+                    <FormLabel>{t("admin.forms.video_file")}</FormLabel>
                     <FormControl>
                       <Uploader
                         onChange={field.onChange}
@@ -178,7 +184,9 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
               />
 
               <Button type="submit" disabled={pending}>
-                {pending ? "Updating Lesson..." : "Update Lesson"}
+                {pending
+                  ? t("admin.forms.updating_lesson")
+                  : t("admin.forms.update_lesson")}
               </Button>
             </form>
           </Form>
