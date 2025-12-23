@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
@@ -6,7 +8,10 @@ import { authClient } from "@/lib/auth-client";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/providers/LanguageContext";
+
 function Logout() {
+  const { t } = useLanguage();
   const [logoutPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -16,7 +21,7 @@ function Logout() {
         fetchOptions: {
           onSuccess: () => {
             router.push("/");
-            toast.success("Signed out successfully");
+            toast.success(t("common.signed_out_success"));
           },
           onError: (error) => {
             toast.error(error.error.message);
@@ -34,14 +39,14 @@ function Logout() {
           className="flex cursor-pointer items-center gap-2"
         >
           <LogOutIcon size={16} className="opacity-60" aria-hidden="true" />
-          <span>Logout</span>
+          <span>{t("common.logout")}</span>
         </DropdownMenuItem>
       }
-      title="Logout"
-      description="Are you sure you want to logout?"
+      title={t("common.logout")}
+      description={t("common.logout_confirm")}
       onConfirm={signOut}
-      confirmLabel="Logout"
-      cancelLabel="Cancel"
+      confirmLabel={t("common.logout")}
+      cancelLabel={t("common.cancel")}
       confirmVariant="destructive"
     />
   );

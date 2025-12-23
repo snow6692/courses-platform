@@ -214,7 +214,10 @@
     "unexpected_error": "حدث خطأ غير متوقع، حاول مرة أخرى.",
     "edit_course": "تعديل الكورس",
     "preview_course": "معاينة الكورس",
-    "delete_course": "حذف الكورس"
+    "delete_course": "حذف الكورس",
+    "logout": "تسجيل الخروج",
+    "logout_confirm": "هل أنت متأكد من تسجيل الخروج؟",
+    "signed_out_success": "تم تسجيل الخروج بنجاح"
   },
   "profile": {
     "tabs": {
@@ -539,7 +542,9 @@
       "remove_from_quiz": "إزالة الميم من الاختبار",
       "remove_from_quiz_confirm": "هل أنت متأكد من إزالة هذا الميم من الاختبار؟ سيبقى الميم في المكتبة.",
       "remove": "إزالة",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "delete_meme_title": "حذف الميم",
+      "delete_meme_confirm": "هل أنت متأكد من حذف هذا الميم؟ لا يمكن التراجع عن هذا الإجراء."
     },
     "quiz": {
       "delete_quiz": "حذف الاختبار",

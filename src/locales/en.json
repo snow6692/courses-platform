@@ -213,7 +213,10 @@
     "unexpected_error": "An unexpected error occurred. Please try again.",
     "edit_course": "Edit Course",
     "preview_course": "Preview Course",
-    "delete_course": "Delete Course"
+    "delete_course": "Delete Course",
+    "logout": "Logout",
+    "logout_confirm": "Are you sure you want to logout?",
+    "signed_out_success": "Signed out successfully"
   },
   "profile": {
     "tabs": {
@@ -538,7 +541,9 @@
       "remove_from_quiz": "Remove Meme from Quiz",
       "remove_from_quiz_confirm": "Are you sure you want to remove this meme from the quiz? The meme will still exist in the library.",
       "remove": "Remove",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "delete_meme_title": "Delete Meme",
+      "delete_meme_confirm": "Are you sure you want to delete this meme? This action cannot be undone."
     },
     "quiz": {
       "delete_quiz": "Delete Quiz",

@@ -6,8 +6,10 @@ import { Trash2 } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
+import { useLanguage } from "@/providers/LanguageContext";
 
 export default function DeleteMeme({ id }: { id: string }) {
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
@@ -33,10 +35,11 @@ export default function DeleteMeme({ id }: { id: string }) {
           <Trash2 className="h-4 w-4" />
         </Button>
       }
-      title="Delete Meme"
-      description="Are you sure you want to delete this meme? This action cannot be undone."
-      confirmLabel="Delete"
-      cancelLabel="Cancel"
+      title={t("admin.memes.delete_meme_title")}
+      description={t("admin.memes.delete_meme_confirm")}
+      confirmLabel={t("admin.memes.delete")}
+      cancelLabel={t("admin.memes.cancel")}
+      confirmVariant="destructive"
       onConfirm={handleDelete}
     />
   );
