@@ -469,6 +469,16 @@
       "create_quiz": "إنشاء اختبار",
       "update_quiz": "تحديث الاختبار"
     },
+    "courses_page": {
+      "your_courses": "كل الدورات ",
+      "create_course": "إنشاء دورة",
+      "no_courses": "لا توجد دورات",
+      "no_courses_description": "أنشئ دورة جديدة للبدء",
+      "create_a_course": "إنشاء دورة",
+      "status_draft": "مسودة",
+      "status_published": "منشور",
+      "status_archived": "مؤرشف"
+    },
     "dashboard": {
       "total_courses": "إجمالي الدورات",
       "total_customers": "إجمالي العملاء",

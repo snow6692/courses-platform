@@ -6,17 +6,22 @@ import AdminCourseCard, {
   AdminCourseCardSkeleton,
 } from "../../../components/course/AdminCourseCard";
 import EmptyState from "@/components/shared/EmptyState";
+import { getServerLocale } from "@/lib/i18n";
 
-function CoursesPage() {
+async function CoursesPage() {
+  const { t } = await getServerLocale();
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Your courses</h1>
+        <h1 className="text-2xl font-bold">
+          {t("admin.courses_page.your_courses")}
+        </h1>
         <Link
           href="/admin/courses/create"
           className={buttonVariants({ variant: "default" })}
         >
-          Create course
+          {t("admin.courses_page.create_course")}
         </Link>
       </div>
 
@@ -30,6 +35,7 @@ function CoursesPage() {
 export default CoursesPage;
 
 async function RenderCourses() {
+  const { t } = await getServerLocale();
   const { data, totalCourses } = await adminGetCourses({
     page: 1,
     limit: 10,
@@ -40,9 +46,9 @@ async function RenderCourses() {
       {data.length === 0 ? (
         <EmptyState
           href={"/admin/courses/create"}
-          title="No courses found"
-          buttonText="Create a course"
-          description="Create a new course to get started"
+          title={t("admin.courses_page.no_courses")}
+          buttonText={t("admin.courses_page.create_a_course")}
+          description={t("admin.courses_page.no_courses_description")}
         />
       ) : (
         <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">

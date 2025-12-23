@@ -91,7 +91,13 @@ function AdminCourseCard({ course }: { course: AdminCourseType }) {
           </div>
         </div>
         <p>{course.price}</p>
-        <p>{course.status}</p>
+        <p>
+          {course.status === "DRAFT"
+            ? t("admin.courses_page.status_draft")
+            : course.status === "PUBLISHED"
+              ? t("admin.courses_page.status_published")
+              : t("admin.courses_page.status_archived")}
+        </p>
         <Link
           className={buttonVariants({ className: "mt-4 w-full" })}
           href={`/admin/courses/${course.id}/edit`}

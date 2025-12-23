@@ -468,6 +468,16 @@
       "create_quiz": "Create Quiz",
       "update_quiz": "Update Quiz"
     },
+    "courses_page": {
+      "your_courses": "Your Courses",
+      "create_course": "Create Course",
+      "no_courses": "No courses found",
+      "no_courses_description": "Create a new course to get started",
+      "create_a_course": "Create a course",
+      "status_draft": "Draft",
+      "status_published": "Published",
+      "status_archived": "Archived"
+    },
     "dashboard": {
       "total_courses": "Total Courses",
       "total_customers": "Total Customers",
