@@ -9,6 +9,9 @@ export async function checkIfCourseBought(courseId: string): Promise<boolean> {
 
   if (!session?.user) return false;
 
+  // Admin users have access to all courses
+  if (session.user.role === "admin") return true;
+
   const enrollment = await prisma.enrollment.findUnique({
     where: {
       userId_courseId: {

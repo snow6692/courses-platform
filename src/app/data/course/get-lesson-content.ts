@@ -33,6 +33,26 @@ export async function getLessonContent(lessonId: string) {
 
   if (!lesson) notFound();
 
+  // Admin users have access to all courses
+  const isAdmin = session?.user?.role === "admin";
+  if (isAdmin) {
+    const progress = session?.user
+      ? await prisma.lessonProgress.findUnique({
+          where: {
+            userId_lessonId: { userId: session.user.id, lessonId },
+          },
+          select: { completed: true },
+        })
+      : null;
+
+    return {
+      ...lesson,
+      lessonProgress: progress ? [progress] : [],
+      canAccess: true,
+      isEnrolled: true, // Treat admin as enrolled
+    };
+  }
+
   // Free lessons → everyone can view (even without login)
   if (lesson.isFree) {
     // Get progress if user is logged in

@@ -85,6 +85,11 @@ export async function getCourseSidebarData(slug: string) {
 
   if (!course) return notFound();
 
+  // Admin users have access to all courses
+  if (user.role === "admin") {
+    return { ...course, isEnrolled: true };
+  }
+
   const enrollment = await prisma.enrollment.findUnique({
     where: {
       userId_courseId: {
