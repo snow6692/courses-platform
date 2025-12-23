@@ -108,9 +108,19 @@ export function SortableQuestion({
                 />
               )}
               {question.explanation && (
-                <p className="text-muted-foreground mt-4 text-xs sm:text-sm">
-                  {t("admin.quiz.explanation")}: {question.explanation}
-                </p>
+                <div className="text-muted-foreground mt-4 text-xs sm:text-sm">
+                  <span className="font-medium">
+                    {t("admin.quiz.explanation")}:{" "}
+                  </span>
+                  {(() => {
+                    try {
+                      const parsed = JSON.parse(question.explanation);
+                      return <RenderDescription json={parsed} />;
+                    } catch {
+                      return question.explanation;
+                    }
+                  })()}
+                </div>
               )}
             </div>
 

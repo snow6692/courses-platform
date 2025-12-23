@@ -140,6 +140,7 @@ export function SortableSection({
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+                <DialogTitle>{t("admin.quiz.new_question")}</DialogTitle>
                 <QuestionForm
                   quizId={quizId}
                   courseId={courseId}
