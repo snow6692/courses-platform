@@ -9,7 +9,7 @@ import { StartJourneySection } from "@/components/home/StartJourneySection";
 import { Footer } from "@/components/shared/Footer";
 
 import { FadeIn } from "@/components/animations/FadeIn";
-
+import { SpiderWebBackground } from "@/components/animations/SpiderWebBackground";
 
 export const revalidate = 300;
 
@@ -17,7 +17,10 @@ export default async function Home() {
   const { usersCount, coursesCount } = await getHeroStats();
 
   return (
-    <main className="min-h-screen w-full transition-colors duration-300">
+    <main className="relative min-h-screen w-full transition-colors duration-300">
+      {/* 3D Spider Web Animation Background */}
+      <SpiderWebBackground />
+
       <FadeIn direction="none">
         <HeroSection usersCount={usersCount} coursesCount={coursesCount} />
       </FadeIn>
