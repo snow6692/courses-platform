@@ -50,9 +50,22 @@ export default function VideoPlayer({
 
   return (
     <div
-      className="relative aspect-video overflow-hidden rounded-lg bg-black"
+      className="video-protection-container relative aspect-video overflow-hidden rounded-lg bg-black"
       onContextMenu={(e) => e.preventDefault()}
+      style={{
+        // Screen capture protection styles
+        WebkitUserSelect: "none",
+        userSelect: "none",
+      }}
     >
+      {/* Screen capture protection overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{
+          backdropFilter: "blur(0px)",
+          WebkitBackdropFilter: "blur(0px)",
+        }}
+      />
       <video
         controls
         poster={thumbnailUrl}
@@ -61,6 +74,9 @@ export default function VideoPlayer({
         disableRemotePlayback
         playsInline
         className="h-full w-full object-cover"
+        style={{
+          mixBlendMode: "screen",
+        }}
         onContextMenu={(e) => e.preventDefault()}
       >
         <source src={videoUrl} type="video/mp4" />
@@ -69,7 +85,7 @@ export default function VideoPlayer({
         Your Browser doesn't support the video tag
       </video>
       {/* Watermark */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-8 text-2xl font-bold text-white opacity-40">
+      <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-8 text-2xl font-bold text-white opacity-40">
         <div>{user?.email}</div>
         <div className="text-right">{user?.id}</div>
         <div className="self-center">{new Date().toLocaleString()}</div>

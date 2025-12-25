@@ -106,16 +106,46 @@ export function HeroSection({
 
         {/* Image/Illustration */}
         <div className="relative flex h-full min-h-[500px] w-full items-center justify-center lg:min-h-[700px]">
-          <div className="relative z-10 h-full w-full">
+          <div className="animate-hero-float relative z-10 h-full w-full">
             <Image
               src="/images/hero.svg"
               alt={t("hero.title")}
               fill
-              className="object-contain"
+              className="object-contain drop-shadow-2xl"
               priority
             />
           </div>
         </div>
+
+        {/* Floating animation styles */}
+        <style jsx>{`
+          @keyframes heroDropIn {
+            0% {
+              opacity: 0;
+              transform: translateY(-100vh);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes floatGentle {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-10px);
+            }
+          }
+
+          :global(.animate-hero-float) {
+            animation:
+              heroDropIn 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+              floatGentle 3s ease-in-out 2.5s infinite;
+          }
+        `}</style>
       </div>
 
       {/* Bottom Wave Divider */}

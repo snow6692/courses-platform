@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { profileFormSchema, ProfileFormValues } from "@/validation/profile.zod";
-import { updateUser } from "@/app/actions/user.actions";
+import { updateUser } from "@/actions/user.actions";
 import { useTransition } from "react";
 import { Loader2, Lock } from "lucide-react";
 import { useLanguage } from "@/providers/LanguageContext";

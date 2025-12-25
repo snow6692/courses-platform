@@ -21,7 +21,7 @@ import {
 } from "@/validation/profile.zod";
 import { useTransition } from "react";
 import { Loader2, Lock, AlertCircle } from "lucide-react";
-import { addPassword, changePassword } from "@/app/actions/user.actions";
+import { addPassword, changePassword } from "@/actions/user.actions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/providers/LanguageContext";
 

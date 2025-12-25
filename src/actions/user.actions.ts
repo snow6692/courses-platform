@@ -5,7 +5,7 @@ import { profileFormSchema, ProfileFormValues } from "@/validation/profile.zod";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { requireUser } from "../data/user/require-user";
+import { requireUser } from "../app/data/user/require-user";
 import bcrypt from "bcryptjs";
 import { env } from "@/lib/config";
 
