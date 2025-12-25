@@ -50,7 +50,7 @@ export async function adminGetStudents({
         id: true,
         name: true,
         email: true,
-        phone: true,
+        phoneNumber: true,
         enrollments: {
           select: {
             id: true,

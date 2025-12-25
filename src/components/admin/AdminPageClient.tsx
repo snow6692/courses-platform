@@ -13,7 +13,7 @@ interface Enrollment {
     id: string;
     name: string | null;
     email: string;
-    phone: string | null;
+    phoneNumber: string | null;
   };
   Course: {
     id: string;

@@ -12,7 +12,7 @@ export async function adminGetRecentEnrollments(limit = 10) {
           id: true,
           name: true,
           email: true,
-          phone: true,
+          phoneNumber: true,
         },
       },
       Course: {

@@ -49,10 +49,10 @@ export async function updateUser(
   }
 
   // Check phone uniqueness if provided
-  if (rest.phone) {
+  if (rest.phoneNumber) {
     const existingPhone = await prisma.user.findFirst({
       where: {
-        phone: rest.phone,
+        phoneNumber: rest.phoneNumber,
         NOT: { id: session.user.id },
       },
     });
@@ -69,58 +69,9 @@ export async function updateUser(
     data: {
       name: fullName,
       email: isGoogleUser ? undefined : result.data.email,
-      phone: result.data.phone || null,
+      phoneNumber: result.data.phoneNumber || null,
     },
   });
-
-  revalidatePath("/dashboard/profile");
-
-  return { success: true };
-}
-
-export async function addPassword(password: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
-
-  // Check if user already has a credential account
-  const existingAccount = await prisma.account.findFirst({
-    where: {
-      userId: session.user.id,
-      providerId: "credential",
-    },
-  });
-
-  if (existingAccount && existingAccount.password) {
-    throw new Error("لديك كلمة مرور بالفعل");
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  if (existingAccount) {
-    // Update existing credential account
-    await prisma.account.update({
-      where: { id: existingAccount.id },
-      data: { password: hashedPassword },
-    });
-  } else {
-    // Create new credential account
-    await prisma.account.create({
-      data: {
-        id: crypto.randomUUID(),
-        accountId: session.user.id,
-        providerId: "credential",
-        userId: session.user.id,
-        password: hashedPassword,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-  }
 
   revalidatePath("/dashboard/profile");
 
@@ -139,35 +90,30 @@ export async function changePassword(
     throw new Error("Unauthorized");
   }
 
-  // Get current password hash
-  const account = await prisma.account.findFirst({
-    where: {
-      userId: session.user.id,
-      providerId: "credential",
-    },
-  });
+  try {
+    // Use better-auth's changePassword API which handles hashing correctly (scrypt)
+    await auth.api.changePassword({
+      body: {
+        currentPassword,
+        newPassword,
+        revokeOtherSessions: true,
+      },
+      headers: await headers(),
+    });
 
-  if (!account || !account.password) {
-    throw new Error("لا يوجد كلمة مرور لتغييرها");
+    revalidatePath("/dashboard/profile");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error changing password:", error);
+    // Handle common errors with Arabic messages
+    if (
+      error.message?.includes("Invalid") ||
+      error.message?.includes("password")
+    ) {
+      throw new Error("كلمة المرور الحالية غير صحيحة");
+    }
+    throw new Error(error.message || "فشل في تغيير كلمة المرور");
   }
-
-  // Verify current password
-  const isValid = await bcrypt.compare(currentPassword, account.password);
-
-  if (!isValid) {
-    throw new Error("كلمة المرور الحالية غير صحيحة");
-  }
-
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  await prisma.account.update({
-    where: { id: account.id },
-    data: { password: hashedPassword },
-  });
-
-  revalidatePath("/dashboard/profile");
-
-  return { success: true };
 }
 
 export async function updateProfileImage(imageKey: string) {

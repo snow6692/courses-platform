@@ -10,7 +10,7 @@ export const profileFormSchema = z.object({
   email: z.string().email({
     message: "البريد الإلكتروني غير صالح",
   }),
-  phone: z
+  phoneNumber: z
     .string()
     .optional()
     .refine((val) => !val || val.length >= 9, {

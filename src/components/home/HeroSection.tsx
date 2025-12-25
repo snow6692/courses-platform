@@ -149,7 +149,7 @@ export function HeroSection({
       </div>
 
       {/* Bottom Wave Divider */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-0">
         <svg
           className="relative block h-[30px] w-[calc(100%+1.3px)] sm:h-[60px]"
           data-name="Layer 1"

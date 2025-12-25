@@ -19,9 +19,10 @@ import {
   changePasswordSchema,
   ChangePasswordValues,
 } from "@/validation/profile.zod";
-import { useTransition } from "react";
-import { Loader2, Lock, AlertCircle } from "lucide-react";
-import { addPassword, changePassword } from "@/actions/user.actions";
+import { useState, useTransition } from "react";
+import { Loader2, Lock, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { changePassword } from "@/actions/user.actions";
+import { setUserPassword } from "@/actions/set-password";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/providers/LanguageContext";
 
@@ -32,6 +33,13 @@ interface SecurityFormProps {
 export function SecurityForm({ hasPassword }: SecurityFormProps) {
   const [isPending, startTransition] = useTransition();
   const { t } = useLanguage();
+
+  // Show password states
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showAddPassword, setShowAddPassword] = useState(false);
+  const [showAddConfirmPassword, setShowAddConfirmPassword] = useState(false);
 
   const addPasswordForm = useForm<AddPasswordValues>({
     resolver: zodResolver(addPasswordSchema),
@@ -53,7 +61,7 @@ export function SecurityForm({ hasPassword }: SecurityFormProps) {
   function onAddPassword(data: AddPasswordValues) {
     startTransition(async () => {
       try {
-        await addPassword(data.password);
+        await setUserPassword(data.password);
         toast.success(t("profile.security.add_success"));
         addPasswordForm.reset();
       } catch (error: any) {
@@ -100,10 +108,23 @@ export function SecurityForm({ hasPassword }: SecurityFormProps) {
                     <div className="relative">
                       <Lock className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                       <Input
-                        type="password"
+                        type={showCurrentPassword ? "text" : "password"}
                         {...field}
-                        className="pr-10 text-right"
+                        className="pr-10 pl-10 text-right"
                       />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowCurrentPassword(!showCurrentPassword)
+                        }
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 left-3 -translate-y-1/2"
+                      >
+                        {showCurrentPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -121,10 +142,21 @@ export function SecurityForm({ hasPassword }: SecurityFormProps) {
                     <div className="relative">
                       <Lock className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                       <Input
-                        type="password"
+                        type={showNewPassword ? "text" : "password"}
                         {...field}
-                        className="pr-10 text-right"
+                        className="pr-10 pl-10 text-right"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 left-3 -translate-y-1/2"
+                      >
+                        {showNewPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -144,10 +176,23 @@ export function SecurityForm({ hasPassword }: SecurityFormProps) {
                     <div className="relative">
                       <Lock className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                       <Input
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         {...field}
-                        className="pr-10 text-right"
+                        className="pr-10 pl-10 text-right"
                       />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 left-3 -translate-y-1/2"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -185,10 +230,21 @@ export function SecurityForm({ hasPassword }: SecurityFormProps) {
                     <div className="relative">
                       <Lock className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                       <Input
-                        type="password"
+                        type={showAddPassword ? "text" : "password"}
                         {...field}
-                        className="pr-10 text-right"
+                        className="pr-10 pl-10 text-right"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowAddPassword(!showAddPassword)}
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 left-3 -translate-y-1/2"
+                      >
+                        {showAddPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -208,10 +264,23 @@ export function SecurityForm({ hasPassword }: SecurityFormProps) {
                     <div className="relative">
                       <Lock className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                       <Input
-                        type="password"
+                        type={showAddConfirmPassword ? "text" : "password"}
                         {...field}
-                        className="pr-10 text-right"
+                        className="pr-10 pl-10 text-right"
                       />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowAddConfirmPassword(!showAddConfirmPassword)
+                        }
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 left-3 -translate-y-1/2"
+                      >
+                        {showAddConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />

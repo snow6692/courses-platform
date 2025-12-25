@@ -16,7 +16,7 @@ interface Student {
   id: string;
   name: string | null;
   email: string;
-  phone: string | null;
+  phoneNumber: string | null;
   enrollments: {
     id: string;
     createdAt: Date;
@@ -93,7 +93,7 @@ export function StudentsTable({
             invoiceNumber,
             escapeCsvField(student.name || "N/A"),
             student.email,
-            student.phone || "N/A",
+            student.phoneNumber || "N/A",
             escapeCsvField(enrollment.Course.title),
             amount,
             "SAR",
@@ -204,10 +204,10 @@ export function StudentsTable({
                     </td>
                     <td className="px-4 py-3">
                       <div className="space-y-1">
-                        {student.phone && (
+                        {student.phoneNumber && (
                           <div className="flex items-center gap-1 text-sm text-gray-600">
                             <IconPhone className="size-3" />
-                            <span>{student.phone}</span>
+                            <span>{student.phoneNumber}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-1 text-sm text-gray-600">

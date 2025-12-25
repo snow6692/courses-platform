@@ -33,7 +33,7 @@ export function ProfilePageContent({ profileData }: ProfilePageContentProps) {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    phone: user.phone || "",
+    phoneNumber: user.phoneNumber || "",
   };
 
   const renderTabContent = () => {

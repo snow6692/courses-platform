@@ -30,7 +30,8 @@ model User {
   favoriteFolders   FavoriteFolder[]
 
   stripeCustomerId String? @unique
-  phone            String? @unique
+  phoneNumber      String? @unique
+  phoneNumberVerified Boolean @default(false)
 
   role         String?
   banned       Boolean?

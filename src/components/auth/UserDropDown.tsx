@@ -39,8 +39,21 @@ export default function UserDropDown({
 }: UserDropDownProps) {
   const { t } = useLanguage();
 
-  if (!image || !name || !email) {
-    return null; // Hide dropdown if no user
+  // Get initials from name (first letter of first name + first letter of last name)
+  const getInitials = (name: string) => {
+    if (!name) return "U";
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (
+        parts[0]?.charAt(0) + parts[parts.length - 1]?.charAt(0)
+      ).toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  };
+
+  // Only require name or email to show dropdown
+  if (!name && !email) {
+    return null;
   }
 
   return (
@@ -49,12 +62,8 @@ export default function UserDropDown({
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
           <Avatar>
             <AvatarImage src={image} alt="Profile image" />
-            <AvatarFallback>
-              {name
-                ? name.length > 1
-                  ? name.split(" ")[0]?.charAt(0).toUpperCase()
-                  : email.split("@")[0]?.charAt(0).toUpperCase()
-                : email.split("@")[0]?.charAt(0).toUpperCase() || "CN"}
+            <AvatarFallback className="bg-primary/10 text-primary font-medium">
+              {getInitials(name)}
             </AvatarFallback>
           </Avatar>
           <ChevronDownIcon

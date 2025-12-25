@@ -24,7 +24,7 @@ export async function getProfileData() {
       name: true,
       email: true,
       image: true,
-      phone: true,
+      phoneNumber: true,
       createdAt: true,
       accounts: {
         select: {

@@ -51,7 +51,7 @@ export async function requireUser() {
       email: true,
       image: true,
       role: true,
-      phone: true,
+      phoneNumber: true,
     },
   });
 

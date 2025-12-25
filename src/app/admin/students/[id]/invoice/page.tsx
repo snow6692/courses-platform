@@ -18,7 +18,7 @@ async function getStudentWithEnrollments(id: string) {
       id: true,
       name: true,
       email: true,
-      phone: true,
+      phoneNumber: true,
       enrollments: {
         select: {
           id: true,
