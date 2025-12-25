@@ -150,6 +150,7 @@ video {
 
 body {
   letter-spacing: var(--tracking-normal);
+  font-family: var(--font-almarai), var(--font-sans), sans-serif;
 }
 @layer base {
   * {
