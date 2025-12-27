@@ -289,6 +289,8 @@
       "phone_optional": "(اختياري)",
       "google_account": "(حساب Google)",
       "google_email_locked": "لا يمكن تغيير البريد الإلكتروني لحساب Google",
+      "email_locked": "(البريد مقفل)",
+      "email_cannot_change": "لا يمكن تغيير البريد الإلكتروني",
       "save_changes": "حفظ التغييرات",
       "save_success": "تم حفظ التغييرات بنجاح",
       "save_error": "حدث خطأ ما"

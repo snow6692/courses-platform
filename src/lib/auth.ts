@@ -1,14 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./db";
-import {
-  admin,
-  createAuthMiddleware,
-  emailOTP,
-  phoneNumber,
-} from "better-auth/plugins";
+import { admin, createAuthMiddleware, phoneNumber } from "better-auth/plugins";
 import { env } from "./config";
-import { resend } from "./resend";
 import { sendWhatsAppOTP } from "./twilio";
 
 export const auth = betterAuth({
@@ -25,16 +19,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    emailOTP({
-      async sendVerificationOTP({ email, otp }) {
-        await resend.emails.send({
-          from: "Snow <onboarding@resend.dev>",
-          to: [email],
-          subject: "Snow courses - Verify your email",
-          html: `<p>Your verification code is <string>${otp}</string></p>`,
-        });
-      },
-    }),
     phoneNumber({
       sendOTP: async ({ phoneNumber, code }) => {
         // Send OTP via WhatsApp using Twilio (don't await for faster response)

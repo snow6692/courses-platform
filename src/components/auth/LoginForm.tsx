@@ -8,15 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useQueryState } from "nuqs";
-import { IconBrandGoogle, IconMail, IconPhone } from "@tabler/icons-react";
+import { IconBrandGoogle } from "@tabler/icons-react";
 import { useLanguage } from "@/providers/LanguageContext";
 import Image from "next/image";
 import { PhoneLoginForm } from "./PhoneLoginForm";
@@ -26,12 +21,9 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 type AuthView = "login" | "register" | "forgot-password";
 
 function LoginForm() {
-  const router = useRouter();
   const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [authView, setAuthView] = useState<AuthView>("login");
-
-  const [email, setEmail] = useQueryState("email", { defaultValue: "" });
 
   function signInWithGoogle() {
     startTransition(async () => {
@@ -41,24 +33,6 @@ function LoginForm() {
         fetchOptions: {
           onSuccess: () => {
             toast.success(t("login_page.signed_in_google"));
-          },
-          onError: (error) => {
-            toast.error(error.error.message);
-          },
-        },
-      });
-    });
-  }
-
-  function signInWithEmail() {
-    startTransition(async () => {
-      await authClient.emailOtp.sendVerificationOtp({
-        email,
-        type: "sign-in",
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success(t("login_page.verification_sent"));
-            router.push(`/verify-request/?email=${email}`);
           },
           onError: (error) => {
             toast.error(error.error.message);
@@ -158,46 +132,10 @@ function LoginForm() {
           <div className="border-border w-1/4 border-t" />
         </div>
 
-        <Tabs defaultValue="phone" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="phone" className="gap-2">
-              <IconPhone className="size-4" />
-              {t("phone_auth.phone_tab")}
-            </TabsTrigger>
-            <TabsTrigger value="email" className="gap-2">
-              <IconMail className="size-4" />
-              {t("phone_auth.email_tab")}
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="phone" className="mt-4">
-            <PhoneLoginForm
-              onForgotPassword={() => setAuthView("forgot-password")}
-              onRegister={() => setAuthView("register")}
-            />
-          </TabsContent>
-          <TabsContent value="email" className="mt-4">
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">{t("login_page.email_label")}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  placeholder={"test123@gmail.com"}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <Button
-                onClick={signInWithEmail}
-                className="w-full cursor-pointer font-bold shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isPending || !email}
-              >
-                {t("login_page.continue_email")}
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <PhoneLoginForm
+          onForgotPassword={() => setAuthView("forgot-password")}
+          onRegister={() => setAuthView("register")}
+        />
       </CardContent>
     </Card>
   );

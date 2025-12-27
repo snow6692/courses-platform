@@ -288,6 +288,8 @@
       "phone_optional": "(Optional)",
       "google_account": "(Google Account)",
       "google_email_locked": "Cannot change email for Google account",
+      "email_locked": "(Email locked)",
+      "email_cannot_change": "Email cannot be changed",
       "save_changes": "Save Changes",
       "save_success": "Changes saved successfully",
       "save_error": "Something went wrong"

@@ -117,33 +117,43 @@ export function PersonalInformationForm({
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2">
-                  {t("profile.personal.email")}
-                  {isGoogleUser && (
+            render={({ field }) => {
+              // Check if this is a temp email from phone registration
+              const isTempEmail = field.value?.includes("@temp.local");
+
+              if (isTempEmail) {
+                // Don't show email field for phone-registered users
+                return <></>;
+              }
+
+              return (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    {t("profile.personal.email")}
                     <span className="flex items-center gap-1 text-xs text-gray-500">
                       <Lock className="h-3 w-3" />
-                      {t("profile.personal.google_account")}
+                      {isGoogleUser
+                        ? t("profile.personal.google_account")
+                        : t("profile.personal.email_locked")}
                     </span>
-                  )}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="ahmad@example.com"
-                    {...field}
-                    className="text-right"
-                    disabled={isGoogleUser}
-                  />
-                </FormControl>
-                {isGoogleUser && (
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="ahmad@example.com"
+                      {...field}
+                      className="text-right"
+                      disabled
+                    />
+                  </FormControl>
                   <p className="text-xs text-gray-500">
-                    {t("profile.personal.google_email_locked")}
+                    {isGoogleUser
+                      ? t("profile.personal.google_email_locked")
+                      : t("profile.personal.email_cannot_change")}
                   </p>
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           {/* Phone Number Field - Read only with change button */}

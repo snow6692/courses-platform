@@ -103,7 +103,9 @@ async function InvoicePage({ params }: InvoicePageProps) {
           </h3>
           <p className="font-semibold">{student.name || "N/A"}</p>
           <p className="text-gray-600">{student.email}</p>
-          {student.phone && <p className="text-gray-600">{student.phone}</p>}
+          {student.phoneNumber && (
+            <p className="text-gray-600">{student.phoneNumber}</p>
+          )}
         </div>
 
         {/* Courses Table */}
