@@ -15,6 +15,7 @@ export async function getLessonContent(lessonId: string) {
       description: true,
       thumbnailKey: true,
       videoKey: true,
+      bunnyVideoId: true,
       isFree: true,
       position: true,
       Chapter: {

@@ -12,26 +12,26 @@ import {
   RenderUploadingState,
 } from "./RenderState";
 import { toast } from "sonner";
-import { useConstructUrl } from "@/hooks/use-construct-url";
 
 interface UploaderState {
   id: string | null;
   file: File | null;
   uploading: boolean;
   progress: number;
-  key?: string;
+  path?: string; // Bunny Storage path for deletion
   isDeleting: boolean;
   error: boolean;
-  objectUrl?: string; //local url
+  objectUrl?: string; // CDN URL or local URL
   fileType: "image" | "video" | "pdf";
 }
+
 interface IProps {
-  value?: string;
+  value?: string; // This is now the full CDN URL
   onChange?: (value: string) => void;
   fileTypeAccepted: "image" | "video" | "pdf";
 }
+
 function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
-  const fileUrl = useConstructUrl(value as string);
   const xhrRef = useRef<XMLHttpRequest | null>(null);
   const [fileState, setFileState] = useState<UploaderState>({
     id: null,
@@ -41,39 +41,23 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
     isDeleting: false,
     error: false,
     fileType: fileTypeAccepted,
-    key: value,
-    objectUrl: value ? fileUrl : undefined,
+    path: value ? extractPathFromUrl(value) : undefined,
+    objectUrl: value || undefined,
   });
 
-  //onDrop is a callback function that is called when a file is dropped
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      if (acceptedFiles.length > 0) {
-        const file = acceptedFiles[0];
+  // Extract path from CDN URL for deletion
+  function extractPathFromUrl(url: string): string | undefined {
+    if (!url) return undefined;
+    try {
+      const urlObj = new URL(url);
+      // Remove leading slash
+      return urlObj.pathname.substring(1);
+    } catch {
+      return undefined;
+    }
+  }
 
-        // blob:http://localhost:3000/
-        //revoke the old object url to avoid memory leak make sure to delete the old object url when the file is uploaded
-        if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
-          URL.revokeObjectURL(fileState.objectUrl);
-        }
-        setFileState({
-          file,
-          uploading: false,
-          progress: 0,
-          error: false,
-          objectUrl: URL.createObjectURL(file), //Convert the object{file size, type, name} to a url
-          id: uuidv4(),
-          isDeleting: false,
-          fileType: fileTypeAccepted,
-        });
-        uploadFile(file);
-      }
-    },
-    [fileState.objectUrl],
-  );
-
-  //upload the file to the s3 bucket
-
+  // Upload the file to Bunny Storage via XHR
   const uploadFile = useCallback(
     async (file: File) => {
       setFileState((prev) => ({
@@ -83,8 +67,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
       }));
 
       try {
-        // get presigned url
-
+        // Get upload URL from server
         const presignedResponse = await fetch("/api/s3/upload", {
           method: "POST",
           headers: {
@@ -94,13 +77,13 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
             fileName: file.name,
             contentType: file.type,
             fileSize: file.size,
-            isImage: fileTypeAccepted === "image" ? true : false,
+            isImage: fileTypeAccepted === "image",
           }),
         });
 
         if (!presignedResponse.ok) {
           const error = await presignedResponse.json();
-          toast.error(error.error);
+          toast.error(error.error || "Failed to get upload URL");
           setFileState((prev) => ({
             ...prev,
             uploading: false,
@@ -110,15 +93,15 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
           return;
         }
 
-        const { presignedUrl, key } = await presignedResponse.json();
+        const { presignedUrl, key, accessKey, cdnUrl } =
+          await presignedResponse.json();
 
-        // instead of using fetch, to detect upload progress
+        // Upload using XHR to track progress
         await new Promise<void>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
-          xhrRef.current = xhr; // Store reference for cancel
+          xhrRef.current = xhr;
 
           xhr.upload.onprogress = (event) => {
-            // total bytes of the file
             if (event.lengthComputable) {
               const percentageCompleted = Math.round(
                 (event.loaded / event.total) * 100,
@@ -132,29 +115,34 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
 
           xhr.onload = () => {
             xhrRef.current = null;
-            if (xhr.status === 200 || xhr.status === 204) {
+            if (xhr.status === 200 || xhr.status === 201) {
               setFileState((prev) => ({
                 ...prev,
                 uploading: false,
                 progress: 100,
-                key,
+                path: key,
+                objectUrl: cdnUrl,
               }));
-              onChange?.(key);
+              onChange?.(cdnUrl); // Store the full CDN URL
               toast.success("File uploaded successfully");
               resolve();
             } else {
               reject(new Error("Failed to upload file"));
             }
           };
+
           xhr.onerror = () => {
             xhrRef.current = null;
             reject(new Error("Upload failed"));
           };
+
           xhr.onabort = () => {
             xhrRef.current = null;
-            resolve(); // Resolve without error on cancel
+            resolve();
           };
+
           xhr.open("PUT", presignedUrl);
+          xhr.setRequestHeader("AccessKey", accessKey);
           xhr.setRequestHeader("Content-Type", file.type);
           xhr.send(file);
         });
@@ -171,6 +159,37 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
     [fileTypeAccepted, onChange],
   );
 
+  // onDrop is a callback function that is called when a file is dropped
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+
+        // Revoke old object URL to avoid memory leak
+        if (
+          fileState.objectUrl &&
+          (fileState.objectUrl.startsWith("blob:") ||
+            !fileState.objectUrl.startsWith("http"))
+        ) {
+          URL.revokeObjectURL(fileState.objectUrl);
+        }
+
+        setFileState({
+          file,
+          uploading: false,
+          progress: 0,
+          error: false,
+          objectUrl: URL.createObjectURL(file),
+          id: uuidv4(),
+          isDeleting: false,
+          fileType: fileTypeAccepted,
+        });
+        uploadFile(file);
+      }
+    },
+    [fileState.objectUrl, fileTypeAccepted, uploadFile],
+  );
+
   // Cancel upload function
   const cancelUpload = useCallback(() => {
     if (xhrRef.current) {
@@ -179,7 +198,11 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
     }
 
     // Cleanup object URL
-    if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+    if (
+      fileState.objectUrl &&
+      (fileState.objectUrl.startsWith("blob:") ||
+        !fileState.objectUrl.startsWith("http"))
+    ) {
       URL.revokeObjectURL(fileState.objectUrl);
     }
 
@@ -192,35 +215,38 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
       isDeleting: false,
       error: false,
       fileType: fileTypeAccepted,
-      key: undefined,
+      path: undefined,
       objectUrl: undefined,
     });
 
     toast.info("Upload cancelled");
   }, [fileState.objectUrl, fileTypeAccepted]);
 
-  //cleanup the old object url when the file is uploaded
+  // Cleanup old object URL on unmount
   useEffect(() => {
-    //cleanup the old object url when the file is uploaded
     return () => {
-      if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+      if (
+        fileState.objectUrl &&
+        (fileState.objectUrl.startsWith("blob:") ||
+          !fileState.objectUrl.startsWith("http"))
+      ) {
         URL.revokeObjectURL(fileState.objectUrl);
       }
     };
   }, [fileState.objectUrl]);
 
-  // Sync value prop with fileState when value changes (e.g., after data fetch)
+  // Sync value prop with fileState when value changes
   useEffect(() => {
-    if (value && value !== fileState.key) {
+    if (value && value !== fileState.objectUrl) {
       setFileState((prev) => ({
         ...prev,
-        key: value,
-        objectUrl: fileUrl,
+        path: extractPathFromUrl(value),
+        objectUrl: value,
       }));
     }
-  }, [value, fileUrl]);
+  }, [value]);
 
-  //delete the file from the s3 bucket
+  // Delete the file from Bunny Storage
   const handleRemoveFile = async () => {
     if (fileState.isDeleting || !fileState.objectUrl) return;
 
@@ -230,27 +256,39 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         isDeleting: true,
       }));
 
-      const response = await fetch(`/api/s3/delete`, {
-        method: "DELETE",
-        body: JSON.stringify({ key: fileState.key }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        toast.error(error.error);
-        setFileState((prev) => ({
-          ...prev,
-          isDeleting: true,
-          error: true,
-        }));
-        return;
+      // Get path for deletion
+      const pathToDelete =
+        fileState.path || extractPathFromUrl(fileState.objectUrl);
+
+      if (pathToDelete) {
+        const response = await fetch(
+          `/api/bunny/storage/delete?path=${encodeURIComponent(pathToDelete)}`,
+          {
+            method: "DELETE",
+          },
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          toast.error(error.error || "Failed to delete file");
+          setFileState((prev) => ({
+            ...prev,
+            isDeleting: false,
+            error: true,
+          }));
+          return;
+        }
       }
 
-      if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+      // Cleanup local object URL
+      if (
+        fileState.objectUrl &&
+        (fileState.objectUrl.startsWith("blob:") ||
+          !fileState.objectUrl.startsWith("http"))
+      ) {
         URL.revokeObjectURL(fileState.objectUrl);
       }
+
       onChange?.("");
 
       setFileState(() => ({
@@ -262,7 +300,9 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         id: null,
         isDeleting: false,
         fileType: fileTypeAccepted,
+        path: undefined,
       }));
+
       toast.success("File deleted successfully");
     } catch (error) {
       toast.error("Failed to delete file");
@@ -274,7 +314,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
     }
   };
 
-  //handle the rejected files
+  // Handle rejected files
   function rejectedFiles(fileRejection: FileRejection[]) {
     if (fileRejection.length) {
       const tooManyFiles = fileRejection.find(
@@ -314,7 +354,8 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
       }
     }
   }
-  //render the content based on the file state
+
+  // Render content based on state
   function renderContent() {
     if (fileState.uploading) {
       return (
@@ -342,6 +383,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
 
     return <RenderEmptyState isDragActive={isDragActive} />;
   }
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept:

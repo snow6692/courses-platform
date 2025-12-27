@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import RichTextEditor from "../rich-text-editor/Editor";
 import Uploader from "../file-uploader/Uploader";
+import BunnyVideoUploader from "../file-uploader/BunnyVideoUploader";
 import { updateLesson } from "@/actions/lesson.action";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
@@ -50,7 +51,7 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
       description: lesson.description ?? "",
       thumbnailKey: lesson.thumbnailKey ?? undefined,
       videoKey: lesson.videoKey ?? undefined,
-
+      bunnyVideoId: lesson.bunnyVideoId ?? undefined,
       isFree: lesson.isFree,
     },
   });
@@ -165,17 +166,22 @@ function UpdateLessonForm({ chapterId, lesson, courseId }: IProps) {
                   </FormItem>
                 )}
               />
+
+              {/* Bunny Video Upload */}
               <FormField
-                name="videoKey"
+                name="bunnyVideoId"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("admin.forms.video_file")}</FormLabel>
+                    <FormDescription>
+                      Videos are automatically transcoded to 1080p, 720p, 480p,
+                      360p
+                    </FormDescription>
                     <FormControl>
-                      <Uploader
+                      <BunnyVideoUploader
                         onChange={field.onChange}
                         value={field.value}
-                        fileTypeAccepted="video"
                       />
                     </FormControl>
                     <FormMessage />

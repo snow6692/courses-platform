@@ -118,8 +118,11 @@ export async function changePassword(
 export async function updateProfileImage(imageKey: string) {
   const user = await requireUser();
 
-  // Construct the full URL using Tigris storage format
-  const imageUrl = `https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.fly.storage.tigris.dev/${imageKey}`;
+  // Construct the full URL using Bunny CDN
+  // If already a full URL, use as-is; otherwise construct from key
+  const imageUrl = imageKey.startsWith("http")
+    ? imageKey
+    : `https://spider-pl.b-cdn.net/${imageKey}`;
 
   await prisma.user.update({
     where: {

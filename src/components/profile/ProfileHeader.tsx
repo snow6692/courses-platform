@@ -7,7 +7,6 @@ import { useLanguage } from "@/providers/LanguageContext";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { env } from "@/lib/config";
 
 interface ProfileHeaderProps {
   user: {
@@ -97,8 +96,8 @@ export function ProfileHeader({ user, metrics }: ProfileHeaderProps) {
         throw new Error("Failed to upload to S3");
       }
 
-      // Step 3: Construct the full image URL using Tigris storage format
-      const imageUrl = `https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.fly.storage.tigris.dev/${key}`;
+      // Step 3: Construct the full image URL using Bunny CDN
+      const imageUrl = `https://spider-pl.b-cdn.net/${key}`;
 
       // Step 4: Update database via our API
       const updateResponse = await fetch("/api/profile/update-image", {

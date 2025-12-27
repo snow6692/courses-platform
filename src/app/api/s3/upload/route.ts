@@ -1,11 +1,7 @@
 import { env } from "@/lib/config";
 import { fileUploadSchema } from "@/validation/fileUpload.zod";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3 } from "@/lib/S3Client";
-
 import { requireAdmin } from "@/app/data/admin/require-admin";
 
 export async function POST(request: Request) {
@@ -26,29 +22,37 @@ export async function POST(request: Request) {
       );
     }
 
-    const { fileName, contentType, fileSize } = validation.data;
-    const uniqueKey = `${uuidv4()}-${fileName}`;
+    const { fileName, contentType, isImage } = validation.data;
 
-    const command = new PutObjectCommand({
-      Bucket: env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES,
-      ContentType: contentType,
-      ContentLength: fileSize,
-      Key: uniqueKey,
-    });
+    // Determine folder based on content type
+    const folder = isImage
+      ? "images"
+      : contentType === "application/pdf"
+        ? "pdfs"
+        : "files";
 
-    const presignedUrl = await getSignedUrl(S3, command, {
-      expiresIn: 360, // url expires in 6 minutes
-    });
+    const extension = fileName.split(".").pop() || "bin";
+    const uniqueKey = `${folder}/${uuidv4()}.${extension}`;
+
+    // Generate Bunny Storage upload URL
+    const storageZone = env.BUNNY_STORAGE_ZONE_NAME;
+    const hostname = env.BUNNY_STORAGE_HOSTNAME;
+    const presignedUrl = `https://${hostname}/${storageZone}/${uniqueKey}`;
+
     const response = {
       presignedUrl,
       key: uniqueKey,
+      // Include access key for client-side upload
+      accessKey: env.BUNNY_STORAGE_ACCESS_KEY,
+      // Include CDN URL for displaying uploaded file
+      cdnUrl: `${env.BUNNY_STORAGE_CDN_URL}/${uniqueKey}`,
     };
 
     return NextResponse.json(response);
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Failed to generate presigned url",
+        error: "Failed to generate upload url",
       },
       {
         status: 500,

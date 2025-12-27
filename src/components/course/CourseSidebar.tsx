@@ -9,7 +9,6 @@ import {
   FileText,
   Lock,
 } from "lucide-react";
-import { env } from "@/lib/config";
 import { CourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 import {
   Collapsible,
@@ -62,7 +61,11 @@ function CourseSidebar({ course }: IProps) {
         {/* Course PDF Download Button */}
         {course.pdfKey && (
           <a
-            href={`https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.fly.storage.tigris.dev/${course.pdfKey}`}
+            href={
+              course.pdfKey.startsWith("http")
+                ? course.pdfKey
+                : `https://spider-pl.b-cdn.net/${course.pdfKey}`
+            }
             target="_blank"
             rel="noopener noreferrer"
             className={cn("mt-3 block", isQuizActive && "pointer-events-none")}

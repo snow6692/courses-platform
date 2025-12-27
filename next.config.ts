@@ -8,15 +8,12 @@ const nextConfig: NextConfig = {
     };
     return config;
   },
-  experimental: {
-    // ppr: "incremental",
-  },
 
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "courses.fly.storage.tigris.dev",
+        hostname: "spider-pl.b-cdn.net",
       },
     ],
   },

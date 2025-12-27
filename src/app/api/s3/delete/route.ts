@@ -1,7 +1,5 @@
 import { requireAdmin } from "@/app/data/admin/require-admin";
 import { env } from "@/lib/config";
-import { S3 } from "@/lib/S3Client";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 
 export async function DELETE(request: Request) {
@@ -13,12 +11,24 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Key is required" }, { status: 400 });
     }
 
-    const command = new DeleteObjectCommand({
-      Bucket: env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES,
-      Key: key,
+    // Delete from Bunny Storage
+    const storageZone = env.BUNNY_STORAGE_ZONE_NAME;
+    const hostname = env.BUNNY_STORAGE_HOSTNAME;
+    const accessKey = env.BUNNY_STORAGE_ACCESS_KEY;
+
+    const deleteUrl = `https://${hostname}/${storageZone}/${key}`;
+
+    const response = await fetch(deleteUrl, {
+      method: "DELETE",
+      headers: {
+        AccessKey: accessKey,
+      },
     });
 
-    await S3.send(command);
+    // 404 is okay - file might already be deleted
+    if (!response.ok && response.status !== 404) {
+      throw new Error("Failed to delete from Bunny Storage");
+    }
 
     return NextResponse.json(
       { message: "File deleted successfully" },

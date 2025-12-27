@@ -2,8 +2,12 @@ import { SiteHeader } from "@/components/sidebar/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "../../components/sidebar/app-sidebar";
 import Navbar from "@/components/shared/Navbar";
+import { requireAdmin } from "@/app/data/admin/require-admin";
 
-function AdminLayout({ children }: { children: React.ReactNode }) {
+async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Protect all admin routes
+  await requireAdmin();
+
   return (
     <SidebarProvider
       style={

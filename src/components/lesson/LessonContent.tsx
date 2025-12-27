@@ -4,6 +4,7 @@
 import { LessonContentType } from "@/app/data/course/get-lesson-content";
 import RenderDescription from "../rich-text-editor/RenderDescription";
 import VideoPlayer from "./VideoPlayer";
+import BunnyVideoPlayer from "./BunnyVideoPlayer";
 
 import CompleteLessonButton from "./CompleteLessonButton";
 import { FileText } from "lucide-react";
@@ -19,6 +20,7 @@ interface LessonProps {
   title: string;
   description: string | null;
   videoKey: string | null;
+  bunnyVideoId?: string | null;
   thumbnailKey: string | null;
   Chapter: {
     Course: {
@@ -36,7 +38,11 @@ interface LessonContentProps {
 
 export default function LessonContent({ lesson }: LessonContentProps) {
   const { t } = useLanguage();
-  const hasVideo = !!lesson.videoKey;
+
+  // Check for Bunny video first, then fall back to S3 video
+  const hasBunnyVideo = !!(lesson as LessonProps).bunnyVideoId;
+  const hasS3Video = !!lesson.videoKey;
+  const hasVideo = hasBunnyVideo || hasS3Video;
 
   const progress =
     lesson.lessonProgress && Array.isArray(lesson.lessonProgress)
@@ -46,8 +52,15 @@ export default function LessonContent({ lesson }: LessonContentProps) {
 
   return (
     <div className="bg-background flex h-full flex-col gap-6 p-4 pb-20 md:gap-8 md:p-6 md:pb-12 lg:pr-6">
-      {/* Video Player */}
-      {hasVideo && (
+      {/* Video Player - Bunny or S3 */}
+      {hasBunnyVideo && (
+        <BunnyVideoPlayer
+          bunnyVideoId={(lesson as LessonProps).bunnyVideoId!}
+        />
+      )}
+
+      {/* Fallback to S3 video if no Bunny video */}
+      {!hasBunnyVideo && hasS3Video && (
         <VideoPlayer
           thumbnailKey={lesson.thumbnailKey ?? ""}
           videoKey={lesson.videoKey!}

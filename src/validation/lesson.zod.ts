@@ -9,6 +9,7 @@ export const lessonSchema = z.object({
   description: z.string().optional(),
   thumbnailKey: z.string().optional(),
   videoKey: z.string().optional(),
+  bunnyVideoId: z.string().optional(),
   isFree: z.boolean().optional(),
 });
 

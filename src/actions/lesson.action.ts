@@ -82,6 +82,7 @@ export async function createLesson(
           title: data.name,
           description: data.description,
           videoKey: data.videoKey,
+          bunnyVideoId: data.bunnyVideoId,
           thumbnailKey: data.thumbnailKey,
           position: maxPosition ? maxPosition.position : 1,
 
@@ -204,7 +205,7 @@ export async function updateLesson({
         description: data.description,
         thumbnailKey: data.thumbnailKey,
         videoKey: data.videoKey,
-
+        bunnyVideoId: data.bunnyVideoId,
         isFree: data.isFree,
       },
     });
