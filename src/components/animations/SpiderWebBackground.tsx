@@ -1,34 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 export function SpiderWebBackground() {
   const mountRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load Three.js dynamically
-    const script = document.createElement("script");
-    script.src =
-      "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-    script.async = true;
-    script.onload = () => setIsLoaded(true);
-    document.body.appendChild(script);
+    if (!mountRef.current) return;
 
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    // Wait for Three.js to load
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!isLoaded || !mountRef.current || !(window as any).THREE) return;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const THREE = (window as any).THREE;
     const container = mountRef.current;
     let width = container.clientWidth || window.innerWidth;
     let height = container.clientHeight || window.innerHeight;
@@ -171,7 +151,7 @@ export function SpiderWebBackground() {
       }
       renderer.dispose();
     };
-  }, [isLoaded]);
+  }, []);
 
   return (
     <div
