@@ -1,11 +1,8 @@
-import { env } from "@/lib/config";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3 } from "@/lib/S3Client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { uploadToBunnyStorage } from "@/lib/bunny";
 
 export async function POST(request: Request) {
   // Check if user is authenticated
@@ -18,18 +15,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = await request.json();
-    const { fileName, contentType, fileSize } = body;
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
-    if (!fileName || !contentType || !fileSize) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 },
-      );
+    if (!file) {
+      return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
 
     // Validate file type (images only)
-    if (!contentType.startsWith("image/")) {
+    if (!file.type.startsWith("image/")) {
       return NextResponse.json(
         { error: "Only image files are allowed" },
         { status: 400 },
@@ -37,34 +31,33 @@ export async function POST(request: Request) {
     }
 
     // Validate file size (max 5MB)
-    if (fileSize > 5 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
         { error: "File size must be less than 5MB" },
         { status: 400 },
       );
     }
 
-    const uniqueKey = `profile/${session.user.id}/${uuidv4()}-${fileName}`;
+    // Create unique file path
+    const extension = file.name.split(".").pop() || "jpg";
+    const uniqueFileName = `profile/${session.user.id}/${uuidv4()}.${extension}`;
 
-    const command = new PutObjectCommand({
-      Bucket: env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES,
-      ContentType: contentType,
-      ContentLength: fileSize,
-      Key: uniqueKey,
-    });
+    // Convert File to Buffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const presignedUrl = await getSignedUrl(S3, command, {
-      expiresIn: 360,
-    });
+    // Upload to Bunny Storage
+    const result = await uploadToBunnyStorage(buffer, uniqueFileName);
 
     return NextResponse.json({
-      presignedUrl,
-      key: uniqueKey,
+      success: true,
+      imageUrl: result.url,
+      key: uniqueFileName,
     });
   } catch (error) {
     console.error("Profile upload error:", error);
     return NextResponse.json(
-      { error: "Failed to generate upload URL" },
+      { error: "Failed to upload image" },
       { status: 500 },
     );
   }

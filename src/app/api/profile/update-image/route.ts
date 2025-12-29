@@ -3,40 +3,26 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { S3 } from "@/lib/S3Client";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { deleteFromBunnyStorage } from "@/lib/bunny";
 import { env } from "@/lib/config";
 
-// Helper function to extract S3 key from URL
-function extractS3Key(imageUrl: string): string | null {
+// Helper function to extract file path from Bunny CDN URL
+function extractBunnyFilePath(imageUrl: string): string | null {
   if (!imageUrl) return null;
 
-  // URL format: https://bucket.fly.storage.tigris.dev/key
   try {
-    const url = new URL(imageUrl);
-    // Remove leading slash from pathname
-    return url.pathname.slice(1);
-  } catch {
-    // If it's already just a key (old format)
+    // URL format: https://cdn-url.b-cdn.net/path/to/file
+    const cdnUrl = env.BUNNY_STORAGE_CDN_URL;
+    if (imageUrl.startsWith(cdnUrl)) {
+      return imageUrl.replace(`${cdnUrl}/`, "");
+    }
+    // If it's already just a path
     if (imageUrl.startsWith("profile/")) {
       return imageUrl;
     }
     return null;
-  }
-}
-
-// Helper function to delete file from S3
-async function deleteFromS3(key: string): Promise<void> {
-  try {
-    const command = new DeleteObjectCommand({
-      Bucket: env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES,
-      Key: key,
-    });
-    await S3.send(command);
-    console.log("Deleted old image from S3:", key);
-  } catch (error) {
-    console.error("Failed to delete old image from S3:", error);
-    // Don't throw - we still want to update the image even if delete fails
+  } catch {
+    return null;
   }
 }
 
@@ -66,11 +52,20 @@ export async function POST(request: Request) {
       select: { image: true },
     });
 
-    // Delete old image from S3 if it exists
+    // Delete old image from Bunny Storage if it exists
     if (currentUser?.image) {
-      const oldKey = extractS3Key(currentUser.image);
-      if (oldKey) {
-        await deleteFromS3(oldKey);
+      const oldPath = extractBunnyFilePath(currentUser.image);
+      if (oldPath) {
+        try {
+          await deleteFromBunnyStorage(oldPath);
+          console.log("Deleted old image from Bunny Storage:", oldPath);
+        } catch (error) {
+          console.error(
+            "Failed to delete old image from Bunny Storage:",
+            error,
+          );
+          // Don't throw - we still want to update the image even if delete fails
+        }
       }
     }
 

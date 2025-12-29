@@ -9,11 +9,6 @@ export const env = createEnv({
     BETTER_AUTH_URL: z.string().url(),
     BETTER_AUTH_SECRET: z.string().min(1),
     ARCJET_KEY: z.string().min(1),
-    AWS_ACCESS_KEY_ID: z.string().min(1),
-    AWS_SECRET_ACCESS_KEY: z.string().min(1),
-    AWS_ENDPOINT_URL_S3: z.string().url().min(1),
-    AWS_ENDPOINT_URL_IAM: z.string().url().min(1),
-    AWS_REGION: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
     TWILIO_ACCOUNT_SID: z.string().min(1),
@@ -31,13 +26,10 @@ export const env = createEnv({
     BUNNY_STORAGE_CDN_URL: z.string().url(),
   },
   client: {
-    NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES: z.string().min(1),
     NEXT_PUBLIC_BUNNY_CDN_URL: z.string().url(),
   },
 
   experimental__runtimeEnv: {
-    NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES:
-      process.env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES,
     NEXT_PUBLIC_BUNNY_CDN_URL: process.env.NEXT_PUBLIC_BUNNY_CDN_URL,
   },
 });

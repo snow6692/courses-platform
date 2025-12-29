@@ -70,7 +70,7 @@ function CourseSidebar({ course }: IProps) {
             rel="noopener noreferrer"
             className={cn("mt-3 block", isQuizActive && "pointer-events-none")}
           >
-            <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-3 transition-all hover:from-blue-100 hover:to-cyan-100">
+            <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-linear-to-r from-blue-50 to-cyan-50 p-3 transition-all hover:from-blue-100 hover:to-cyan-100">
               <div className="flex size-8 items-center justify-center rounded-full bg-blue-600">
                 <FileText className="size-4 text-white" />
               </div>
@@ -119,7 +119,7 @@ function CourseSidebar({ course }: IProps) {
                   </div>
                 ) : (
                   <Link href={`/dashboard/${course.slug}/quiz/${quiz.id}`}>
-                    <div className="flex items-center gap-3 rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 transition-all hover:from-purple-100 hover:to-indigo-100">
+                    <div className="flex items-center gap-3 rounded-lg border border-purple-200 bg-linear-to-r from-purple-50 to-indigo-50 p-3 transition-all hover:from-purple-100 hover:to-indigo-100">
                       <div className="flex size-8 items-center justify-center rounded-full bg-purple-600">
                         <GraduationCap className="size-4 text-white" />
                       </div>
@@ -225,7 +225,7 @@ function CourseSidebar({ course }: IProps) {
                         <Link
                           href={`/dashboard/${course.slug}/quiz/${chapterQuiz.id}`}
                         >
-                          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 p-2.5 transition-all hover:from-red-100 hover:to-orange-100">
+                          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-linear-to-r from-red-50 to-orange-50 p-2.5 transition-all hover:from-red-100 hover:to-orange-100">
                             <div className="flex size-7 items-center justify-center rounded-full bg-red-600">
                               <FileQuestion className="size-3.5 text-white" />
                             </div>
