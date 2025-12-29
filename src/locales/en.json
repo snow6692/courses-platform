@@ -243,6 +243,7 @@
     }
   },
   "common": {
+    "back": "Back",
     "show_more": "Show more",
     "show_less": "Show less",
     "progress": "Progress",

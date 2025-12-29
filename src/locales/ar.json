@@ -244,6 +244,7 @@
     }
   },
   "common": {
+    "back": "عودة",
     "show_more": "عرض المزيد",
     "show_less": "عرض أقل",
     "progress": "التقدم",

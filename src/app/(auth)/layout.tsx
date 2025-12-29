@@ -1,26 +1,12 @@
-import { buttonVariants } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { AuthBackButton } from "@/components/auth/AuthBackButton";
 import { ReactNode } from "react";
 
 function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="bg-bg-hero relative mx-auto flex h-screen w-full flex-col items-center justify-center">
-      <div className="absolute top-10 left-4">
-        <Link
-          href={"/"}
-          className={buttonVariants({
-            variant: "outline",
-            className:
-              "bg-background/50 hover:bg-background/80 backdrop-blur-sm",
-          })}
-        >
-          <ArrowLeft className="size-4" />
-          Back
-        </Link>
-      </div>
+      <AuthBackButton />
 
-      <div className="w-full max-w-sm px-4">{children}</div>
+      <div className="flex w-full justify-center px-4">{children}</div>
 
       {/* Bottom Wave Divider */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-0">
