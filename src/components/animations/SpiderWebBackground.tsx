@@ -29,8 +29,9 @@ export function SpiderWebBackground() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const THREE = (window as any).THREE;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    const container = mountRef.current;
+    let width = container.clientWidth || window.innerWidth;
+    let height = container.clientHeight || window.innerHeight;
 
     // Setup scene
     const scene = new THREE.Scene();
@@ -40,7 +41,7 @@ export function SpiderWebBackground() {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mountRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
 
     // Create particles
     const particlesCount = 200;
@@ -152,8 +153,8 @@ export function SpiderWebBackground() {
 
     // Handle resize
     const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
+      width = container.clientWidth || window.innerWidth;
+      height = container.clientHeight || window.innerHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
@@ -165,9 +166,8 @@ export function SpiderWebBackground() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
-      if (mountRef.current && renderer.domElement) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        mountRef.current.removeChild(renderer.domElement);
+      if (container && renderer.domElement) {
+        container.removeChild(renderer.domElement);
       }
       renderer.dispose();
     };
@@ -176,7 +176,7 @@ export function SpiderWebBackground() {
   return (
     <div
       ref={mountRef}
-      className="pointer-events-none fixed inset-0 z-0"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     />
   );

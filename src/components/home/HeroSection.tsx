@@ -11,10 +11,12 @@ export function HeroSection({
   usersCount: number;
   coursesCount: number;
 }) {
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
 
   return (
-    <section className="bg-bg-hero relative min-h-[120vh] w-full overflow-hidden pt-20 lg:pt-0">
+    <section
+      className={`bg-bg-hero relative ${dir === "rtl" ? "min-h-[100vh]" : "min-h-[110vh]"} w-full overflow-hidden pt-20 lg:pt-0`}
+    >
       <div className="container mx-auto grid h-full min-h-[90vh] grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
         {/* Text Content */}
         <div className="flex flex-col items-start space-y-8 py-12 lg:py-0">

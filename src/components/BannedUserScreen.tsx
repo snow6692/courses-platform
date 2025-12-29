@@ -11,7 +11,7 @@ export function BannedUserScreen({ banReason }: BannedUserScreenProps) {
   const { t, language } = useLanguage();
 
   return (
-    <div className="dark:to-background flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-red-50 to-white px-4 dark:from-red-950/20">
+    <div className="dark:to-background flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-red-50 to-white px-4 dark:from-red-950/20">
       <div className="mx-auto max-w-md text-center">
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
           <IconBan className="h-10 w-10 text-red-600 dark:text-red-400" />

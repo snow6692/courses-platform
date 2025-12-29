@@ -47,7 +47,7 @@ export default function Navbar() {
   return (
     <header className="border-border/40 bg-background/60 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-xl">
       <div className="container mx-auto flex min-h-16 items-center justify-between px-4 py-4 md:px-6 lg:px-8">
-        {/* Left Side - Logo + Courses */}
+        {/* Left Side - Logo + Navigation Links */}
         <div className="flex items-center gap-6">
           <Link href={"/"} className="flex items-center gap-2">
             <Image
@@ -59,40 +59,52 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Courses Link - Desktop only */}
-          <Link
-            href="/courses"
-            className={cn(
-              "text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors md:block",
-              isActive("/courses") && "text-foreground",
+          {/* Navigation Links - Desktop only */}
+          <nav className="hidden items-center gap-4 md:flex">
+            <Link
+              href="/courses"
+              className={cn(
+                "text-muted-foreground hover:text-foreground text-sm font-medium transition-colors",
+                isActive("/courses") && "text-foreground",
+              )}
+            >
+              {t("navbar.courses")}
+            </Link>
+            {user && (
+              <>
+                <Link
+                  href="/dashboard"
+                  className={cn(
+                    "text-muted-foreground hover:text-foreground text-sm font-medium transition-colors",
+                    isActive("/dashboard") && "text-foreground",
+                  )}
+                >
+                  {t("navbar.dashboard")}
+                </Link>
+                <Link
+                  href="/dashboard/profile"
+                  className={cn(
+                    "text-muted-foreground hover:text-foreground text-sm font-medium transition-colors",
+                    isActive("/dashboard/profile") && "text-foreground",
+                  )}
+                >
+                  {t("user_menu.profile")}
+                </Link>
+              </>
             )}
-          >
-            {t("navbar.courses")}
-          </Link>
+          </nav>
         </div>
 
         {/* Right Side - Desktop */}
         <div className="hidden items-center gap-4 md:flex">
           <LanguageSwitcher />
           {user ? (
-            <>
-              <Link href={"/dashboard"}>
-                <Button variant="outline">{t("navbar.dashboard")}</Button>
-              </Link>
-              <Link
-                href={"/dashboard/profile"}
-                className={buttonVariants({ variant: "ghost" })}
-              >
-                <User className="size-4 ltr:mr-2 rtl:ml-2" />
-                {t("user_menu.profile")}
-              </Link>
-              <UserDropDown
-                email={user.email}
-                name={user.name}
-                image={user.image ?? ""}
-                role={user.role ?? "user"}
-              />
-            </>
+            <UserDropDown
+              email={user.email}
+              name={user.name}
+              image={user.image ?? ""}
+              role={user.role ?? "user"}
+            />
           ) : (
             <>
               <Link href={"/login"}>{t("navbar.login")}</Link>

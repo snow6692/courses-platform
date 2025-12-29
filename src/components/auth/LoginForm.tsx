@@ -42,10 +42,10 @@ function LoginForm() {
     });
   }
 
-  // Handle different auth views
+  //
   if (authView === "register") {
     return (
-      <Card className="border-border/50 space-y-5 shadow-xl">
+      <Card className="border-border/50 space-y-5 p-6 shadow-xl">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <Image
@@ -74,7 +74,7 @@ function LoginForm() {
 
   if (authView === "forgot-password") {
     return (
-      <Card className="border-border/50 space-y-5 shadow-xl">
+      <Card className="border-border/50 space-y-5 p-6 shadow-xl">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <Image
@@ -94,7 +94,7 @@ function LoginForm() {
   }
 
   return (
-    <Card className="border-border/50 space-y-5 shadow-xl">
+    <Card className="border-border/50 space-y-5 p-6 shadow-xl">
       <CardHeader className="space-y-4 text-center">
         <div className="flex justify-center">
           <Image

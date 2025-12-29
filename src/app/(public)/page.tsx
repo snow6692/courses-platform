@@ -17,31 +17,47 @@ export default async function Home() {
   const { usersCount, coursesCount } = await getHeroStats();
 
   return (
-    <main className="relative min-h-screen w-full transition-colors duration-300">
-      {/* 3D Spider Web Animation Background */}
+    <main className="relative min-h-screen w-full">
+      {/* 3D Spider Web Animation - Fixed background */}
       <SpiderWebBackground />
 
-      <FadeIn direction="none">
+      {/* Hero Section */}
+      <FadeIn direction="none" className="mb-12">
         <HeroSection usersCount={usersCount} coursesCount={coursesCount} />
       </FadeIn>
 
-      <FadeIn delay={0.2}>
-        <Suspense fallback={<BestSellingSectionSkeleton />}>
-          <BestSellingSectionWrapper />
-        </Suspense>
-      </FadeIn>
+      {/* Content sections - full width with gaps between them */}
+      <div className="relative z-10 space-y-12">
+        {/* Best Selling Section */}
+        <div className="bg-background">
+          <FadeIn delay={0.2}>
+            <Suspense fallback={<BestSellingSectionSkeleton />}>
+              <BestSellingSectionWrapper />
+            </Suspense>
+          </FadeIn>
+        </div>
 
-      <FadeIn delay={0.2}>
-        <LearnYourWaySection />
-      </FadeIn>
+        {/* Learn Your Way Section */}
+        <div className="bg-background">
+          <FadeIn delay={0.2}>
+            <LearnYourWaySection />
+          </FadeIn>
+        </div>
 
-      <FadeIn delay={0.2}>
-        <StartJourneySection />
-      </FadeIn>
+        {/* Start Journey Section */}
+        <div className="bg-background">
+          <FadeIn delay={0.2}>
+            <StartJourneySection />
+          </FadeIn>
+        </div>
 
-      <FadeIn delay={0.2} direction="up">
-        <Footer />
-      </FadeIn>
+        {/* Footer */}
+        <div className="bg-background">
+          <FadeIn delay={0.2} direction="up">
+            <Footer />
+          </FadeIn>
+        </div>
+      </div>
     </main>
   );
 }
