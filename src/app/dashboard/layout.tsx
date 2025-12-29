@@ -1,7 +1,27 @@
 import Navbar from "@/components/shared/Navbar";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import prisma from "@/lib/db";
+import { BannedUserScreen } from "@/components/BannedUserScreen";
 import React, { ReactNode } from "react";
 
-function DashboardLayout({ children }: { children: ReactNode }) {
+async function DashboardLayout({ children }: { children: ReactNode }) {
+  // Check if user is banned
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session?.user) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { banned: true, banReason: true },
+    });
+
+    if (user?.banned) {
+      return <BannedUserScreen banReason={user.banReason} />;
+    }
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <Navbar />

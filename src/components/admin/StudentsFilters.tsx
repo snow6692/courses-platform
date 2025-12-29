@@ -44,6 +44,8 @@ export function StudentsFilters({ courses }: StudentsFiltersProps) {
       } else {
         params.delete(name);
       }
+      // Reset page when filters change
+      params.delete("page");
       return params.toString();
     },
     [searchParams],
@@ -70,6 +72,12 @@ export function StudentsFilters({ courses }: StudentsFiltersProps) {
     );
   };
 
+  const handleBannedChange = (value: string) => {
+    router.push(
+      `${pathname}?${createQueryString("banned", value === "all" ? "" : value)}`,
+    );
+  };
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row">
       <div className="relative max-w-md flex-1">
@@ -86,7 +94,7 @@ export function StudentsFilters({ courses }: StudentsFiltersProps) {
         defaultValue={searchParams.get("course") || "all"}
         onValueChange={handleCourseChange}
       >
-        <SelectTrigger className="w-full sm:w-[250px]">
+        <SelectTrigger className="w-full sm:w-[200px]">
           <SelectValue placeholder={t("admin.students.all_courses")} />
         </SelectTrigger>
         <SelectContent>
@@ -96,6 +104,24 @@ export function StudentsFilters({ courses }: StudentsFiltersProps) {
               {course.title} ({course._count.enrollments})
             </SelectItem>
           ))}
+        </SelectContent>
+      </Select>
+
+      <Select
+        defaultValue={searchParams.get("banned") || "all"}
+        onValueChange={handleBannedChange}
+      >
+        <SelectTrigger className="w-full sm:w-[160px]">
+          <SelectValue placeholder={t("admin.students.all_status")} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t("admin.students.all_status")}</SelectItem>
+          <SelectItem value="banned">
+            {t("admin.students.banned_only")}
+          </SelectItem>
+          <SelectItem value="active">
+            {t("admin.students.active_only")}
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>

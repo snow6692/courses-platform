@@ -9,6 +9,7 @@ interface StudentsPageProps {
   searchParams: Promise<{
     search?: string;
     course?: string;
+    banned?: string;
     page?: string;
   }>;
 }
@@ -17,6 +18,7 @@ async function StudentsPage({ searchParams }: StudentsPageProps) {
   const params = await searchParams;
   const search = params.search || "";
   const courseFilter = params.course || "";
+  const bannedFilter = (params.banned as "all" | "banned" | "active") || "all";
   const page = parseInt(params.page || "1", 10);
   const pageSize = 10;
 
@@ -32,6 +34,7 @@ async function StudentsPage({ searchParams }: StudentsPageProps) {
         <StudentsTableWrapper
           search={search}
           courseFilter={courseFilter}
+          bannedFilter={bannedFilter}
           page={page}
           pageSize={pageSize}
         />
@@ -50,17 +53,20 @@ async function FiltersWrapper() {
 async function StudentsTableWrapper({
   search,
   courseFilter,
+  bannedFilter,
   page,
   pageSize,
 }: {
   search: string;
   courseFilter: string;
+  bannedFilter: "all" | "banned" | "active";
   page: number;
   pageSize: number;
 }) {
   const { students, totalCount, totalPages } = await adminGetStudents({
     search,
     courseFilter,
+    bannedFilter,
     page,
     pageSize,
   });

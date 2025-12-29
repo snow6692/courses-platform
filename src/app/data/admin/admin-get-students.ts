@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 interface GetStudentsParams {
   search?: string;
   courseFilter?: string;
+  bannedFilter?: "all" | "banned" | "active";
   page?: number;
   pageSize?: number;
 }
@@ -10,17 +11,26 @@ interface GetStudentsParams {
 export async function adminGetStudents({
   search,
   courseFilter,
+  bannedFilter = "all",
   page = 1,
   pageSize = 10,
 }: GetStudentsParams) {
   const where: any = {};
 
-  // Search by name or email
+  // Search by name, email, or phone number
   if (search) {
     where.OR = [
       { name: { contains: search, mode: "insensitive" } },
       { email: { contains: search, mode: "insensitive" } },
+      { phoneNumber: { contains: search, mode: "insensitive" } },
     ];
+  }
+
+  // Filter by banned status
+  if (bannedFilter === "banned") {
+    where.banned = true;
+  } else if (bannedFilter === "active") {
+    where.NOT = { banned: true };
   }
 
   // Filter by course enrollment
@@ -51,6 +61,8 @@ export async function adminGetStudents({
         name: true,
         email: true,
         phoneNumber: true,
+        banned: true,
+        banReason: true,
         enrollments: {
           select: {
             id: true,
