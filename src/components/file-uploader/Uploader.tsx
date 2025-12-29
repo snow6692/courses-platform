@@ -68,7 +68,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
 
       try {
         // Get upload URL from server
-        const presignedResponse = await fetch("/api/s3/upload", {
+        const presignedResponse = await fetch("/api/bunny/storage/presign", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

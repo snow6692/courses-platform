@@ -1,23 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-async function fetchSignedVideoUrl(key: string) {
-  const res = await fetch("/api/s3/get", {
-    method: "POST",
-    body: JSON.stringify({ key }),
-  });
 
-  if (!res.ok) throw new Error("Failed to get signed url");
-
-  const data = await res.json();
-  return data.url;
+/**
+ * Get video URL from Bunny Storage CDN
+ * Since Bunny CDN URLs are public, we don't need signed URLs
+ */
+function constructBunnyVideoUrl(videoKey: string): string {
+  // If already a full URL, return as-is
+  if (videoKey.startsWith("http://") || videoKey.startsWith("https://")) {
+    return videoKey;
+  }
+  // Construct Bunny CDN URL for legacy keys
+  return `https://spider-pl.b-cdn.net/${videoKey}`;
 }
 
 export function useVideoUrl(videoKey: string) {
   return useQuery({
     queryKey: ["video-url", videoKey],
-    queryFn: () => fetchSignedVideoUrl(videoKey),
-    enabled: !!videoKey, //      Use the query when have a key
-    staleTime: 0, //
-    gcTime: 0, //
-    refetchOnWindowFocus: false, //
+    queryFn: () => Promise.resolve(constructBunnyVideoUrl(videoKey)),
+    enabled: !!videoKey,
+    staleTime: Infinity, // URL doesn't change
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 }
