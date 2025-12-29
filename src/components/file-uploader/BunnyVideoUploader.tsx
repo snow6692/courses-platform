@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface BunnyUploadState {
   videoId: string | null;
@@ -40,6 +41,7 @@ export default function BunnyVideoUploader({
   onChange,
   onDelete,
 }: BunnyVideoUploaderProps) {
+  const { t } = useLanguage();
   const [state, setState] = useState<BunnyUploadState>({
     videoId: value || null,
     file: null,
@@ -93,7 +95,7 @@ export default function BunnyVideoUploader({
             setState((prev) => ({
               ...prev,
               status: "error",
-              error: "Video encoding failed",
+              error: t("admin.video_uploader.video_encoding_failed"),
             }));
             return true;
           } else {
@@ -176,7 +178,7 @@ export default function BunnyVideoUploader({
               error: "Upload failed. Please try again.",
             }));
             uploadRef.current = null;
-            toast.error("Upload failed");
+            toast.error(t("admin.video_uploader.failed_upload_video"));
           },
           onProgress: (bytesUploaded, bytesTotal) => {
             const percentage = Math.round((bytesUploaded / bytesTotal) * 100);
@@ -193,7 +195,7 @@ export default function BunnyVideoUploader({
               progress: 100,
             }));
             uploadRef.current = null;
-            toast.success("Upload complete! Video is being processed...");
+            toast.success(t("admin.video_uploader.upload_complete"));
             // Start polling for encoding status
             pollEncodingStatus(videoId);
           },
@@ -218,7 +220,7 @@ export default function BunnyVideoUploader({
           error: "Failed to upload video",
         }));
         uploadRef.current = null;
-        toast.error("Failed to upload video");
+        toast.error(t("admin.video_uploader.failed_upload_video"));
       }
     },
     [pollEncodingStatus],
@@ -253,7 +255,7 @@ export default function BunnyVideoUploader({
       embedUrl: null,
     });
 
-    toast.info("Upload cancelled");
+    toast.info(t("admin.uploader.upload_cancelled"));
   }, [state.videoId]);
 
   const handleFileSelect = useCallback(
@@ -261,7 +263,7 @@ export default function BunnyVideoUploader({
       const file = e.target.files?.[0];
       if (file) {
         if (!file.type.startsWith("video/")) {
-          toast.error("Please select a video file");
+          toast.error(t("admin.video_uploader.please_select_video"));
           return;
         }
         handleUpload(file);
@@ -310,9 +312,9 @@ export default function BunnyVideoUploader({
       });
 
       setShowPreview(false);
-      toast.success("Video deleted");
+      toast.success(t("admin.video_uploader.video_deleted"));
     } catch {
-      toast.error("Failed to delete video");
+      toast.error(t("admin.video_uploader.failed_delete_video"));
     }
   }, [state.videoId, onDelete, onChange]);
 
@@ -330,10 +332,10 @@ export default function BunnyVideoUploader({
           <div className="flex flex-col items-center justify-center py-8">
             <Upload className="text-muted-foreground mb-4 h-12 w-12" />
             <p className="text-muted-foreground mb-2 text-sm">
-              Drag and drop a video file, or click to browse
+              {t("admin.video_uploader.drag_drop_hint")}
             </p>
             <p className="text-muted-foreground text-xs">
-              Supports MP4, MOV, WebM, AVI
+              {t("admin.video_uploader.supported_formats")}
             </p>
           </div>
         );
@@ -342,7 +344,7 @@ export default function BunnyVideoUploader({
         return (
           <div className="flex flex-col items-center justify-center py-8">
             <Loader2 className="text-primary mb-4 h-12 w-12 animate-spin" />
-            <p className="text-sm">Creating video...</p>
+            <p className="text-sm">{t("admin.video_uploader.creating_video")}</p>
             <Button
               variant="outline"
               size="sm"
@@ -352,7 +354,7 @@ export default function BunnyVideoUploader({
                 handleCancel();
               }}
             >
-              <StopCircle className="mr-1 h-4 w-4" /> Cancel
+              <StopCircle className="mr-1 h-4 w-4" /> {t("admin.video_uploader.cancel")}
             </Button>
           </div>
         );
@@ -361,7 +363,7 @@ export default function BunnyVideoUploader({
         return (
           <div className="flex w-full flex-col items-center justify-center px-8 py-8">
             <Video className="text-primary mb-4 h-12 w-12" />
-            <p className="mb-2 text-sm">Uploading {state.file?.name}</p>
+            <p className="mb-2 text-sm">{t("admin.video_uploader.uploading")} {state.file?.name}</p>
             <Progress value={state.progress} className="mb-2 h-2 w-full" />
             <p className="text-muted-foreground mb-4 text-xs">
               {state.progress}%
@@ -374,7 +376,7 @@ export default function BunnyVideoUploader({
                 handleCancel();
               }}
             >
-              <StopCircle className="mr-1 h-4 w-4" /> Cancel Upload
+              <StopCircle className="mr-1 h-4 w-4" /> {t("admin.video_uploader.cancel_upload")}
             </Button>
           </div>
         );
@@ -383,16 +385,16 @@ export default function BunnyVideoUploader({
         return (
           <div className="flex w-full flex-col items-center justify-center px-8 py-8">
             <Loader2 className="mb-4 h-12 w-12 animate-spin text-orange-500" />
-            <p className="mb-2 text-sm">Processing video...</p>
+            <p className="mb-2 text-sm">{t("admin.video_uploader.processing_video")}</p>
             <Progress
               value={state.encodeProgress}
               className="mb-2 h-2 w-full"
             />
             <p className="text-muted-foreground text-xs">
-              Encoding: {state.encodeProgress}%
+              {t("admin.video_uploader.encoding")}: {state.encodeProgress}%
             </p>
             <p className="text-muted-foreground mt-2 text-xs">
-              Please wait, this may take a few minutes
+              {t("admin.video_uploader.processing_wait")}
             </p>
           </div>
         );
@@ -419,7 +421,7 @@ export default function BunnyVideoUploader({
                     setShowPreview(false);
                   }}
                 >
-                  Hide Preview
+                  {t("admin.video_uploader.hide_preview")}
                 </Button>
                 <Button
                   variant="destructive"
@@ -439,9 +441,9 @@ export default function BunnyVideoUploader({
         return (
           <div className="relative flex flex-col items-center justify-center py-8">
             <CheckCircle2 className="mb-4 h-12 w-12 text-green-500" />
-            <p className="mb-2 text-sm text-green-600">Video ready!</p>
+            <p className="mb-2 text-sm text-green-600">{t("admin.video_uploader.video_ready")}</p>
             <p className="text-muted-foreground mb-4 text-xs">
-              Video ID: {state.videoId || value}
+              {t("admin.video_uploader.video_id")}: {state.videoId || value}
             </p>
             <div className="flex gap-2">
               <Button
@@ -455,7 +457,7 @@ export default function BunnyVideoUploader({
                   setShowPreview(true);
                 }}
               >
-                <Play className="mr-1 h-4 w-4" /> Preview
+                <Play className="mr-1 h-4 w-4" /> {t("admin.video_uploader.preview")}
               </Button>
               <Button
                 variant="destructive"
@@ -465,7 +467,7 @@ export default function BunnyVideoUploader({
                   handleDelete();
                 }}
               >
-                <X className="mr-1 h-4 w-4" /> Remove
+                <X className="mr-1 h-4 w-4" /> {t("admin.video_uploader.remove")}
               </Button>
             </div>
           </div>
@@ -488,7 +490,7 @@ export default function BunnyVideoUploader({
                 }))
               }
             >
-              Try again
+              {t("admin.video_uploader.try_again")}
             </Button>
           </div>
         );

@@ -8,12 +8,13 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().url(),
     BETTER_AUTH_SECRET: z.string().min(1),
-    ARCJET_KEY: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    // Twilio
     TWILIO_ACCOUNT_SID: z.string().min(1),
     TWILIO_AUTH_TOKEN: z.string().min(1),
     TWILIO_WHATSAPP_NUMBER: z.string().min(1),
+    TWILIO_TEMPLATE_SID: z.string().min(1),
     // Bunny Stream
     BUNNY_STREAM_API_KEY: z.string().min(1),
     BUNNY_STREAM_LIBRARY_ID: z.string().min(1),

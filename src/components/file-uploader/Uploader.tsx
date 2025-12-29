@@ -12,6 +12,7 @@ import {
   RenderUploadingState,
 } from "./RenderState";
 import { toast } from "sonner";
+import { useLanguage } from "@/providers/LanguageContext";
 
 interface UploaderState {
   id: string | null;
@@ -32,6 +33,7 @@ interface IProps {
 }
 
 function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
+  const { t } = useLanguage();
   const xhrRef = useRef<XMLHttpRequest | null>(null);
   const [fileState, setFileState] = useState<UploaderState>({
     id: null,
@@ -83,7 +85,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
 
         if (!presignedResponse.ok) {
           const error = await presignedResponse.json();
-          toast.error(error.error || "Failed to get upload URL");
+          toast.error(error.error || t("admin.uploader.failed_get_upload_url"));
           setFileState((prev) => ({
             ...prev,
             uploading: false,
@@ -124,7 +126,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
                 objectUrl: cdnUrl,
               }));
               onChange?.(cdnUrl); // Store the full CDN URL
-              toast.success("File uploaded successfully");
+              toast.success(t("admin.uploader.file_uploaded_success"));
               resolve();
             } else {
               reject(new Error("Failed to upload file"));
@@ -147,7 +149,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
           xhr.send(file);
         });
       } catch (error) {
-        toast.error("Failed to upload file");
+        toast.error(t("admin.uploader.failed_upload_file"));
         setFileState((prev) => ({
           ...prev,
           uploading: false,
@@ -219,7 +221,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
       objectUrl: undefined,
     });
 
-    toast.info("Upload cancelled");
+    toast.info(t("admin.uploader.upload_cancelled"));
   }, [fileState.objectUrl, fileTypeAccepted]);
 
   // Cleanup old object URL on unmount
@@ -270,7 +272,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
 
         if (!response.ok) {
           const error = await response.json();
-          toast.error(error.error || "Failed to delete file");
+          toast.error(error.error || t("admin.uploader.failed_delete_file"));
           setFileState((prev) => ({
             ...prev,
             isDeleting: false,
@@ -303,9 +305,9 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         path: undefined,
       }));
 
-      toast.success("File deleted successfully");
+      toast.success(t("admin.uploader.file_deleted_success"));
     } catch (error) {
-      toast.error("Failed to delete file");
+      toast.error(t("admin.uploader.failed_delete_file"));
       setFileState((prev) => ({
         ...prev,
         isDeleting: false,
@@ -321,7 +323,7 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
         (rejection) => rejection.errors[0].code === "too-many-files",
       );
       if (tooManyFiles) {
-        toast.error("You can only upload one file");
+        toast.error(t("admin.uploader.one_file_only"));
         return;
       }
 
@@ -335,7 +337,9 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
             : fileTypeAccepted === "pdf"
               ? "50MB"
               : "5GB";
-        toast.error(`File size must be less than ${limit}`);
+        toast.error(
+          t("admin.uploader.file_size_limit").replace("{limit}", limit),
+        );
         return;
       }
 
@@ -345,11 +349,13 @@ function Uploader({ value, onChange, fileTypeAccepted }: IProps) {
       if (fileType) {
         const typeName =
           fileTypeAccepted === "image"
-            ? "image"
+            ? t("admin.uploader.type_image")
             : fileTypeAccepted === "pdf"
-              ? "PDF"
-              : "video";
-        toast.error(`File must be a ${typeName}`);
+              ? t("admin.uploader.type_pdf")
+              : t("admin.uploader.type_video");
+        toast.error(
+          t("admin.uploader.file_must_be").replace("{type}", typeName),
+        );
         return;
       }
     }

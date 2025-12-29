@@ -6,9 +6,12 @@ const client = twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 export async function sendWhatsAppOTP(phoneNumber: string, otp: string) {
   try {
     await client.messages.create({
-      body: `Your verification code is: ${otp}`,
       from: env.TWILIO_WHATSAPP_NUMBER,
       to: `whatsapp:${phoneNumber}`,
+      contentSid: env.TWILIO_TEMPLATE_SID,
+      contentVariables: JSON.stringify({
+        "1": otp,
+      }),
     });
     console.log(`OTP sent to ${phoneNumber}`);
   } catch (error) {
