@@ -215,7 +215,7 @@ export function StudentsTable({
                 👥 {totalCount} {t("admin.students.title")}
               </span>
             </div>
-            <div className="rounded-lg border border-emerald-200 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 px-4 py-2 dark:border-emerald-800">
+            <div className="rounded-lg border border-emerald-200 bg-linear-to-r from-emerald-500/10 to-teal-500/10 px-4 py-2 dark:border-emerald-800">
               <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
                 💰 {grandTotal.toLocaleString()}{" "}
                 {language === "ar" ? "ر.س" : "SAR"}

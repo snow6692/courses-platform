@@ -3,7 +3,7 @@ import { z } from "zod";
 // validation/quiz.zod.ts
 export const quizSchema = z.object({
   quizId: z.string().uuid().optional(), //
-  title: z.string().min(3, "Title must be at least 3 characters"),
+  title: z.string().min(3, "validation.title_min_length"),
   description: z.string().optional().nullable(),
   timeLimit: z.coerce.number().int().min(1).max(300).optional().nullable(),
 

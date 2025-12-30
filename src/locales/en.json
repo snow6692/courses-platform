@@ -596,6 +596,19 @@
       "create_quiz": "Create Quiz",
       "update_quiz": "Update Quiz"
     },
+    "quiz_form": {
+      "update_title": "Update Quiz",
+      "create_title": "Create Quiz",
+      "update_desc": "Update your quiz details",
+      "create_desc": "Add a new quiz",
+      "quiz_title_label": "Quiz Title",
+      "quiz_title_placeholder": "Enter quiz title",
+      "description_label": "Description (Optional)",
+      "description_placeholder": "Short description...",
+      "time_limit_label": "Time Limit (minutes) - Optional",
+      "time_limit_placeholder": "e.g. 30",
+      "saving": "Saving..."
+    },
     "courses_page": {
       "your_courses": "Your Courses",
       "create_course": "Create Course",
@@ -743,5 +756,31 @@
       "failed_create_answer": "Failed to create answer, please try again",
       "failed_update_answer": "Failed to update answer, please try again"
     }
+  },
+  "validation": {
+    "title_min_length": "Title must be at least 3 characters",
+    "title_max_length": "Title must be less than 100 characters",
+    "description_min_length": "Description must be at least 3 characters",
+    "file_required": "File is required",
+    "price_required": "Price is required",
+    "duration_required": "Duration is required",
+    "duration_max_length": "Duration must be less than 500 hours",
+    "small_description_min_length": "Small description must be at least 3 characters",
+    "small_description_max_length": "Small description must be less than 200 characters",
+    "slug_min_length": "Slug must be at least 3 characters",
+    "status_required": "Status is required",
+    "chapter_name_min_length": "Name must be at least 3 characters long",
+    "invalid_course_id": "Invalid course id",
+    "file_name_required": "File name is required",
+    "content_type_required": "Content type is required",
+    "file_size_required": "File size is required",
+    "lesson_name_min_length": "Name must be at least 3 characters long",
+    "invalid_chapter_id": "Invalid chapter id",
+    "select_answer": "Please select an answer",
+    "select_at_least_one_answer": "Please select at least one answer",
+    "title_required": "Title is required",
+    "time_limit_min": "Time limit must be at least 1 minute",
+    "question_text_required": "Question text is required",
+    "answer_text_required": "Answer text is required"
   }
 }

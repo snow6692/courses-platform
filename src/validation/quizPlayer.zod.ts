@@ -4,8 +4,8 @@ export const quizPlayerSchema = z.object({
   answers: z.record(
     z.string(),
     z.union([
-      z.string().min(1, "Please select an answer"),
-      z.array(z.string()).min(1, "Please select at least one answer"),
+      z.string().min(1, "validation.select_answer"),
+      z.array(z.string()).min(1, "validation.select_at_least_one_answer"),
     ]),
   ),
 });

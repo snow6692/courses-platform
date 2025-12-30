@@ -597,6 +597,19 @@
       "create_quiz": "إنشاء اختبار",
       "update_quiz": "تحديث الاختبار"
     },
+    "quiz_form": {
+      "update_title": "تحديث الاختبار",
+      "create_title": "إنشاء اختبار",
+      "update_desc": "تحديث تفاصيل الاختبار",
+      "create_desc": "إضافة اختبار جديد",
+      "quiz_title_label": "عنوان الاختبار",
+      "quiz_title_placeholder": "أدخل عنوان الاختبار",
+      "description_label": "الوصف (اختياري)",
+      "description_placeholder": "وصف قصير...",
+      "time_limit_label": "الوقت المحدد (بالدقائق) - اختياري",
+      "time_limit_placeholder": "مثال: 30",
+      "saving": "جاري الحفظ..."
+    },
     "courses_page": {
       "your_courses": "كل الدورات ",
       "create_course": "إنشاء دورة",
@@ -744,5 +757,31 @@
       "failed_create_answer": "فشل إنشاء الإجابة، حاول مرة أخرى",
       "failed_update_answer": "فشل تحديث الإجابة، حاول مرة أخرى"
     }
+  },
+  "validation": {
+    "title_min_length": "يجب أن يكون العنوان 3 أحرف على الأقل",
+    "title_max_length": "يجب أن يكون العنوان أقل من 100 حرف",
+    "description_min_length": "يجب أن يكون الوصف 3 أحرف على الأقل",
+    "file_required": "الملف مطلوب",
+    "price_required": "السعر مطلوب",
+    "duration_required": "المدة مطلوبة",
+    "duration_max_length": "يجب أن تكون المدة أقل من 500 ساعة",
+    "small_description_min_length": "الوصف المختصر يجب أن يكون 3 أحرف على الأقل",
+    "small_description_max_length": "الوصف المختصر يجب أن يكون أقل من 200 حرف",
+    "slug_min_length": "الرابط المختصر يجب أن يكون 3 أحرف على الأقل",
+    "status_required": "الحالة مطلوبة",
+    "chapter_name_min_length": "يجب أن يكون الاسم 3 أحرف على الأقل",
+    "invalid_course_id": "معرف الدورة غير صالح",
+    "file_name_required": "اسم الملف مطلوب",
+    "content_type_required": "نوع المحتوى مطلوب",
+    "file_size_required": "حجم الملف مطلوب",
+    "lesson_name_min_length": "يجب أن يكون الاسم 3 أحرف على الأقل",
+    "invalid_chapter_id": "معرف الفصل غير صالح",
+    "select_answer": "الرجاء اختيار إجابة",
+    "select_at_least_one_answer": "الرجاء اختيار إجابة واحدة على الأقل",
+    "title_required": "العنوان مطلوب",
+    "time_limit_min": "يجب أن يكون الوقت دقيقة واحدة على الأقل",
+    "question_text_required": "نص السؤال مطلوب",
+    "answer_text_required": "نص الإجابة مطلوب"
   }
 }

@@ -27,6 +27,7 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 import { saveQuiz } from "@/actions/quiz/quiz.action";
 import { AdminGetQuizOfCourse } from "@/app/data/quiz/admin/admin-get-quiz-of-course";
+import { useLanguage } from "@/providers/LanguageContext";
 
 type Props = {
   open: boolean;
@@ -47,6 +48,7 @@ export default function QuizDialog({
   existingQuiz,
   quizType,
 }: Props) {
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<QuizSchema>({
@@ -80,10 +82,14 @@ export default function QuizDialog({
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>
-            {existingQuiz ? "Update Quiz" : "Create Quiz"}
+            {existingQuiz
+              ? t("admin.quiz_form.update_title")
+              : t("admin.quiz_form.create_title")}
           </DialogTitle>
           <DialogDescription>
-            {existingQuiz ? "Update your quiz details" : "Add a new quiz"}
+            {existingQuiz
+              ? t("admin.quiz_form.update_desc")
+              : t("admin.quiz_form.create_desc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -94,9 +100,12 @@ export default function QuizDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quiz Title</FormLabel>
+                  <FormLabel>{t("admin.quiz_form.quiz_title_label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter quiz title" {...field} />
+                    <Input
+                      placeholder={t("admin.quiz_form.quiz_title_placeholder")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,10 +117,12 @@ export default function QuizDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormLabel>
+                    {t("admin.quiz_form.description_label")}
+                  </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Short description..."
+                      placeholder={t("admin.quiz_form.description_placeholder")}
                       {...field}
                       value={field.value ?? ""}
                     />
@@ -126,11 +137,11 @@ export default function QuizDialog({
               name="timeLimit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Time Limit (minutes) - Optional</FormLabel>
+                  <FormLabel>{t("admin.quiz_form.time_limit_label")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="e.g. 30"
+                      placeholder={t("admin.quiz_form.time_limit_placeholder")}
                       {...field}
                       value={field.value ?? ""}
                       onChange={(e) =>
@@ -148,10 +159,10 @@ export default function QuizDialog({
             <DialogFooter>
               <Button type="submit" disabled={isPending} className="w-full">
                 {isPending
-                  ? "Saving..."
+                  ? t("admin.quiz_form.saving")
                   : existingQuiz
-                    ? "Update Quiz"
-                    : "Create Quiz"}
+                    ? t("admin.quiz_form.update_title")
+                    : t("admin.quiz_form.create_title")}
               </Button>
             </DialogFooter>
           </form>

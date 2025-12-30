@@ -2,19 +2,19 @@ import { z } from "zod";
 
 export const profileFormSchema = z.object({
   firstName: z.string().min(2, {
-    message: "الاسم الأول يجب أن يكون حرفين على الأقل",
+    message: "profile.validation.first_name_min",
   }),
   lastName: z.string().min(2, {
-    message: "الاسم الأخير يجب أن يكون حرفين على الأقل",
+    message: "profile.validation.last_name_min",
   }),
   email: z.string().email({
-    message: "البريد الإلكتروني غير صالح",
+    message: "profile.validation.email_invalid",
   }),
   phoneNumber: z
     .string()
     .optional()
     .refine((val) => !val || val.length >= 9, {
-      message: "رقم الجوال يجب أن يكون 9 أرقام على الأقل",
+      message: "profile.validation.phone_min",
     }),
   image: z.string().optional(),
 });
@@ -24,13 +24,11 @@ export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 // Password schemas
 export const addPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, { message: "كلمة المرور يجب أن تكون 8 أحرف على الأقل" }),
+    password: z.string().min(8, { message: "profile.validation.password_min" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "كلمة المرور غير متطابقة",
+    message: "profile.validation.password_mismatch",
     path: ["confirmPassword"],
   });
 
@@ -38,14 +36,14 @@ export const changePasswordSchema = z
   .object({
     currentPassword: z
       .string()
-      .min(1, { message: "كلمة المرور الحالية مطلوبة" }),
+      .min(1, { message: "profile.validation.password_required" }),
     newPassword: z
       .string()
-      .min(8, { message: "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل" }),
+      .min(8, { message: "profile.validation.password_min" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "كلمة المرور غير متطابقة",
+    message: "profile.validation.password_mismatch",
     path: ["confirmPassword"],
   });
 
