@@ -688,6 +688,8 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
         totalQuestions={currentSection.questions.length}
         timeLeft={timeLeft}
         enableTimer={quizSettings?.enableTimer || false}
+        onSubmit={handleSubmit}
+        showSubmit={currentSectionIndex === sections.length - 1}
       />
 
       {/* Question Content */}

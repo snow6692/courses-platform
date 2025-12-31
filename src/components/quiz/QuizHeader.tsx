@@ -9,6 +9,8 @@ interface QuizHeaderProps {
   totalQuestions: number;
   timeLeft: number | null;
   enableTimer: boolean;
+  onSubmit?: () => void;
+  showSubmit?: boolean;
 }
 
 export function QuizHeader({
@@ -17,6 +19,8 @@ export function QuizHeader({
   totalQuestions,
   timeLeft,
   enableTimer,
+  onSubmit,
+  showSubmit,
 }: QuizHeaderProps) {
   const { t } = useLanguage();
 
@@ -30,21 +34,34 @@ export function QuizHeader({
     <div className="sticky top-0 z-10 border-b bg-white shadow-sm">
       <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
         {/* Timer */}
-        {timeLeft !== null && enableTimer && (
-          <div
-            className={`flex items-center gap-2 font-mono text-lg font-bold ${
-              timeLeft < 60 ? "text-red-600" : "text-gray-700"
-            }`}
-          >
-            <Timer className="h-5 w-5" />
-            {formatTime(timeLeft)}
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {timeLeft !== null && enableTimer && (
+            <div
+              className={`flex items-center gap-2 font-mono text-lg font-bold ${
+                timeLeft < 60 ? "text-red-600" : "text-gray-700"
+              }`}
+            >
+              <Timer className="h-5 w-5" />
+              {formatTime(timeLeft)}
+            </div>
+          )}
+        </div>
 
-        {/* Section Badge */}
-        <div className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white">
-          <FileText className="h-4 w-4" />
-          <span className="font-semibold">{sectionTitle}</span>
+        {/* Right Side: Section Badge + Submit Button */}
+        <div className="flex items-center gap-2">
+          {showSubmit && onSubmit && (
+            <button
+              onClick={onSubmit}
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+            >
+              {t("quiz.player.submit_quiz")}
+            </button>
+          )}
+
+          <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700">
+            <FileText className="h-4 w-4" />
+            <span className="font-semibold">{sectionTitle}</span>
+          </div>
         </div>
       </div>
 
