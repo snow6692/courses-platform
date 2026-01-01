@@ -25,7 +25,7 @@ export async function CourseDescriptionSection({
   return (
     <div className="space-y-4" dir={dir}>
       <ExpandableDescription maxHeight={200}>
-        <div className="prose prose-lg max-w-none text-gray-600">
+        <div className="prose prose-lg dark:prose-invert text-muted-foreground max-w-none">
           <RenderDescription json={parsedDescription} />
         </div>
       </ExpandableDescription>

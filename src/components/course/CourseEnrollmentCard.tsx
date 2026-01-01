@@ -38,7 +38,7 @@ export async function CourseEnrollmentCard({
     <div className="sticky top-20">
       {/* Gradient border wrapper */}
       <div className="rounded-3xl bg-gradient-to-br from-purple-500/20 via-pink-500/10 to-orange-500/20 p-[2px] shadow-2xl shadow-purple-500/10">
-        <Card className="overflow-hidden rounded-3xl border-none bg-white/95 backdrop-blur-sm">
+        <Card className="bg-card overflow-hidden rounded-3xl border-none backdrop-blur-sm">
           {/* Course Image with overlay gradient */}
           <div className="relative aspect-video w-full overflow-hidden">
             <Image
@@ -53,10 +53,10 @@ export async function CourseEnrollmentCard({
 
             {/* Course stats badge */}
             <div className="absolute right-3 bottom-3 left-3 flex justify-between">
-              <Badge className="bg-white/90 text-gray-700 backdrop-blur-sm hover:bg-white/90">
+              <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary/90 backdrop-blur-sm">
                 {course.chapters.length} {t("course_detail.chapters")}
               </Badge>
-              <Badge className="bg-white/90 text-gray-700 backdrop-blur-sm hover:bg-white/90">
+              <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary/90 backdrop-blur-sm">
                 {totalLessons} {t("course_detail.lessons")}
               </Badge>
             </div>
@@ -67,14 +67,14 @@ export async function CourseEnrollmentCard({
             <div className="mb-6 flex flex-col items-center gap-2">
               <div className="flex items-baseline gap-1">
                 <span className="text-5xl font-extrabold">{course.price}</span>
-                <span className="text-xl font-semibold text-gray-600">
+                <span className="text-muted-foreground text-xl font-semibold">
                   {t("courses.card.currency")}
                 </span>
               </div>
 
               <Badge
                 variant="secondary"
-                className="border-green-200 bg-green-50 text-green-700"
+                className="border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400"
               >
                 <IconSparkles className="mr-1 size-3" />
                 {t("course_detail.one_payment_label")}
@@ -102,7 +102,7 @@ export async function CourseEnrollmentCard({
             </div>
 
             {/* Trust indicators */}
-            <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+            <div className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-xs">
               <svg
                 className="size-4 text-green-500"
                 fill="currentColor"

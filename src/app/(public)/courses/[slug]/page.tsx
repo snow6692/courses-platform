@@ -68,7 +68,7 @@ async function CoursePage({ params }: IProps) {
       </section>
 
       {/* Content Section */}
-      <section className="bg-white px-4 py-12 md:px-16">
+      <section className="bg-background px-4 py-12 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div className="mt-12 lg:col-span-2">

@@ -17,11 +17,21 @@ export function HeroSection({
     <section
       className={`bg-bg-hero relative ${dir === "rtl" ? "min-h-screen" : "min-h-[110vh]"} w-full overflow-hidden pt-20 lg:pt-0`}
     >
+      {/* Spiderweb Decorations */}
+      <div className="pointer-events-none absolute -top-12 left-0 z-20 -scale-x-100">
+        <Image
+          src="/images/hero-web.svg"
+          alt="spiderweb"
+          width={300}
+          height={300}
+          className="opacity-60 dark:opacity-40"
+        />
+      </div>
       <div className="relative z-10 container mx-auto grid h-full min-h-[90vh] grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
         {/* Text Content */}
         <div className="flex flex-col items-start space-y-8 py-12 lg:py-0">
           {/* Badge */}
-          <div className="dark:bg-secondary inline-flex items-center rounded-full bg-white shadow-sm">
+          <div className="dark:bg-secondary inline-flex items-center rounded-full bg-white px-4 py-2 shadow-sm">
             <span className="text-foreground text-sm font-medium">
               {t("hero.badge")}
             </span>
@@ -150,18 +160,18 @@ export function HeroSection({
         `}</style>
       </div>
 
-      {/* Bottom Wave Divider */}
+      {/* Bottom Curve Divider */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-0">
         <svg
-          className="relative block h-[30px] w-[calc(100%+1.3px)] sm:h-[60px]"
+          className="relative block h-[80px] w-full sm:h-[150px]"
           data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
         >
           <path
-            d="M985.66,92.83C906.67,72,823.78,31,432.84,52.47,276.53,60.83,109.25,32.38,32,0L0,0V120H1200V75.1C1154.27,99.37,1065.19,113.67,985.66,92.83Z"
-            className="fill-background"
+            d="M0,0 C600,180 900,0 1200,50 V120 H0 Z"
+            className="fill-bg-footer dark:fill-bg-footer"
           ></path>
         </svg>
       </div>

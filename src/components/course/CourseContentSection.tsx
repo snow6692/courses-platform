@@ -40,7 +40,7 @@ export async function CourseContentSection({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="bg-background space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-semibold tracking-tight">
           {t("course_detail.course_content")}
@@ -54,7 +54,7 @@ export async function CourseContentSection({
       <div className="space-y-4">
         {course.chapters.map((chapter, index) => (
           <Collapsible key={chapter.id} defaultOpen={index === 0}>
-            <Card className="gap-0 overflow-hidden border-2 p-0 transition-all duration-200 hover:shadow-md">
+            <Card className="bg-card border-border gap-0 overflow-hidden border-2 p-0 transition-all duration-200 hover:shadow-md">
               <CollapsibleTrigger>
                 <div className="">
                   <CardContent className="hover:bg-muted/50 p-6 transition-colors">
