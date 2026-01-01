@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "spider-pl.b-cdn.net",
+        hostname: "spider-pull.b-cdn.net",
       },
       {
         protocol: "https",

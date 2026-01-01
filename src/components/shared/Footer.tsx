@@ -10,10 +10,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="relative w-full border-t bg-white pt-16 pb-8">
-      {/* Background Watermark */}
-      <div className="absolute inset-0 bg-[url('/images/footer.svg')] bg-[length:600px_600px] bg-center bg-no-repeat opacity-[0.03]" />
-
+    <footer className="bg-bg-footer relative w-full border-t pt-16 pb-8">
       <div className="relative container mx-auto px-6">
         <div className="grid grid-cols-1 gap-12 text-center md:grid-cols-2 lg:grid-cols-4 lg:text-start">
           {/* Column 1: Logo & Slogan */}

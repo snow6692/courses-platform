@@ -251,7 +251,14 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
   // Timer logic
   useEffect(() => {
-    if (!quizStarted || !quizSettings?.enableTimer || !currentSection) return;
+    if (
+      !quizStarted ||
+      !quizSettings?.enableTimer ||
+      !currentSection ||
+      isSubmitting ||
+      quizResult
+    )
+      return;
     if (timeLeft === null || timeLeft <= 0) return;
 
     const timer = setInterval(() => {
@@ -267,7 +274,14 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [quizStarted, quizSettings?.enableTimer, currentSection, timeLeft]);
+  }, [
+    quizStarted,
+    quizSettings?.enableTimer,
+    currentSection,
+    timeLeft,
+    isSubmitting,
+    quizResult,
+  ]);
 
   // Handle section time up
   const handleSectionTimeUp = useCallback(async () => {
@@ -689,7 +703,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
         timeLeft={timeLeft}
         enableTimer={quizSettings?.enableTimer || false}
         onSubmit={handleSubmit}
-        showSubmit={currentSectionIndex === sections.length - 1}
+        showSubmit={true}
       />
 
       {/* Question Content */}

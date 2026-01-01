@@ -46,17 +46,24 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <NuqsAdapter>
-              <ReactQueryProvider>
-                {children}
-                <Toaster
-                  richColors
-                  position="top-center"
-                  duration={2000}
-                  closeButton
-                />
-              </ReactQueryProvider>
-            </NuqsAdapter>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <NuqsAdapter>
+                <ReactQueryProvider>
+                  {children}
+                  <Toaster
+                    richColors
+                    position="top-center"
+                    duration={2000}
+                    closeButton
+                  />
+                </ReactQueryProvider>
+              </NuqsAdapter>
+            </ThemeProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

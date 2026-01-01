@@ -156,7 +156,7 @@ export function SpiderWebBackground() {
   return (
     <div
       ref={mountRef}
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-1 overflow-hidden"
       aria-hidden="true"
     />
   );

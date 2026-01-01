@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import UserDropDown from "../auth/UserDropDown";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ModeToggle } from "@/components/ui/ModeToggle";
 import { useLanguage } from "@/providers/LanguageContext";
 import { useSession } from "@/hooks/useAuthUser";
 import { Menu, User } from "lucide-react";
@@ -97,6 +98,7 @@ export default function Navbar() {
 
         {/* Right Side - Desktop */}
         <div className="hidden items-center gap-4 md:flex">
+          <ModeToggle />
           <LanguageSwitcher />
           {user ? (
             <UserDropDown
@@ -120,6 +122,7 @@ export default function Navbar() {
 
         {/* Right Side - Mobile */}
         <div className="flex items-center gap-2 md:hidden">
+          <ModeToggle />
           <LanguageSwitcher />
           {user && (
             <UserDropDown

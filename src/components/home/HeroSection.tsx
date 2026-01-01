@@ -15,13 +15,13 @@ export function HeroSection({
 
   return (
     <section
-      className={`bg-bg-hero relative ${dir === "rtl" ? "min-h-[100vh]" : "min-h-[110vh]"} w-full overflow-hidden pt-20 lg:pt-0`}
+      className={`bg-bg-hero relative ${dir === "rtl" ? "min-h-screen" : "min-h-[110vh]"} w-full overflow-hidden pt-20 lg:pt-0`}
     >
-      <div className="container mx-auto grid h-full min-h-[90vh] grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
+      <div className="relative z-10 container mx-auto grid h-full min-h-[90vh] grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
         {/* Text Content */}
         <div className="flex flex-col items-start space-y-8 py-12 lg:py-0">
           {/* Badge */}
-          <div className="inline-flex items-center rounded-full bg-white px-4 py-2 shadow-sm">
+          <div className="dark:bg-secondary inline-flex items-center rounded-full bg-white shadow-sm">
             <span className="text-foreground text-sm font-medium">
               {t("hero.badge")}
             </span>
@@ -75,7 +75,7 @@ export function HeroSection({
               className={buttonVariants({
                 size: "lg",
                 className:
-                  "border-primary min-w-[200px] border-2 bg-transparent text-lg font-bold text-[black!important] hover:bg-red-50",
+                  "border-primary text-foreground hover:bg-primary/10 min-w-[200px] border-2 bg-transparent text-lg font-bold",
               })}
             >
               {t("hero.browse")}
@@ -86,7 +86,7 @@ export function HeroSection({
           <div className="mt-8 flex w-full flex-col gap-6 sm:flex-row sm:items-center sm:gap-12">
             <div className="flex items-center justify-between gap-8 border-t pt-8 sm:justify-start sm:border-t-0 sm:pt-0">
               <div className="flex flex-col items-start">
-                <span className="text-3xl font-bold text-black">
+                <span className="text-foreground text-3xl font-bold">
                   {usersCount}
                 </span>
                 <span className="text-muted-foreground text-sm font-medium">
@@ -95,7 +95,7 @@ export function HeroSection({
               </div>
               <div className="bg-border h-12 w-px"></div>
               <div className="flex flex-col items-start">
-                <span className="text-3xl font-bold text-black">
+                <span className="text-foreground text-3xl font-bold">
                   {coursesCount}
                 </span>
                 <span className="text-muted-foreground text-sm font-medium">

@@ -29,7 +29,7 @@ export default async function Home() {
       {/* Content sections - full width with gaps between them */}
       <div className="relative z-10 space-y-12">
         {/* Best Selling Section */}
-        <div className="bg-background">
+        <div className="">
           <FadeIn delay={0.2}>
             <Suspense fallback={<BestSellingSectionSkeleton />}>
               <BestSellingSectionWrapper />
@@ -38,21 +38,21 @@ export default async function Home() {
         </div>
 
         {/* Learn Your Way Section */}
-        <div className="bg-background">
+        <div className="">
           <FadeIn delay={0.2}>
             <LearnYourWaySection />
           </FadeIn>
         </div>
 
         {/* Start Journey Section */}
-        <div className="bg-background">
+        <div className="">
           <FadeIn delay={0.2}>
             <StartJourneySection />
           </FadeIn>
         </div>
 
         {/* Footer */}
-        <div className="bg-background">
+        <div className="">
           <FadeIn delay={0.2} direction="up">
             <Footer />
           </FadeIn>
